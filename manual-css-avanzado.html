@@ -1,0 +1,2713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Avanzado — Serie Manuales de Programación Web Vol. 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   RESET & VARIABLES
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:          #1C2B1A;
+  --ink-soft:     #2E4030;
+  --ink-muted:    #5A7060;
+  --ink-faint:    #8FA893;
+  --emerald:      #1A6B3C;
+  --emerald-dark: #0F4526;
+  --emerald-deep: #092E18;
+  --emerald-light:#C8E6D4;
+  --emerald-pale: #EBF5EE;
+  --emerald-glow: rgba(26,107,60,.14);
+  --gold:         #9B7B2A;
+  --gold-light:   #F5ECD6;
+  --gold-pale:    #FAF4E8;
+  --cream:        #F7F3EA;
+  --cream-dark:   #EDE7D9;
+  --cream-deeper: #E0D8C8;
+  --paper:        #FBF9F4;
+  --parchment:    #F0EBE0;
+  --border:       #D6CCBA;
+  --border-soft:  #E8E2D6;
+  --text-primary:  var(--ink);
+  --text-secondary:var(--ink-soft);
+  --text-muted:    var(--ink-muted);
+  --bg:            var(--cream);
+  --surface:       var(--paper);
+  --surface2:      var(--parchment);
+  --code-bg:       #111D12;
+  --sidebar-w:     276px;
+  --radius:        8px;
+  --radius-lg:     16px;
+  --shadow-sm:     0 1px 3px rgba(28,43,26,.07), 0 1px 2px rgba(28,43,26,.05);
+  --shadow-md:     0 4px 14px rgba(28,43,26,.10);
+  --shadow-lg:     0 12px 40px rgba(28,43,26,.14);
+  --shadow-emrd:   0 6px 24px rgba(26,107,60,.18);
+  --font-display:  'Playfair Display', Georgia, serif;
+  --font-body:     'Source Serif 4', Georgia, serif;
+  --font-mono:     'JetBrains Mono', monospace;
+  --transition:    0.18s ease;
+}
+
+/* =============================================
+   BASE
+   ============================================= */
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.72;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Paper texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: .6;
+}
+
+::selection { background: var(--emerald-light); color: var(--emerald-deep); }
+
+/* =============================================
+   SIDEBAR
+   ============================================= */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--ink);
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition);
+  border-right: 3px solid var(--emerald-dark);
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 100% 40% at 50% 0%, rgba(26,107,60,.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.sidebar-brand {
+  padding: 28px 22px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  position: relative;
+}
+
+.sidebar-series {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--emerald-light);
+  margin-bottom: 8px;
+  opacity: .8;
+}
+
+.sidebar-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.2;
+  font-style: italic;
+}
+
+.sidebar-vol {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--emerald);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.sidebar-nav { padding: 12px 0 28px; flex: 1; position: relative; }
+
+.nav-group-label {
+  padding: 14px 20px 5px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.22);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,.5);
+  text-decoration: none;
+  transition: all var(--transition);
+  border-left: 2px solid transparent;
+  letter-spacing: .01em;
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,.04);
+  color: rgba(255,255,255,.82);
+}
+
+.nav-link.active {
+  background: rgba(26,107,60,.18);
+  color: var(--emerald-light);
+  border-left-color: var(--emerald);
+  font-weight: 400;
+}
+
+.nav-num {
+  width: 19px; height: 19px;
+  border-radius: 4px;
+  background: rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  flex-shrink: 0;
+  color: rgba(255,255,255,.25);
+}
+
+.nav-link.active .nav-num {
+  background: var(--emerald);
+  color: #fff;
+}
+
+/* =============================================
+   MAIN
+   ============================================= */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  max-width: 880px;
+  padding: 52px 60px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================
+   HERO
+   ============================================= */
+.hero {
+  position: relative;
+  margin-bottom: 60px;
+  padding: 54px 54px 50px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--ink);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 90% 50%, rgba(26,107,60,.3) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 60% at 0% 100%, rgba(155,123,42,.15) 0%, transparent 60%);
+}
+
+/* Decorative rule */
+.hero::after {
+  content: '';
+  position: absolute;
+  left: 54px; bottom: 0;
+  width: 120px; height: 3px;
+  background: linear-gradient(90deg, var(--emerald), transparent);
+}
+
+.hero-content { position: relative; }
+
+.hero-series {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(26,107,60,.25);
+  color: var(--emerald-light);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(26,107,60,.4);
+}
+
+.hero-vol {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(255,255,255,.3);
+  letter-spacing: .08em;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 54px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.0;
+  letter-spacing: -.02em;
+  margin-bottom: 8px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--emerald-light);
+}
+
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255,255,255,.6);
+  max-width: 500px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+  margin-top: 10px;
+}
+
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.hero-tag {
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.45);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .05em;
+  padding: 4px 11px;
+  border-radius: 99px;
+  border: 1px solid rgba(255,255,255,.09);
+}
+
+/* Decorative CSS text */
+.hero-deco {
+  position: absolute;
+  right: 40px; top: 32px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,.06);
+  line-height: 1.6;
+  letter-spacing: .02em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =============================================
+   SECTIONS
+   ============================================= */
+.section {
+  margin-bottom: 64px;
+  scroll-margin-top: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+  position: relative;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 40px; height: 2px;
+  background: var(--emerald);
+}
+
+.section-num {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: var(--emerald);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-emrd);
+}
+
+.section h2 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -.01em;
+  line-height: 1.2;
+}
+
+.section h3 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--emerald);
+  margin: 28px 0 12px;
+}
+
+p {
+  font-size: 14.5px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: .85rem;
+  font-weight: 300;
+}
+
+p strong { font-weight: 600; color: var(--text-primary); }
+p em { color: var(--emerald); font-style: italic; }
+
+/* =============================================
+   CODE BLOCKS
+   ============================================= */
+.code-wrap { position: relative; margin: 18px 0 22px; }
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 7px 14px;
+}
+
+.code-dots { display: flex; gap: 5px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.code-dots span:nth-child(1) { background: #FF5F57; }
+.code-dots span:nth-child(2) { background: #FEBC2E; }
+.code-dots span:nth-child(3) { background: #28C840; }
+
+.code-lang {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(255,255,255,.28);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  overflow-x: auto;
+}
+
+.code-wrap pre {
+  border-radius: 0 0 var(--radius) var(--radius);
+}
+
+pre code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: #C8D6C9;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+/* Dracula-ish syntax */
+.at  { color: #C792EA; }  /* @rule */
+.pr  { color: #80CBC4; }  /* property */
+.vl  { color: #C3E88D; }  /* value */
+.sl  { color: #F07178; }  /* selector */
+.cm  { color: #546E7A; font-style: italic; }
+.nm  { color: #F78C6C; }  /* number/unit */
+.kw  { color: #C792EA; }  /* keyword */
+.st  { color: #C3E88D; }  /* string */
+.fn  { color: #82AAFF; }  /* function */
+.vn  { color: #EEFFFF; }  /* var name */
+.pv  { color: #FFCB6B; }  /* --custom-property */
+
+code.inline {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--emerald-pale);
+  color: var(--emerald-dark);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--emerald-light);
+}
+
+/* =============================================
+   TABLES
+   ============================================= */
+.table-wrap {
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+th {
+  background: var(--cream-dark);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--emerald);
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-secondary);
+  vertical-align: top;
+  line-height: 1.55;
+  font-weight: 300;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gold-pale); }
+td code { font-family: var(--font-mono); font-size: 11.5px; background: var(--emerald-pale); color: var(--emerald-dark); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--emerald-light); }
+td strong { font-weight: 600; color: var(--text-primary); }
+
+/* =============================================
+   CALLOUTS
+   ============================================= */
+.note, .tip, .warning, .danger {
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 13px 16px;
+  margin: 16px 0;
+  border-left: 3px solid;
+}
+
+.note { background: var(--emerald-pale); border-color: var(--emerald); }
+.note-label { font-family: var(--font-mono); font-size: 9.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--emerald); margin-bottom: 5px; }
+.note p { font-size: 13px; color: var(--emerald-deep); margin: 0; }
+
+.tip { background: var(--gold-pale); border-color: var(--gold); }
+.tip-label { font-family: var(--font-mono); font-size: 9.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); margin-bottom: 5px; }
+.tip p { font-size: 13px; color: #5C4510; margin: 0; }
+
+.warning { background: #FFF3CD; border-color: #F59E0B; }
+.warning-label { font-family: var(--font-mono); font-size: 9.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: #B45309; margin-bottom: 5px; }
+.warning p { font-size: 13px; color: #713F12; margin: 0; }
+
+.danger { background: #FEE2E2; border-color: #EF4444; }
+.danger-label { font-family: var(--font-mono); font-size: 9.5px; font-weight: 500; text-transform: uppercase; letter-spacing: .12em; color: #B91C1C; margin-bottom: 5px; }
+.danger p { font-size: 13px; color: #7F1D1D; margin: 0; }
+
+/* =============================================
+   CARDS & GRID
+   ============================================= */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--emerald);
+  margin-bottom: 10px;
+}
+
+.card pre { margin: 0; padding: 12px 14px; }
+
+/* =============================================
+   TABS
+   ============================================= */
+.tab-bar {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  padding: 7px 16px;
+  font-size: 12.5px;
+  font-family: var(--font-body);
+  font-weight: 300;
+  border-radius: var(--radius) var(--radius) 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  background: transparent;
+  transition: all var(--transition);
+  margin-bottom: -2px;
+  letter-spacing: .01em;
+}
+
+.tab-btn:hover { color: var(--emerald); background: var(--emerald-pale); }
+
+.tab-btn.active {
+  color: var(--emerald);
+  background: var(--surface);
+  border-color: var(--border);
+  border-bottom-color: var(--surface);
+  font-weight: 400;
+}
+
+.tab-panel { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; }
+.tab-panel.active { display: block; }
+.tab-panel pre { border: none; border-radius: 0; margin: 0; }
+.tab-panel .code-header { border-radius: 0; }
+
+/* =============================================
+   COMPARISON
+   ============================================= */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+
+.cmp { border-radius: var(--radius); overflow: hidden; border: 1px solid; }
+.cmp.good { border-color: #A7D7B0; }
+.cmp.bad  { border-color: #F5B8B8; }
+
+.cmp-label {
+  padding: 7px 14px;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cmp.good .cmp-label { background: #DCFCE7; color: var(--emerald); }
+.cmp.bad  .cmp-label { background: #FEE2E2; color: #B91C1C; }
+.cmp pre { margin: 0; border: none; border-radius: 0; border-top: 1px solid var(--border); }
+
+/* =============================================
+   CHECKLIST
+   ============================================= */
+.checklist { list-style: none; margin: 14px 0; }
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-soft);
+  line-height: 1.55;
+  font-weight: 300;
+}
+
+.checklist li:last-child { border-bottom: none; }
+
+.ck-icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--emerald);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ck-icon svg { width: 10px; height: 10px; }
+
+/* =============================================
+   LIVE DEMOS
+   ============================================= */
+.demo-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  margin: 16px 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.demo-label {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--emerald);
+  margin-bottom: 14px;
+}
+
+.demo-area {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* ——— Custom Properties Demo ——— */
+.cp-demo-card {
+  --card-hue: 145;
+  background: hsl(var(--card-hue), 45%, 94%);
+  border: 2px solid hsl(var(--card-hue), 45%, 72%);
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: hsl(var(--card-hue), 50%, 22%);
+  font-weight: 400;
+  text-align: center;
+  min-width: 130px;
+  cursor: pointer;
+  transition: --card-hue .3s, background .3s, border-color .3s, color .3s;
+}
+
+/* ——— Pseudo-elements Demo ——— */
+.pseudo-btn {
+  position: relative;
+  display: inline-block;
+  padding: 10px 24px;
+  background: var(--emerald);
+  color: #fff;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  overflow: hidden;
+  border: none;
+  font-weight: 400;
+  transition: background .2s;
+}
+
+.pseudo-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background .2s;
+}
+
+.pseudo-btn:hover::before { background: rgba(255,255,255,.12); }
+
+.pseudo-btn::after {
+  content: '→';
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: right .2s, opacity .2s;
+  opacity: 0;
+}
+
+.pseudo-btn:hover::after { right: 10px; opacity: 1; }
+.pseudo-btn:hover { padding-right: 36px; }
+
+/* ——— Filter Demo ——— */
+.filter-img {
+  width: 100px; height: 100px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--emerald), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  transition: filter .3s;
+  cursor: pointer;
+}
+
+.filter-img:hover { filter: saturate(1.6) brightness(1.1) drop-shadow(0 4px 12px rgba(26,107,60,.4)); }
+.filter-img.grayscale { filter: grayscale(1); }
+.filter-img.blur-f { filter: blur(4px); }
+.filter-img.sepia-f { filter: sepia(.8) hue-rotate(15deg); }
+
+/* ——— Custom Scrollbar Demo ——— */
+.custom-scroll-demo {
+  height: 120px;
+  overflow-y: auto;
+  padding: 12px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  scrollbar-width: thin;
+  scrollbar-color: var(--emerald) var(--cream-dark);
+}
+
+.custom-scroll-demo::-webkit-scrollbar { width: 6px; }
+.custom-scroll-demo::-webkit-scrollbar-track { background: var(--cream-dark); border-radius: 3px; }
+.custom-scroll-demo::-webkit-scrollbar-thumb { background: var(--emerald); border-radius: 3px; }
+.custom-scroll-demo::-webkit-scrollbar-thumb:hover { background: var(--emerald-dark); }
+
+/* ——— Clip-path Demo ——— */
+.clip-shapes {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.clip-shape {
+  width: 80px;
+  height: 80px;
+  background: var(--emerald);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #fff;
+  cursor: pointer;
+  transition: transform .2s, background .2s;
+}
+
+.clip-shape:hover { transform: scale(1.08); background: var(--emerald-dark); }
+
+.clip-circle   { clip-path: circle(50%); }
+.clip-triangle { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+.clip-diamond  { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+.clip-hexagon  { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+.clip-star     { clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); }
+
+/* ——— CSS Variables Interactive ——— */
+.cv-demo {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.cv-box {
+  --cv-hue: 145;
+  --cv-sat: 55%;
+  --cv-size: 80px;
+  width: var(--cv-size);
+  height: var(--cv-size);
+  border-radius: 12px;
+  background: hsl(var(--cv-hue), var(--cv-sat), 50%);
+  margin: 0 auto 14px;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+}
+
+.cv-control { margin: 8px 0; display: flex; align-items: center; gap: 10px; }
+.cv-label { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); min-width: 100px; }
+.cv-slider { flex: 1; accent-color: var(--emerald); }
+
+/* ——— @layer Demo Visual ——— */
+.layer-diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 14px 0;
+}
+
+.layer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  border: 1px solid;
+}
+
+.layer-row.reset   { background: #FEF9C3; border-color: #FDE047; }
+.layer-row.base    { background: var(--emerald-pale); border-color: var(--emerald-light); }
+.layer-row.layout  { background: #DBEAFE; border-color: #93C5FD; }
+.layer-row.comp    { background: #EDE9FE; border-color: #C4B5FD; }
+.layer-row.util    { background: #FCE7F3; border-color: #F9A8D4; }
+.layer-row.nolayer { background: #FEE2E2; border-color: #FCA5A5; }
+
+.layer-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.layer-row.reset   .layer-badge { background: #FDE047; color: #713F12; }
+.layer-row.base    .layer-badge { background: var(--emerald-light); color: var(--emerald-deep); }
+.layer-row.layout  .layer-badge { background: #93C5FD; color: #1E3A8A; }
+.layer-row.comp    .layer-badge { background: #C4B5FD; color: #3730A3; }
+.layer-row.util    .layer-badge { background: #F9A8D4; color: #831843; }
+.layer-row.nolayer .layer-badge { background: #FCA5A5; color: #7F1D1D; }
+
+.layer-desc { font-size: 12px; color: var(--text-muted); font-weight: 300; }
+.layer-priority { margin-left: auto; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+
+/* ——— Scroll Animation Demo ——— */
+.scroll-demo {
+  height: 180px;
+  overflow-y: scroll;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: var(--emerald) var(--cream-dark);
+}
+
+.scroll-inner { padding: 16px; }
+
+.scroll-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 300;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity .4s ease, transform .4s ease;
+}
+
+.scroll-card.visible { opacity: 1; transform: translateY(0); }
+
+/* ——— Gradient Demo ——— */
+.gradient-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0; }
+
+.grad-swatch {
+  height: 70px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: flex-end;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  border: 1px solid var(--border);
+}
+
+.grad-swatch:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+.grad-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .05em;
+  color: rgba(255,255,255,.75);
+  text-shadow: 0 1px 2px rgba(0,0,0,.3);
+}
+
+/* ——— Writing modes demo ——— */
+.writing-demo {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.wm-box {
+  background: var(--emerald-pale);
+  border: 1px solid var(--emerald-light);
+  border-radius: var(--radius);
+  padding: 12px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--emerald-dark);
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =============================================
+   DIVIDER
+   ============================================= */
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 60px 0;
+  position: relative;
+}
+
+.divider::after {
+  content: '✦';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  padding: 0 12px;
+  color: var(--emerald-light);
+  font-size: 12px;
+}
+
+/* =============================================
+   SERIES FOOTER
+   ============================================= */
+.series-footer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-top: 56px;
+  box-shadow: var(--shadow-sm);
+}
+
+.series-footer-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.series-vols { display: flex; flex-wrap: wrap; gap: 8px; }
+.series-vols a {
+  text-decoration: none;   /* Quita el subrayado */
+  color: inherit;          /* Mantiene el color del texto del span */
+}
+
+
+.vol-chip {
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  background: var(--cream);
+  font-weight: 300;
+}
+a .vol-chip {
+  text-decoration: none;
+}
+
+
+.vol-chip.done    { color: var(--ink-soft); border-color: var(--border); }
+.vol-chip.current { background: var(--emerald-pale); border-color: var(--emerald-light); color: var(--emerald-dark); font-weight: 400; }
+
+/* =============================================
+   PROGRESS + CONTROLS
+   ============================================= */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--emerald), var(--gold));
+  z-index: 999;
+  width: 0%;
+  transition: width .1s;
+}
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 48px; height: 48px;
+  background: var(--emerald);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 300;
+  box-shadow: var(--shadow-emrd);
+  align-items: center; justify-content: center;
+}
+
+.back-top {
+  position: fixed;
+  bottom: 24px;
+  left: calc(var(--sidebar-w) + 20px);
+  width: 38px; height: 38px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--text-muted);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+  text-decoration: none;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.back-top.visible { opacity: 1; pointer-events: all; }
+.back-top:hover { background: var(--emerald); color: #fff; border-color: var(--emerald); }
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 32px 24px 80px; }
+  .sidebar-toggle { display: flex; }
+  .hero { padding: 32px 28px; }
+  .hero h1 { font-size: 36px; }
+  .compare, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .hero-deco { display: none; }
+}
+
+@media (max-width: 560px) {
+  .main { padding: 24px 16px 80px; }
+  .hero h1 { font-size: 28px; }
+  .gradient-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-series">Serie · Programación &amp; Diseño Web</div>
+    <div class="sidebar-title">CSS Avanzado</div>
+    <span class="sidebar-vol">Vol. 5</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-group-label">Variables y arquitectura</div>
+    <a href="#s01" class="nav-link active"><span class="nav-num">01</span>Custom Properties</a>
+    <a href="#s02" class="nav-link"><span class="nav-num">02</span>@layer y cascada</a>
+    <a href="#s03" class="nav-link"><span class="nav-num">03</span>@scope y @starting-style</a>
+    <div class="nav-group-label">Selectores y funciones</div>
+    <a href="#s04" class="nav-link"><span class="nav-num">04</span>Pseudo-elementos</a>
+    <a href="#s05" class="nav-link"><span class="nav-num">05</span>Selectores avanzados</a>
+    <a href="#s06" class="nav-link"><span class="nav-num">06</span>Funciones CSS</a>
+    <div class="nav-group-label">Gráficos y efectos</div>
+    <a href="#s07" class="nav-link"><span class="nav-num">07</span>Gradientes avanzados</a>
+    <a href="#s08" class="nav-link"><span class="nav-num">08</span>Filtros y efectos</a>
+    <a href="#s09" class="nav-link"><span class="nav-num">09</span>Clip-path y máscaras</a>
+    <a href="#s10" class="nav-link"><span class="nav-num">10</span>Sombras y bordes</a>
+    <div class="nav-group-label">Animaciones</div>
+    <a href="#s11" class="nav-link"><span class="nav-num">11</span>Transiciones avanzadas</a>
+    <a href="#s12" class="nav-link"><span class="nav-num">12</span>@keyframes profundo</a>
+    <a href="#s13" class="nav-link"><span class="nav-num">13</span>Scroll-driven animations</a>
+    <div class="nav-group-label">Layout avanzado</div>
+    <a href="#s14" class="nav-link"><span class="nav-num">14</span>Subgrid</a>
+    <a href="#s15" class="nav-link"><span class="nav-num">15</span>Aspect-ratio y sizing</a>
+    <div class="nav-group-label">Tipografía y texto</div>
+    <a href="#s16" class="nav-link"><span class="nav-num">16</span>Tipografía avanzada</a>
+    <a href="#s17" class="nav-link"><span class="nav-num">17</span>Writing modes y logical</a>
+    <div class="nav-group-label">Referencia</div>
+    <a href="#s18" class="nav-link"><span class="nav-num">18</span>Buenas prácticas</a>
+    <a href="#s19" class="nav-link"><span class="nav-num">19</span>Referencia rápida</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-series">
+        <span class="hero-badge">
+          <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#C8E6D4"/></svg>
+          Serie: Manuales de Programación &amp; Diseño Web
+        </span>
+        <span class="hero-vol">Volumen 5</span>
+      </div>
+      <h1>CSS <em>Avanzado</em></h1>
+      <p class="hero-sub">Custom Properties, @layer, animaciones scroll-driven, clip-path, subgrid, filtros, pseudo-elementos y todo el poder de CSS moderno.</p>
+      <div class="hero-tags">
+        <span class="hero-tag">Intermedio / Avanzado</span>
+        <span class="hero-tag">19 secciones</span>
+        <span class="hero-tag">Demos interactivas</span>
+        <span class="hero-tag">Scroll Animations</span>
+        <span class="hero-tag">@layer + Subgrid</span>
+      </div>
+    </div>
+    <div class="hero-deco">
+:root {<br>
+&nbsp;&nbsp;--emerald: #1A6B3C;<br>
+&nbsp;&nbsp;--radius: 16px;<br>
+}<br>
+@layer base, comp;<br>
+@keyframes appear {<br>
+&nbsp;&nbsp;from { opacity: 0; }<br>
+}
+    </div>
+  </div>
+
+  <!-- S01 — CUSTOM PROPERTIES -->
+  <section class="section" id="s01">
+    <div class="section-header"><div class="section-num">01</div><h2>Custom Properties (Variables CSS)</h2></div>
+    <p>Las <strong>Custom Properties</strong> —coloquialmente "variables CSS"— son propiedades definidas por el desarrollador que almacenan valores reutilizables. A diferencia de los preprocesadores, son dinámicas: se pueden cambiar en tiempo de ejecución con JavaScript, respetan el scope del DOM y participan en la herencia.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— Definición y uso básico ——— */</span>
+<span class="sl">:root</span> {
+  <span class="pv">--color-primario</span>: <span class="vl">#1A6B3C</span>;
+  <span class="pv">--radio</span>: <span class="nm">8px</span>;
+  <span class="pv">--espacio</span>: <span class="nm">1rem</span>;
+  <span class="pv">--fuente-display</span>: <span class="st">'Playfair Display', serif</span>;
+  <span class="pv">--sombra</span>: <span class="vl">0 4px 14px rgba(0,0,0,.1)</span>;
+}
+
+<span class="sl">.tarjeta</span> {
+  <span class="pr">background</span>: <span class="fn">var</span>(<span class="pv">--color-primario</span>);
+  <span class="pr">border-radius</span>: <span class="fn">var</span>(<span class="pv">--radio</span>);
+  <span class="pr">padding</span>: <span class="fn">var</span>(<span class="pv">--espacio</span>);
+  <span class="cm">/* Fallback si la variable no existe */</span>
+  <span class="pr">color</span>: <span class="fn">var</span>(<span class="pv">--color-texto</span>, <span class="vl">black</span>);
+}
+
+<span class="cm">/* ——— Scope local ——— */</span>
+<span class="sl">.alerta-roja</span> {
+  <span class="pv">--color-primario</span>: <span class="vl">#DC2626</span>; <span class="cm">/* sobreescribe solo aquí */</span>
+  <span class="pr">background</span>: <span class="fn">var</span>(<span class="pv">--color-primario</span>);
+}
+
+<span class="cm">/* ——— Variables en cálculos ——— */</span>
+<span class="sl">:root</span> {
+  <span class="pv">--base</span>: <span class="nm">4px</span>;
+  <span class="pv">--espacio-sm</span>: <span class="fn">calc</span>(<span class="fn">var</span>(<span class="pv">--base</span>) <span class="kw">*</span> <span class="nm">2</span>);  <span class="cm">/* 8px  */</span>
+  <span class="pv">--espacio-md</span>: <span class="fn">calc</span>(<span class="fn">var</span>(<span class="pv">--base</span>) <span class="kw">*</span> <span class="nm">4</span>);  <span class="cm">/* 16px */</span>
+  <span class="pv">--espacio-lg</span>: <span class="fn">calc</span>(<span class="fn">var</span>(<span class="pv">--base</span>) <span class="kw">*</span> <span class="nm">8</span>);  <span class="cm">/* 32px */</span>
+}
+
+<span class="cm">/* ——— Variables para temas (dark mode) ——— */</span>
+<span class="sl">:root</span> {
+  <span class="pv">--bg</span>: <span class="vl">white</span>;
+  <span class="pv">--texto</span>: <span class="vl">#1C2B1A</span>;
+  <span class="pv">--superficie</span>: <span class="vl">#F7F3EA</span>;
+}
+
+<span class="sl">[data-theme="dark"]</span> {
+  <span class="pv">--bg</span>: <span class="vl">#111D12</span>;
+  <span class="pv">--texto</span>: <span class="vl">#E8F5EB</span>;
+  <span class="pv">--superficie</span>: <span class="vl">#1C2B1D</span>;
+}
+
+<span class="cm">/* ——— Variables en inline styles (JS) ——— */</span>
+<span class="cm">/* elemento.style.setProperty('--mi-var', valor) */</span>
+<span class="cm">/* getComputedStyle(elem).getPropertyValue('--mi-var') */</span>
+
+<span class="cm">/* ——— Variables en @keyframes ——— */</span>
+<span class="sl">:root</span> { <span class="pv">--delay</span>: <span class="nm">0s</span>; }
+<span class="sl">.item-1</span> { <span class="pv">--delay</span>: <span class="nm">0.1s</span>; }
+<span class="sl">.item-2</span> { <span class="pv">--delay</span>: <span class="nm">0.2s</span>; }
+
+<span class="sl">.item</span> {
+  <span class="pr">animation</span>: <span class="vl">fadeIn</span> <span class="nm">0.4s</span> <span class="fn">var</span>(<span class="pv">--delay</span>) <span class="vl">both</span>;
+}</code></pre>
+    </div>
+
+    <h3>Custom Properties con @property (Houdini)</h3>
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* @property: tipado + animación de variables */</span>
+<span class="at">@property</span> <span class="pv">--angulo</span> {
+  <span class="pr">syntax</span>: <span class="st">'&lt;angle&gt;'</span>;
+  <span class="pr">initial-value</span>: <span class="nm">0deg</span>;
+  <span class="pr">inherits</span>: <span class="bo">false</span>;
+}
+
+<span class="sl">.spinner</span> {
+  <span class="pv">--angulo</span>: <span class="nm">0deg</span>;
+  <span class="pr">background</span>: <span class="fn">conic-gradient</span>(<span class="vl">from</span> <span class="fn">var</span>(<span class="pv">--angulo</span>), <span class="vl">transparent</span>, <span class="vl">#1A6B3C</span>);
+  <span class="pr">animation</span>: <span class="vl">girar</span> <span class="nm">2s</span> <span class="vl">linear infinite</span>;
+}
+
+<span class="at">@keyframes</span> <span class="fn">girar</span> {
+  <span class="nm">to</span> { <span class="pv">--angulo</span>: <span class="nm">360deg</span>; }
+  <span class="cm">/* ¡Se puede animar porque @property define el tipo! */</span>
+}
+
+<span class="cm">/* Animación de color via @property */</span>
+<span class="at">@property</span> <span class="pv">--hue</span> {
+  <span class="pr">syntax</span>: <span class="st">'&lt;number&gt;'</span>;
+  <span class="pr">initial-value</span>: <span class="nm">145</span>;
+  <span class="pr">inherits</span>: <span class="bo">false</span>;
+}
+
+<span class="sl">.color-animado</span> {
+  <span class="pr">background</span>: <span class="fn">hsl</span>(<span class="fn">var</span>(<span class="pv">--hue</span>), <span class="nm">60%</span>, <span class="nm">50%</span>);
+  <span class="pr">transition</span>: <span class="pv">--hue</span> <span class="nm">1s</span>;
+}
+
+<span class="sl">.color-animado:hover</span> { <span class="pv">--hue</span>: <span class="nm">200</span>; }</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo interactiva — CSS Variables en tiempo real</div>
+      <div class="cv-demo">
+        <div class="cv-box" id="cvBox">🌿</div>
+        <div class="cv-control">
+          <span class="cv-label">--hue (color)</span>
+          <input type="range" class="cv-slider" id="cvHue" min="0" max="360" value="145">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);min-width:40px;" id="cvHueVal">145</span>
+        </div>
+        <div class="cv-control">
+          <span class="cv-label">--saturation</span>
+          <input type="range" class="cv-slider" id="cvSat" min="0" max="100" value="55">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);min-width:40px;" id="cvSatVal">55%</span>
+        </div>
+        <div class="cv-control">
+          <span class="cv-label">--size</span>
+          <input type="range" class="cv-slider" id="cvSize" min="40" max="140" value="80">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);min-width:40px;" id="cvSizeVal">80px</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <div class="note-label">Diferencia con variables de preprocesadores</div>
+      <p>Las variables de Sass (<code class="inline">$var</code>) se resuelven en compilación y no existen en el navegador. Las Custom Properties de CSS existen en el DOM, son heredables, cambiables con JS y pueden responder a media queries.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S02 — @LAYER -->
+  <section class="section" id="s02">
+    <div class="section-header"><div class="section-num">02</div><h2>@layer — Cascade Layers</h2></div>
+    <p>Las <strong>Cascade Layers</strong> (CSS 2022) permiten organizar los estilos en capas con prioridad explícita, eliminando los conflictos de especificidad. Los estilos en una capa posterior tienen mayor prioridad, sin importar la especificidad de los selectores dentro de ella.</p>
+
+    <div class="layer-diagram">
+      <div class="layer-row reset">
+        <span class="layer-badge">reset</span>
+        <span class="layer-desc">Normalize / reset CSS base</span>
+        <span class="layer-priority">Prioridad 1 (menor)</span>
+      </div>
+      <div class="layer-row base">
+        <span class="layer-badge">base</span>
+        <span class="layer-desc">Tipografía, colores, variables globales</span>
+        <span class="layer-priority">Prioridad 2</span>
+      </div>
+      <div class="layer-row layout">
+        <span class="layer-badge">layout</span>
+        <span class="layer-desc">Grid, Flexbox, containers</span>
+        <span class="layer-priority">Prioridad 3</span>
+      </div>
+      <div class="layer-row comp">
+        <span class="layer-badge">components</span>
+        <span class="layer-desc">Botones, tarjetas, modales</span>
+        <span class="layer-priority">Prioridad 4</span>
+      </div>
+      <div class="layer-row util">
+        <span class="layer-badge">utilities</span>
+        <span class="layer-desc">Clases de utilidad (.hidden, .flex…)</span>
+        <span class="layer-priority">Prioridad 5</span>
+      </div>
+      <div class="layer-row nolayer">
+        <span class="layer-badge">sin @layer</span>
+        <span class="layer-desc">Estilos fuera de cualquier capa</span>
+        <span class="layer-priority">Prioridad 6 (mayor)</span>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— Declarar el orden de capas ——— */</span>
+<span class="at">@layer</span> <span class="vn">reset</span>, <span class="vn">base</span>, <span class="vn">layout</span>, <span class="vn">components</span>, <span class="vn">utilities</span>;
+
+<span class="cm">/* ——— Añadir estilos a cada capa ——— */</span>
+<span class="at">@layer</span> <span class="vn">reset</span> {
+  <span class="sl">*, *::before, *::after</span> { <span class="pr">box-sizing</span>: <span class="vl">border-box</span>; }
+  <span class="sl">body</span> { <span class="pr">margin</span>: <span class="nm">0</span>; }
+}
+
+<span class="at">@layer</span> <span class="vn">base</span> {
+  <span class="sl">:root</span> {
+    <span class="pv">--color-primario</span>: <span class="vl">#1A6B3C</span>;
+    <span class="pv">--fuente</span>: <span class="st">'Source Serif 4', serif</span>;
+  }
+  <span class="sl">body</span> { <span class="pr">font-family</span>: <span class="fn">var</span>(<span class="pv">--fuente</span>); }
+}
+
+<span class="at">@layer</span> <span class="vn">components</span> {
+  <span class="sl">.btn</span> {
+    <span class="pr">background</span>: <span class="fn">var</span>(<span class="pv">--color-primario</span>);
+    <span class="pr">color</span>: <span class="vl">white</span>;
+    <span class="pr">padding</span>: <span class="nm">8px 16px</span>;
+    <span class="pr">border-radius</span>: <span class="nm">6px</span>;
+  }
+}
+
+<span class="at">@layer</span> <span class="vn">utilities</span> {
+  <span class="sl">.hidden</span> { <span class="pr">display</span>: <span class="vl">none</span>; }
+  <span class="sl">.flex</span>   { <span class="pr">display</span>: <span class="vl">flex</span>; }
+  <span class="sl">.w-full</span> { <span class="pr">width</span>: <span class="nm">100%</span>; }
+}
+
+<span class="cm">/* ——— Capas anidadas ——— */</span>
+<span class="at">@layer</span> <span class="vn">components</span> {
+  <span class="at">@layer</span> <span class="vn">base</span>     { <span class="sl">.btn</span> { ... } }
+  <span class="at">@layer</span> <span class="vn">variants</span> { <span class="sl">.btn-primary</span> { ... } }
+  <span class="at">@layer</span> <span class="vn">states</span>   { <span class="sl">.btn:hover</span> { ... } }
+}
+
+<span class="cm">/* ——— Importar archivo con su capa ——— */</span>
+<span class="at">@import</span> <span class="st">"reset.css"</span> <span class="at">layer</span>(<span class="vn">reset</span>);
+<span class="at">@import</span> <span class="st">"bootstrap.css"</span> <span class="at">layer</span>(<span class="vn">libs</span>);
+<span class="cm">/* Bootstrap queda contenida — nunca gana a tu código */</span></code></pre>
+    </div>
+
+    <div class="compare">
+      <div class="cmp good">
+        <div class="cmp-label">✓ Con @layer (predecible)</div>
+        <pre><code><span class="cm">/* Aunque .btn#especial tiene
+   más especificidad que .btn,
+   utilities está DESPUÉS de
+   components → utilities gana */</span>
+<span class="at">@layer</span> <span class="vn">components</span> {
+  <span class="sl">.btn#especial</span> { <span class="pr">color</span>: <span class="vl">red</span>; }
+}
+<span class="at">@layer</span> <span class="vn">utilities</span> {
+  <span class="sl">.override</span> { <span class="pr">color</span>: <span class="vl">blue</span>; }
+}
+<span class="cm">/* .btn#especial.override → azul */</span></code></pre>
+      </div>
+      <div class="cmp bad">
+        <div class="cmp-label">✗ Sin @layer (guerra de especificidad)</div>
+        <pre><code><span class="cm">/* Hay que usar !important
+   o añadir selectores más
+   específicos para ganar */</span>
+<span class="sl">.btn#especial</span> { <span class="pr">color</span>: <span class="vl">red</span>; }
+
+<span class="sl">.override</span> {
+  <span class="pr">color</span>: <span class="vl">blue <span class="kw">!important</span></span>;
+  <span class="cm">/* O: .btn.override { ... } */</span>
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S03 — @SCOPE -->
+  <section class="section" id="s03">
+    <div class="section-header"><div class="section-num">03</div><h2>@scope y @starting-style</h2></div>
+
+    <h3>@scope — Estilos con contexto</h3>
+    <p><code class="inline">@scope</code> permite aplicar estilos solo dentro de un componente específico, evitando fugas de estilos y la necesidad de convenciones como BEM para el scoping.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* @scope: estilos dentro de .tarjeta */</span>
+<span class="at">@scope</span> (<span class="sl">.tarjeta</span>) {
+  <span class="sl">:scope</span> { <span class="pr">border</span>: <span class="nm">1px</span> <span class="vl">solid #ddd</span>; } <span class="cm">/* .tarjeta misma */</span>
+  <span class="sl">h2</span>    { <span class="pr">font-size</span>: <span class="nm">1.25rem</span>; }     <span class="cm">/* solo h2 dentro de .tarjeta */</span>
+  <span class="sl">p</span>     { <span class="pr">color</span>: <span class="vl">#555</span>; }
+}
+
+<span class="cm">/* Con límite inferior — no afecta dentro de .widget */</span>
+<span class="at">@scope</span> (<span class="sl">.card</span>) <span class="kw">to</span> (<span class="sl">.widget</span>) {
+  <span class="sl">p</span> { <span class="pr">color</span>: <span class="vl">blue</span>; }
+  <span class="cm">/* Aplica a <p> dentro de .card PERO NO dentro de .widget */</span>
+}
+
+<span class="cm">/* ——— @starting-style ——— */</span>
+<span class="cm">/* Define el estado inicial ANTES de que un elemento aparezca.
+   Permite animar elementos que se añaden al DOM con display:none */</span>
+
+<span class="sl">.modal</span> {
+  <span class="pr">opacity</span>: <span class="nm">1</span>;
+  <span class="pr">transform</span>: <span class="fn">scale</span>(<span class="nm">1</span>);
+  <span class="pr">transition</span>: <span class="vl">opacity .3s, transform .3s</span>;
+}
+
+<span class="at">@starting-style</span> {
+  <span class="sl">.modal</span> {
+    <span class="pr">opacity</span>: <span class="nm">0</span>;
+    <span class="pr">transform</span>: <span class="fn">scale</span>(<span class="nm">0.9</span>);
+  }
+  <span class="cm">/* Al aparecer en el DOM, el modal anima desde estos valores */</span>
+}
+
+<span class="cm">/* Animar entry/exit con popover API */</span>
+<span class="sl">[popover]</span> {
+  <span class="pr">opacity</span>: <span class="nm">1</span>;
+  <span class="pr">transition</span>: <span class="vl">opacity .2s, display .2s allow-discrete</span>;
+}
+
+<span class="sl">[popover]:not(:popover-open)</span> {
+  <span class="pr">opacity</span>: <span class="nm">0</span>;
+}
+
+<span class="at">@starting-style</span> {
+  <span class="sl">[popover]:popover-open</span> { <span class="pr">opacity</span>: <span class="nm">0</span>; }
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S04 — PSEUDO-ELEMENTOS -->
+  <section class="section" id="s04">
+    <div class="section-header"><div class="section-num">04</div><h2>Pseudo-elementos avanzados</h2></div>
+    <p>Los pseudo-elementos permiten generar contenido visual y aplicar estilos a partes específicas de un elemento sin añadir HTML extra. Son fundamentales para decoraciones, overlays y efectos creativos.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— ::before y ::after ——— */</span>
+<span class="sl">.tarjeta</span> {
+  <span class="pr">position</span>: <span class="vl">relative</span>;
+  <span class="pr">overflow</span>: <span class="vl">hidden</span>;
+}
+
+<span class="cm">/* Overlay de gradiente */</span>
+<span class="sl">.tarjeta::before</span> {
+  <span class="pr">content</span>: <span class="st">''</span>;                         <span class="cm">/* OBLIGATORIO */</span>
+  <span class="pr">position</span>: <span class="vl">absolute</span>;
+  <span class="pr">inset</span>: <span class="nm">0</span>;
+  <span class="pr">background</span>: <span class="fn">linear-gradient</span>(
+    <span class="vl">to bottom</span>, <span class="vl">transparent 50%</span>, <span class="vl">rgba(0,0,0,.7)</span>
+  );
+  <span class="pr">pointer-events</span>: <span class="vl">none</span>;
+}
+
+<span class="cm">/* Contador con ::before */</span>
+<span class="sl">ol</span> { <span class="pr">counter-reset</span>: <span class="vn">items</span>; }
+<span class="sl">li</span> { <span class="pr">counter-increment</span>: <span class="vn">items</span>; <span class="pr">position</span>: <span class="vl">relative</span>; <span class="pr">padding-left</span>: <span class="nm">2rem</span>; }
+<span class="sl">li::before</span> {
+  <span class="pr">content</span>: <span class="fn">counter</span>(<span class="vn">items</span>);
+  <span class="pr">position</span>: <span class="vl">absolute</span>; <span class="pr">left</span>: <span class="nm">0</span>;
+  <span class="pr">background</span>: <span class="fn">var</span>(<span class="pv">--emerald</span>);
+  <span class="pr">color</span>: <span class="vl">white</span>;
+  <span class="pr">width</span>: <span class="nm">1.5rem</span>; <span class="pr">height</span>: <span class="nm">1.5rem</span>;
+  <span class="pr">border-radius</span>: <span class="nm">50%</span>;
+  <span class="pr">display</span>: <span class="vl">grid</span>; <span class="pr">place-items</span>: <span class="vl">center</span>;
+  <span class="pr">font-size</span>: <span class="nm">.8rem</span>; <span class="pr">font-weight</span>: <span class="nm">600</span>;
+}
+
+<span class="cm">/* ——— ::first-line y ::first-letter ——— */</span>
+<span class="sl">article p:first-of-type::first-letter</span> {
+  <span class="pr">font-size</span>: <span class="nm">3em</span>;
+  <span class="pr">font-family</span>: <span class="st">'Playfair Display', serif</span>;
+  <span class="pr">float</span>: <span class="vl">left</span>;
+  <span class="pr">line-height</span>: <span class="nm">1</span>;
+  <span class="pr">margin-right</span>: <span class="nm">.1em</span>;
+  <span class="pr">color</span>: <span class="fn">var</span>(<span class="pv">--emerald</span>);
+}
+
+<span class="cm">/* ——— ::selection ——— */</span>
+<span class="sl">::selection</span> {
+  <span class="pr">background</span>: <span class="vl">#C8E6D4</span>;
+  <span class="pr">color</span>: <span class="vl">#0F4526</span>;
+}
+
+<span class="cm">/* ——— ::marker (listas) ——— */</span>
+<span class="sl">li::marker</span> {
+  <span class="pr">content</span>: <span class="st">'✦ '</span>;
+  <span class="pr">color</span>: <span class="fn">var</span>(<span class="pv">--emerald</span>);
+  <span class="pr">font-size</span>: <span class="nm">.7em</span>;
+}
+
+<span class="cm">/* ——— ::placeholder ——— */</span>
+<span class="sl">input::placeholder</span> {
+  <span class="pr">color</span>: <span class="vl">#9B7B2A</span>;
+  <span class="pr">font-style</span>: <span class="vl">italic</span>;
+  <span class="pr">opacity</span>: <span class="nm">.6</span>;
+}
+
+<span class="cm">/* ——— ::backdrop (dialog / fullscreen) ——— */</span>
+<span class="sl">dialog::backdrop</span> {
+  <span class="pr">background</span>: <span class="fn">rgba</span>(<span class="nm">28,43,26,.6</span>);
+  <span class="pr">backdrop-filter</span>: <span class="fn">blur</span>(<span class="nm">6px</span>);
+}
+
+<span class="cm">/* ——— ::file-selector-button ——— */</span>
+<span class="sl">input[type="file"]::file-selector-button</span> {
+  <span class="pr">background</span>: <span class="fn">var</span>(<span class="pv">--emerald</span>);
+  <span class="pr">color</span>: <span class="vl">white</span>;
+  <span class="pr">border</span>: <span class="vl">none</span>;
+  <span class="pr">padding</span>: <span class="nm">6px 14px</span>;
+  <span class="pr">border-radius</span>: <span class="nm">6px</span>;
+  <span class="pr">cursor</span>: <span class="vl">pointer</span>;
+  <span class="pr">margin-right</span>: <span class="nm">12px</span>;
+}</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo — Efectos con pseudo-elementos</div>
+      <div class="demo-area">
+        <button class="pseudo-btn" id="pseudoBtn">Hover sobre mí</button>
+        <div style="position:relative;width:120px;height:80px;border-radius:8px;overflow:hidden;background:url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"120\" height=\"80\"><rect width=\"120\" height=\"80\" fill=\"%231A6B3C\"/><text x=\"60\" y=\"45\" font-size=\"28\" text-anchor=\"middle\">🌿</text></svg>')">
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.7));display:flex;align-items:flex-end;padding:8px;">
+            <span style="color:#fff;font-size:11px;font-family:var(--font-mono);">::before overlay</span>
+          </div>
+        </div>
+        <div style="font-size:24px;font-family:var(--font-display);font-style:italic;">
+          <span style="font-size:3em;float:left;line-height:1;margin-right:.1em;color:var(--emerald);font-weight:700;">L</span>etra capital con ::first-letter
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S05 — SELECTORES AVANZADOS -->
+  <section class="section" id="s05">
+    <div class="section-header"><div class="section-num">05</div><h2>Selectores avanzados</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— :is() — grupo con especificidad alta ——— */</span>
+<span class="sl">:is(h1, h2, h3, h4)</span> { <span class="pr">line-height</span>: <span class="nm">1.2</span>; }
+
+<span class="cm">/* ——— :where() — igual pero especificidad = 0 ——— */</span>
+<span class="sl">:where(h1, h2, h3)</span> { <span class="pr">margin-bottom</span>: <span class="nm">.75em</span>; }
+<span class="cm">/* Útil para resets: fácil de sobreescribir */</span>
+
+<span class="cm">/* ——— :has() — selector de padre ——— */</span>
+<span class="sl">.card:has(img)</span>          { <span class="pr">display</span>: <span class="vl">grid</span>; <span class="pr">grid-template-columns</span>: <span class="nm">120px 1fr</span>; }
+<span class="sl">.card:has(> p:last-child)</span>{ <span class="pr">padding-bottom</span>: <span class="nm">2rem</span>; }
+<span class="sl">form:has(:invalid)</span>       { <span class="pr">border</span>: <span class="nm">2px</span> <span class="vl">solid red</span>; }
+<span class="sl">label:has(+ input:required)</span>::after { <span class="pr">content</span>: <span class="st">' *'</span>; <span class="pr">color</span>: <span class="vl">red</span>; }
+
+<span class="cm">/* ——— :not() avanzado ——— */</span>
+<span class="sl">p:not(.intro, .nota, .legal)</span> { <span class="pr">text-indent</span>: <span class="nm">1.5em</span>; }
+<span class="sl">a:not([href])</span>                { <span class="pr">opacity</span>: <span class="nm">.4</span>; <span class="pr">cursor</span>: <span class="vl">default</span>; }
+
+<span class="cm">/* ——— :nth-child() con pattern ——— */</span>
+<span class="sl">li:nth-child(3n + 1)</span>  { <span class="pr">color</span>: <span class="vl">red</span>; }    <span class="cm">/* 1, 4, 7, 10... */</span>
+<span class="sl">li:nth-child(-n + 3)</span>  { <span class="pr">font-weight</span>: <span class="nm">700</span>; } <span class="cm">/* primeros 3 */</span>
+<span class="sl">li:nth-last-child(2)</span>  { <span class="pr">color</span>: <span class="vl">blue</span>; }   <span class="cm">/* penúltimo */</span>
+
+<span class="cm">/* ——— :nth-child() con selector (CSS 4) ——— */</span>
+<span class="sl">li:nth-child(2 of .destacado)</span> {
+  <span class="cm">/* 2do li que tenga clase .destacado */</span>
+  <span class="pr">font-size</span>: <span class="nm">1.2rem</span>;
+}
+
+<span class="cm">/* ——— :focus-visible ——— */</span>
+<span class="sl">button:focus-visible</span> {
+  <span class="pr">outline</span>: <span class="nm">3px</span> <span class="vl">solid</span> <span class="fn">var</span>(<span class="pv">--emerald</span>);
+  <span class="pr">outline-offset</span>: <span class="nm">3px</span>;
+}
+<span class="sl">button:focus:not(:focus-visible)</span> { <span class="pr">outline</span>: <span class="vl">none</span>; }
+<span class="cm">/* Muestra foco solo con teclado, no con ratón */</span>
+
+<span class="cm">/* ——— :popover-open, :modal, :fullscreen ——— */</span>
+<span class="sl">[popover]:popover-open</span> { <span class="pr">background</span>: <span class="vl">white</span>; }
+<span class="sl">dialog:modal</span>           { <span class="pr">border-radius</span>: <span class="nm">12px</span>; }
+<span class="sl">video:fullscreen</span>        { <span class="pr">object-fit</span>: <span class="vl">cover</span>; }
+
+<span class="cm">/* ——— Selector de atributos avanzado ——— */</span>
+<span class="sl">a[href^="https"]</span>    { } <span class="cm">/* empieza con */</span>
+<span class="sl">a[href$=".pdf"]</span>     { } <span class="cm">/* termina con */</span>
+<span class="sl">a[href*="ejemplo"]</span>  { } <span class="cm">/* contiene */</span>
+<span class="sl">a[lang|="es"]</span>       { } <span class="cm">/* es "es" o empieza con "es-" */</span>
+<span class="sl">[data-size~="lg"]</span>   { } <span class="cm">/* contiene la palabra "lg" */</span></code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S06 — FUNCIONES CSS -->
+  <section class="section" id="s06">
+    <div class="section-header"><div class="section-num">06</div><h2>Funciones CSS modernas</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— color-mix() — mezclar colores ——— */</span>
+<span class="sl">.btn-hover</span> {
+  <span class="pr">background</span>: <span class="fn">color-mix</span>(<span class="kw">in</span> <span class="vl">srgb</span>, <span class="vl">#1A6B3C</span> <span class="nm">80%</span>, <span class="vl">white</span>);
+  <span class="cm">/* 80% verde + 20% blanco */</span>
+}
+
+<span class="sl">.overlay</span> {
+  <span class="pr">background</span>: <span class="fn">color-mix</span>(<span class="kw">in</span> <span class="vl">hsl</span>, <span class="fn">var</span>(<span class="pv">--color</span>), <span class="vl">transparent</span> <span class="nm">40%</span>);
+}
+
+<span class="cm">/* ——— color() — colores de gama amplia ——— */</span>
+<span class="sl">.display-p3</span> {
+  <span class="pr">color</span>: <span class="fn">color</span>(<span class="vl">display-p3</span> <span class="nm">0.1</span> <span class="nm">0.8</span> <span class="nm">0.4</span>);
+  <span class="cm">/* P3 tiene 25% más colores que sRGB */</span>
+}
+
+<span class="cm">/* ——— oklab / oklch — mejores gradientes ——— */</span>
+<span class="sl">.degradado-suave</span> {
+  <span class="pr">background</span>: <span class="fn">linear-gradient</span>(<span class="kw">in oklch</span>,
+    <span class="fn">oklch</span>(<span class="nm">55%</span> <span class="nm">0.18</span> <span class="nm">145</span>),   <span class="cm">/* verde esmeralda */</span>
+    <span class="fn">oklch</span>(<span class="nm">70%</span> <span class="nm">0.14</span> <span class="nm">220</span>)    <span class="cm">/* azul claro */</span>
+  );
+  <span class="cm">/* OKLCH evita el "gris muerto" en mitad del gradiente */</span>
+}
+
+<span class="cm">/* ——— round(), mod(), rem() ——— */</span>
+<span class="sl">.snap</span> {
+  <span class="pr">width</span>: <span class="fn">round</span>(<span class="nm">327px</span>, <span class="nm">10px</span>);  <span class="cm">/* → 330px (redondea a múltiplo de 10) */</span>
+}
+
+<span class="cm">/* ——— sin() y cos() — geometría ——— */</span>
+<span class="sl">.item-circular</span> {
+  <span class="pr">--i</span>: <span class="nm">0</span>;
+  <span class="pr">--total</span>: <span class="nm">8</span>;
+  <span class="pr">--radio</span>: <span class="nm">120px</span>;
+  <span class="pr">--angulo</span>: <span class="fn">calc</span>(<span class="nm">360deg</span> <span class="kw">/</span> <span class="fn">var</span>(<span class="pv">--total</span>) <span class="kw">*</span> <span class="fn">var</span>(<span class="pv">--i</span>));
+  <span class="pr">transform</span>:
+    <span class="fn">translateX</span>(<span class="fn">calc</span>(<span class="fn">cos</span>(<span class="fn">var</span>(<span class="pv">--angulo</span>)) <span class="kw">*</span> <span class="fn">var</span>(<span class="pv">--radio</span>)))
+    <span class="fn">translateY</span>(<span class="fn">calc</span>(<span class="fn">sin</span>(<span class="fn">var</span>(<span class="pv">--angulo</span>)) <span class="kw">*</span> <span class="fn">var</span>(<span class="pv">--radio</span>)));
+}
+
+<span class="cm">/* ——— env() — variables del entorno ——— */</span>
+<span class="sl">.safe-area</span> {
+  <span class="pr">padding</span>:
+    <span class="fn">env</span>(<span class="vl">safe-area-inset-top</span>)
+    <span class="fn">env</span>(<span class="vl">safe-area-inset-right</span>)
+    <span class="fn">env</span>(<span class="vl">safe-area-inset-bottom</span>)
+    <span class="fn">env</span>(<span class="vl">safe-area-inset-left</span>);
+  <span class="cm">/* iPhone: respeta el notch y home indicator */</span>
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S07 — GRADIENTES -->
+  <section class="section" id="s07">
+    <div class="section-header"><div class="section-num">07</div><h2>Gradientes avanzados</h2></div>
+
+    <div class="gradient-grid">
+      <div class="grad-swatch" style="background:linear-gradient(135deg,#1A6B3C,#9B7B2A);">
+        <span class="grad-label">linear</span></div>
+      <div class="grad-swatch" style="background:radial-gradient(circle at 30% 40%,#1A6B3C,#0F2A14);">
+        <span class="grad-label">radial</span></div>
+      <div class="grad-swatch" style="background:conic-gradient(from 45deg,#1A6B3C,#9B7B2A,#1A6B3C);">
+        <span class="grad-label">conic</span></div>
+      <div class="grad-swatch" style="background:linear-gradient(in oklch,oklch(55% .18 145),oklch(65% .16 220));">
+        <span class="grad-label">oklch</span></div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— linear-gradient avanzado ——— */</span>
+<span class="sl">.gradiente-duro</span> {
+  <span class="cm">/* Stop repetido = borde duro (sin transición) */</span>
+  <span class="pr">background</span>: <span class="fn">linear-gradient</span>(
+    <span class="nm">90deg</span>,
+    <span class="vl">#1A6B3C 0% 33%</span>,    <span class="cm">/* verde hasta 33% */</span>
+    <span class="vl">#9B7B2A 33% 66%</span>,   <span class="cm">/* dorado 33-66% */</span>
+    <span class="vl">#1C2B1A 66% 100%</span>   <span class="cm">/* oscuro hasta el final */</span>
+  );
+}
+
+<span class="cm">/* ——— Gradiente con hint ——— */</span>
+<span class="sl">.gradiente-asimetrico</span> {
+  <span class="pr">background</span>: <span class="fn">linear-gradient</span>(<span class="vl">white</span>, <span class="nm">90%</span>, <span class="vl">black</span>);
+  <span class="cm">/* El punto medio está en 90%, no en 50% */</span>
+}
+
+<span class="cm">/* ——— radial-gradient con forma y posición ——— */</span>
+<span class="sl">.radial-custom</span> {
+  <span class="pr">background</span>: <span class="fn">radial-gradient</span>(
+    <span class="vl">ellipse 80% 50% at 30% 40%</span>,
+    <span class="vl">#1A6B3C</span>, <span class="vl">transparent</span>
+  );
+}
+
+<span class="cm">/* ——— conic-gradient (tartas, spinners) ——— */</span>
+<span class="sl">.tarta</span> {
+  <span class="pr">background</span>: <span class="fn">conic-gradient</span>(
+    <span class="vl">#1A6B3C 0deg 108deg</span>,    <span class="cm">/* 30% */</span>
+    <span class="vl">#9B7B2A 108deg 216deg</span>,  <span class="cm">/* 30% */</span>
+    <span class="vl">#1C2B1A 216deg 360deg</span>   <span class="cm">/* 40% */</span>
+  );
+  <span class="pr">border-radius</span>: <span class="nm">50%</span>;
+}
+
+<span class="cm">/* ——— Gradientes en OKLCH (color uniforme) ——— */</span>
+<span class="sl">.oklch-grad</span> {
+  <span class="pr">background</span>: <span class="fn">linear-gradient</span>(<span class="kw">in oklch longer hue</span>,
+    <span class="fn">oklch</span>(<span class="nm">55%</span> <span class="nm">.18</span> <span class="nm">145</span>),
+    <span class="fn">oklch</span>(<span class="nm">65%</span> <span class="nm">.16</span> <span class="nm">265</span>)
+  );
+}
+
+<span class="cm">/* ——— Gradientes múltiples (layering) ——— */</span>
+<span class="sl">.multi-gradiente</span> {
+  <span class="pr">background</span>:
+    <span class="fn">radial-gradient</span>(<span class="vl">circle at 20% 80%</span>, <span class="fn">rgba</span>(<span class="nm">26,107,60,.4</span>), <span class="vl">transparent</span> <span class="nm">50%</span>),
+    <span class="fn">radial-gradient</span>(<span class="vl">circle at 80% 20%</span>, <span class="fn">rgba</span>(<span class="nm">155,123,42,.3</span>), <span class="vl">transparent</span> <span class="nm">50%</span>),
+    <span class="fn">linear-gradient</span>(<span class="nm">135deg</span>, <span class="vl">#0F2A14</span>, <span class="vl">#1C2B1A</span>);
+}
+
+<span class="cm">/* ——— repeating-linear-gradient (rayas) ——— */</span>
+<span class="sl">.rayas</span> {
+  <span class="pr">background</span>: <span class="fn">repeating-linear-gradient</span>(
+    <span class="nm">45deg</span>,
+    <span class="vl">transparent</span> <span class="nm">0 10px</span>,
+    <span class="fn">rgba</span>(<span class="nm">26,107,60,.15</span>) <span class="nm">10px 20px</span>
+  );
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S08 — FILTROS -->
+  <section class="section" id="s08">
+    <div class="section-header"><div class="section-num">08</div><h2>Filtros y efectos visuales</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— filter: aplicado al elemento ——— */</span>
+<span class="sl">.imagen</span> {
+  <span class="pr">filter</span>:
+    <span class="fn">blur</span>(<span class="nm">0</span>)
+    <span class="fn">brightness</span>(<span class="nm">1</span>)          <span class="cm">/* 0=negro, 1=normal, 2=doble brillo */</span>
+    <span class="fn">contrast</span>(<span class="nm">1</span>)             <span class="cm">/* 0=gris, 1=normal */</span>
+    <span class="fn">grayscale</span>(<span class="nm">0</span>)            <span class="cm">/* 0=color, 1=bn */</span>
+    <span class="fn">hue-rotate</span>(<span class="nm">0deg</span>)       <span class="cm">/* gira la rueda de color */</span>
+    <span class="fn">invert</span>(<span class="nm">0</span>)               <span class="cm">/* 0=normal, 1=negativo */</span>
+    <span class="fn">opacity</span>(<span class="nm">1</span>)              <span class="cm">/* igual que la propiedad opacity */</span>
+    <span class="fn">saturate</span>(<span class="nm">1</span>)             <span class="cm">/* 0=gris, 1=normal, 2=saturado */</span>
+    <span class="fn">sepia</span>(<span class="nm">0</span>)                <span class="cm">/* 0=normal, 1=sepia completo */</span>
+    <span class="fn">drop-shadow</span>(<span class="nm">4px 4px 8px rgba(0,0,0,.3)</span>);
+  <span class="cm">/* drop-shadow sigue el contorno real (PNG, SVG) */</span>
+}
+
+<span class="cm">/* ——— backdrop-filter ——— */</span>
+<span class="sl">.glass-card</span> {
+  <span class="pr">background</span>: <span class="fn">rgba</span>(<span class="nm">255,255,255,.15</span>);
+  <span class="pr">backdrop-filter</span>:
+    <span class="fn">blur</span>(<span class="nm">12px</span>)
+    <span class="fn">saturate</span>(<span class="nm">1.8</span>);
+  <span class="pr">-webkit-backdrop-filter</span>: <span class="fn">blur</span>(<span class="nm">12px</span>) <span class="fn">saturate</span>(<span class="nm">1.8</span>);
+  <span class="pr">border</span>: <span class="nm">1px</span> <span class="vl">solid rgba(255,255,255,.25)</span>;
+}
+
+<span class="cm">/* ——— mix-blend-mode ——— */</span>
+<span class="sl">.texto-blend</span> {
+  <span class="pr">mix-blend-mode</span>: <span class="vl">multiply</span>;  <span class="cm">/* multiply|screen|overlay|difference|etc */</span>
+}
+
+<span class="sl">.imagen::after</span> {
+  <span class="pr">mix-blend-mode</span>: <span class="vl">color</span>;  <span class="cm">/* tinta de color sobre B&W */</span>
+}
+
+<span class="cm">/* ——— isolation (contexto de blend) ——— */</span>
+<span class="sl">.no-blend</span> { <span class="pr">isolation</span>: <span class="vl">isolate</span>; }
+<span class="cm">/* Crea un stacking context que bloquea el blend */</span>
+
+<span class="cm">/* Casos de uso de filtros */</span>
+<span class="sl">.foto-retro</span>       { <span class="pr">filter</span>: <span class="fn">sepia</span>(<span class="nm">.4</span>) <span class="fn">contrast</span>(<span class="nm">1.1</span>) <span class="fn">brightness</span>(<span class="nm">.95</span>); }
+<span class="sl">.foto-duotono</span>     { <span class="pr">filter</span>: <span class="fn">grayscale</span>(<span class="nm">1</span>); <span class="pr">mix-blend-mode</span>: <span class="vl">multiply</span>; }
+<span class="sl">.icono-emerald</span>    { <span class="pr">filter</span>: <span class="fn">invert</span>(<span class="nm">1</span>) <span class="fn">sepia</span>(<span class="nm">1</span>) <span class="fn">saturate</span>(<span class="nm">3</span>) <span class="fn">hue-rotate</span>(<span class="nm">110deg</span>); }
+<span class="sl">.transicion-filtro</span>{ <span class="pr">filter</span>: <span class="fn">grayscale</span>(<span class="nm">1</span>); <span class="pr">transition</span>: <span class="vl">filter .3s</span>; }
+<span class="sl">.transicion-filtro:hover</span> { <span class="pr">filter</span>: <span class="fn">grayscale</span>(<span class="nm">0</span>) <span class="fn">saturate</span>(<span class="nm">1.3</span>); }</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo interactiva — CSS filters</div>
+      <div class="demo-area" style="gap:20px;">
+        <div class="filter-img" id="f1" onclick="cycleFilter(this)" title="Clic para cambiar">🌿</div>
+        <div class="filter-img grayscale" id="f2" onclick="cycleFilter(this)" title="Clic para cambiar">🌿</div>
+        <div class="filter-img blur-f" id="f3" onclick="cycleFilter(this)" title="Clic para cambiar">🌿</div>
+        <div class="filter-img sepia-f" id="f4" onclick="cycleFilter(this)" title="Clic para cambiar">🌿</div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:10px;margin-bottom:0;font-style:italic;">Pasa el cursor o haz clic para ver efectos de filtro</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S09 — CLIP-PATH Y MÁSCARAS -->
+  <section class="section" id="s09">
+    <div class="section-header"><div class="section-num">09</div><h2>Clip-path y máscaras CSS</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— clip-path: formas básicas ——— */</span>
+<span class="sl">.circulo</span>    { <span class="pr">clip-path</span>: <span class="fn">circle</span>(<span class="nm">50%</span>); }
+<span class="sl">.elipse</span>     { <span class="pr">clip-path</span>: <span class="fn">ellipse</span>(<span class="nm">60%</span> <span class="nm">40%</span> <span class="kw">at</span> <span class="nm">50%</span> <span class="nm">50%</span>); }
+<span class="sl">.triangulo</span>  { <span class="pr">clip-path</span>: <span class="fn">polygon</span>(<span class="nm">50%</span> <span class="nm">0%</span>, <span class="nm">0%</span> <span class="nm">100%</span>, <span class="nm">100%</span> <span class="nm">100%</span>); }
+<span class="sl">.rombo</span>      { <span class="pr">clip-path</span>: <span class="fn">polygon</span>(<span class="nm">50%</span> <span class="nm">0%</span>, <span class="nm">100%</span> <span class="nm">50%</span>, <span class="nm">50%</span> <span class="nm">100%</span>, <span class="nm">0%</span> <span class="nm">50%</span>); }
+<span class="sl">.hexagono</span>   { <span class="pr">clip-path</span>: <span class="fn">polygon</span>(<span class="nm">25%</span> <span class="nm">0%</span>, <span class="nm">75%</span> <span class="nm">0%</span>, <span class="nm">100%</span> <span class="nm">50%</span>, <span class="nm">75%</span> <span class="nm">100%</span>, <span class="nm">25%</span> <span class="nm">100%</span>, <span class="nm">0%</span> <span class="nm">50%</span>); }
+
+<span class="cm">/* ——— clip-path en layouts ——— */</span>
+<span class="sl">.hero-diagonal</span> {
+  <span class="pr">clip-path</span>: <span class="fn">polygon</span>(<span class="nm">0 0</span>, <span class="nm">100% 0</span>, <span class="nm">100% 85%</span>, <span class="nm">0 100%</span>);
+  <span class="cm">/* Corta la esquina inferior derecha en diagonal */</span>
+}
+
+<span class="sl">.ola</span> {
+  <span class="pr">clip-path</span>: <span class="fn">path</span>(
+    <span class="st">'M0,0 L1440,0 L1440,280 Q720,380 0,280 Z'</span>
+  );
+}
+
+<span class="cm">/* ——— Animar clip-path ——— */</span>
+<span class="sl">.reveal</span> {
+  <span class="pr">clip-path</span>: <span class="fn">polygon</span>(<span class="nm">0 0</span>, <span class="nm">0 0</span>, <span class="nm">0 100%</span>, <span class="nm">0 100%</span>); <span class="cm">/* oculto */</span>
+  <span class="pr">transition</span>: <span class="vl">clip-path .6s ease</span>;
+}
+<span class="sl">.reveal:hover, .reveal.visible</span> {
+  <span class="pr">clip-path</span>: <span class="fn">polygon</span>(<span class="nm">0 0</span>, <span class="nm">100% 0</span>, <span class="nm">100% 100%</span>, <span class="nm">0 100%</span>); <span class="cm">/* visible */</span>
+}
+
+<span class="cm">/* ——— mask-image ——— */</span>
+<span class="sl">.fade-out</span> {
+  <span class="pr">mask-image</span>: <span class="fn">linear-gradient</span>(<span class="vl">to bottom</span>, <span class="vl">black 60%</span>, <span class="vl">transparent</span>);
+  <span class="cm">/* Desvanece el borde inferior */</span>
+}
+
+<span class="sl">.texto-recortado</span> {
+  <span class="pr">-webkit-mask-image</span>: <span class="fn">url</span>(<span class="st">'forma.svg'</span>);
+  <span class="pr">mask-image</span>: <span class="fn">url</span>(<span class="st">'forma.svg'</span>);
+  <span class="pr">mask-size</span>: <span class="vl">cover</span>;
+  <span class="pr">mask-repeat</span>: <span class="vl">no-repeat</span>;
+}
+
+<span class="cm">/* background-clip: text — texto con gradiente ——— */</span>
+<span class="sl">.texto-gradiente</span> {
+  <span class="pr">background</span>: <span class="fn">linear-gradient</span>(<span class="nm">135deg</span>, <span class="vl">#1A6B3C</span>, <span class="vl">#9B7B2A</span>);
+  <span class="pr">-webkit-background-clip</span>: <span class="vl">text</span>;
+  <span class="pr">background-clip</span>: <span class="vl">text</span>;
+  <span class="pr">-webkit-text-fill-color</span>: <span class="vl">transparent</span>;
+  <span class="pr">color</span>: <span class="vl">transparent</span>;
+}</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo — Formas con clip-path</div>
+      <div class="demo-area">
+        <div class="clip-shapes">
+          <div class="clip-shape clip-circle" title="circle()">○</div>
+          <div class="clip-shape clip-triangle" title="polygon triangle">△</div>
+          <div class="clip-shape clip-diamond" title="polygon diamond">◇</div>
+          <div class="clip-shape clip-hexagon" title="polygon hexagon">⬡</div>
+          <div class="clip-shape clip-star" title="polygon star">★</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S10 — SOMBRAS Y BORDES -->
+  <section class="section" id="s10">
+    <div class="section-header"><div class="section-num">10</div><h2>Sombras y bordes avanzados</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— box-shadow múltiple ——— */</span>
+<span class="sl">.sombra-capas</span> {
+  <span class="pr">box-shadow</span>:
+    <span class="nm">0 1px 2px</span>  <span class="fn">rgba</span>(<span class="nm">0,0,0,.06</span>),   <span class="cm">/* sombra cercana */</span>
+    <span class="nm">0 4px 8px</span>  <span class="fn">rgba</span>(<span class="nm">0,0,0,.06</span>),   <span class="cm">/* media distancia */</span>
+    <span class="nm">0 12px 24px</span> <span class="fn">rgba</span>(<span class="nm">0,0,0,.06</span>),  <span class="cm">/* lejana */</span>
+    <span class="nm">0 32px 64px</span> <span class="fn">rgba</span>(<span class="nm">0,0,0,.04</span>);  <span class="cm">/* ambient */</span>
+}
+
+<span class="cm">/* Sombra inset */</span>
+<span class="sl">.hundido</span> {
+  <span class="pr">box-shadow</span>: <span class="vl">inset</span> <span class="nm">0 2px 6px rgba(0,0,0,.15)</span>;
+}
+
+<span class="cm">/* Sombra de color (glow) */</span>
+<span class="sl">.glow</span> {
+  <span class="pr">box-shadow</span>: <span class="nm">0 0 20px rgba(26,107,60,.4)</span>,
+               <span class="nm">0 0 60px rgba(26,107,60,.2)</span>;
+}
+
+<span class="cm">/* ——— text-shadow múltiple ——— */</span>
+<span class="sl">.texto-relieve</span> {
+  <span class="pr">text-shadow</span>:
+    <span class="nm">1px 1px 0</span> <span class="fn">rgba</span>(<span class="nm">255,255,255,.3</span>),
+    <span class="nm">-1px -1px 0</span> <span class="fn">rgba</span>(<span class="nm">0,0,0,.2</span>);
+}
+
+<span class="sl">.texto-neon</span> {
+  <span class="pr">text-shadow</span>:
+    <span class="nm">0 0 4px</span>  <span class="vl">#1A6B3C</span>,
+    <span class="nm">0 0 10px</span> <span class="vl">#1A6B3C</span>,
+    <span class="nm">0 0 30px</span> <span class="vl">#1A6B3C</span>;
+}
+
+<span class="cm">/* ——— outline vs border ——— */</span>
+<span class="sl">.foco</span>:focus-visible {
+  <span class="pr">outline</span>: <span class="nm">3px</span> <span class="vl">solid</span> <span class="fn">var</span>(<span class="pv">--emerald</span>);
+  <span class="pr">outline-offset</span>: <span class="nm">4px</span>;
+  <span class="cm">/* outline no ocupa espacio, border sí */</span>
+}
+
+<span class="cm">/* ——— border-image ——— */</span>
+<span class="sl">.borde-gradiente</span> {
+  <span class="pr">border</span>: <span class="nm">3px</span> <span class="vl">solid transparent</span>;
+  <span class="pr">background</span>:
+    <span class="fn">linear-gradient</span>(<span class="vl">white</span>, <span class="vl">white</span>) <span class="vl">padding-box</span>,
+    <span class="fn">linear-gradient</span>(<span class="nm">135deg</span>, <span class="vl">#1A6B3C</span>, <span class="vl">#9B7B2A</span>) <span class="vl">border-box</span>;
+  <span class="cm">/* Técnica: dos fondos, el externo colorea el borde */</span>
+}
+
+<span class="cm">/* ——— border-radius creativo ——— */</span>
+<span class="sl">.organico</span> {
+  <span class="pr">border-radius</span>: <span class="nm">60% 40% 30% 70% / 60% 30% 70% 40%</span>;
+  <span class="cm">/* top-left top-right bot-right bot-left /
+     top-left top-right bot-right bot-left (Y) */</span>
+}
+
+<span class="cm">/* ——— scroll-snap ——— */</span>
+<span class="sl">.slider</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">overflow-x</span>: <span class="vl">scroll</span>;
+  <span class="pr">scroll-snap-type</span>: <span class="vl">x mandatory</span>;
+  <span class="pr">scrollbar-width</span>: <span class="vl">none</span>;
+}
+
+<span class="sl">.slider-item</span> {
+  <span class="pr">flex-shrink</span>: <span class="nm">0</span>;
+  <span class="pr">width</span>: <span class="nm">100%</span>;
+  <span class="pr">scroll-snap-align</span>: <span class="vl">start</span>;
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S11 — TRANSICIONES -->
+  <section class="section" id="s11">
+    <div class="section-header"><div class="section-num">11</div><h2>Transiciones avanzadas</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— Múltiples propiedades con timing diferente ——— */</span>
+<span class="sl">.boton</span> {
+  <span class="pr">transition</span>:
+    <span class="vl">background-color</span> <span class="nm">.15s</span> <span class="vl">ease</span>,
+    <span class="vl">transform</span>        <span class="nm">.2s</span>  <span class="vl">cubic-bezier(.34, 1.56, .64, 1)</span>,
+    <span class="vl">box-shadow</span>        <span class="nm">.2s</span>  <span class="vl">ease</span>,
+    <span class="vl">color</span>             <span class="nm">.15s</span> <span class="vl">ease</span>;
+}
+
+<span class="cm">/* cubic-bezier: velocidades personalizadas
+   ease-in:  0.4, 0, 1, 1    → empieza lento
+   ease-out: 0, 0, 0.2, 1    → termina lento
+   bounce:   0.34, 1.56, 0.64, 1 → rebote
+   Material: 0.4, 0, 0.2, 1  → estándar de Google */</span>
+
+<span class="cm">/* ——— View Transitions API ——— */</span>
+<span class="sl">@view-transition</span> { <span class="pr">navigation</span>: <span class="vl">auto</span>; }
+
+<span class="cm">/* Transición en navegaciones entre páginas */</span>
+<span class="sl">::view-transition-old(root)</span> {
+  <span class="pr">animation</span>: <span class="vl">slide-out .3s ease</span>;
+}
+<span class="sl">::view-transition-new(root)</span> {
+  <span class="pr">animation</span>: <span class="vl">slide-in .3s ease</span>;
+}
+
+<span class="cm">/* Transición de un elemento específico */</span>
+<span class="sl">.hero-imagen</span>  { <span class="pr">view-transition-name</span>: <span class="vl">hero</span>; }
+
+<span class="at">@keyframes</span> <span class="fn">slide-out</span> {
+  <span class="nm">to</span>   { <span class="pr">transform</span>: <span class="fn">translateX</span>(<span class="nm">-100%</span>); <span class="pr">opacity</span>: <span class="nm">0</span>; }
+}
+<span class="at">@keyframes</span> <span class="fn">slide-in</span> {
+  <span class="nm">from</span> { <span class="pr">transform</span>: <span class="fn">translateX</span>(<span class="nm">100%</span>);  <span class="pr">opacity</span>: <span class="nm">0</span>; }
+}
+
+<span class="cm">/* ——— transition: display (CSS 2023) ——— */</span>
+<span class="sl">.tooltip</span> {
+  <span class="pr">display</span>: <span class="vl">none</span>;
+  <span class="pr">opacity</span>: <span class="nm">0</span>;
+  <span class="pr">transition</span>: <span class="vl">opacity .2s</span>, <span class="vl">display .2s allow-discrete</span>;
+}
+
+<span class="sl">.tooltip.visible</span> {
+  <span class="pr">display</span>: <span class="vl">block</span>;
+  <span class="pr">opacity</span>: <span class="nm">1</span>;
+}
+
+<span class="at">@starting-style</span> {
+  <span class="sl">.tooltip.visible</span> { <span class="pr">opacity</span>: <span class="nm">0</span>; }
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S12 — @KEYFRAMES PROFUNDO -->
+  <section class="section" id="s12">
+    <div class="section-header"><div class="section-num">12</div><h2>@keyframes en profundidad</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— @keyframes avanzados ——— */</span>
+<span class="at">@keyframes</span> <span class="fn">entrada-stagger</span> {
+  <span class="nm">0%</span>   { <span class="pr">opacity</span>: <span class="nm">0</span>; <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">24px</span>) <span class="fn">scale</span>(<span class="nm">.95</span>); }
+  <span class="nm">60%</span>  { <span class="pr">opacity</span>: <span class="nm">1</span>; <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">-4px</span>) <span class="fn">scale</span>(<span class="nm">1.02</span>); }
+  <span class="nm">100%</span> { <span class="pr">opacity</span>: <span class="nm">1</span>; <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">0</span>) <span class="fn">scale</span>(<span class="nm">1</span>); }
+}
+
+<span class="cm">/* Stagger con custom properties */</span>
+<span class="sl">.lista-item</span> {
+  <span class="pr">animation</span>: <span class="vl">entrada-stagger .5s ease both</span>;
+  <span class="pr">animation-delay</span>: <span class="fn">calc</span>(<span class="fn">var</span>(<span class="pv">--i</span>) <span class="kw">*</span> <span class="nm">80ms</span>);
+}
+<span class="cm">/* HTML: &lt;li style="--i:1"&gt;, &lt;li style="--i:2"&gt;... */</span>
+
+<span class="cm">/* ——— animation-fill-mode ——— */</span>
+<span class="sl">.elemento</span> {
+  <span class="pr">animation</span>: <span class="vl">fadeIn .4s ease</span>
+    <span class="nm">0.2s</span>          <span class="cm">/* delay */</span>
+    <span class="nm">1</span>             <span class="cm">/* iteraciones */</span>
+    <span class="vl">normal</span>        <span class="cm">/* direction: normal|reverse|alternate */</span>
+    <span class="vl">both</span>;         <span class="cm">/* fill-mode: none|forwards|backwards|both */</span>
+  <span class="cm">/* both: aplica el estado final DESPUÉS y el inicial ANTES */</span>
+}
+
+<span class="cm">/* ——— animation-play-state ——— */</span>
+<span class="sl">.pausa:hover</span> { <span class="pr">animation-play-state</span>: <span class="vl">paused</span>; }
+
+<span class="cm">/* ——— Animaciones coordinadas ——— */</span>
+<span class="sl">.parent</span> { <span class="pr">animation</span>: <span class="vl">contenedor .6s ease both</span>; }
+<span class="sl">.child</span>  { <span class="pr">animation</span>: <span class="vl">hijo .4s ease .3s both</span>; }
+<span class="cm">/* Hijo empieza cuando el padre está al 50% */</span>
+
+<span class="cm">/* ——— Animación de escritura ——— */</span>
+<span class="at">@keyframes</span> <span class="fn">escribir</span> {
+  <span class="nm">from</span> { <span class="pr">width</span>: <span class="nm">0</span>; }
+  <span class="nm">to</span>   { <span class="pr">width</span>: <span class="nm">100%</span>; }
+}
+<span class="at">@keyframes</span> <span class="fn">cursor-parpadear</span> {
+  <span class="nm">0%, 100%</span> { <span class="pr">border-color</span>: <span class="vl">transparent</span>; }
+  <span class="nm">50%</span>       { <span class="pr">border-color</span>: <span class="fn">var</span>(<span class="pv">--emerald</span>); }
+}
+
+<span class="sl">.typewriter</span> {
+  <span class="pr">overflow</span>: <span class="vl">hidden</span>;
+  <span class="pr">white-space</span>: <span class="vl">nowrap</span>;
+  <span class="pr">border-right</span>: <span class="nm">2px</span> <span class="vl">solid</span>;
+  <span class="pr">width</span>: <span class="nm">0</span>;
+  <span class="pr">animation</span>:
+    <span class="vl">escribir</span> <span class="nm">2s</span> <span class="vl">steps(30) forwards</span>,
+    <span class="vl">cursor-parpadear</span> <span class="nm">.8s</span> <span class="vl">step-end infinite</span>;
+}</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo — Animación scroll interactiva</div>
+      <div class="scroll-demo" id="scrollDemo">
+        <div class="scroll-inner" id="scrollInner">
+          <div class="scroll-card" data-scroll>Elemento 1 — aparece al hacer scroll</div>
+          <div class="scroll-card" data-scroll>Elemento 2 — fade-in con transform</div>
+          <div class="scroll-card" data-scroll>Elemento 3 — animación escalonada</div>
+          <div class="scroll-card" data-scroll>Elemento 4 — ¡CSS Intersection Observer!</div>
+          <div class="scroll-card" data-scroll>Elemento 5 — último en aparecer</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:10px;margin-bottom:0;font-style:italic;">Haz scroll dentro del contenedor para ver los elementos aparecer</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S13 — SCROLL-DRIVEN ANIMATIONS -->
+  <section class="section" id="s13">
+    <div class="section-header"><div class="section-num">13</div><h2>Scroll-driven Animations</h2></div>
+    <p>Las <strong>Scroll-driven Animations</strong> (Chrome 115+, Firefox 110+) permiten controlar el progreso de una animación usando el scroll del usuario, completamente en CSS — sin JavaScript, sin IntersectionObserver, sin requestAnimationFrame.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— scroll() — progreso de la página ——— */</span>
+
+<span class="cm">/* Barra de progreso de lectura */</span>
+<span class="sl">.barra-progreso</span> {
+  <span class="pr">position</span>: <span class="vl">fixed</span>;
+  <span class="pr">top</span>: <span class="nm">0</span>; <span class="pr">left</span>: <span class="nm">0</span>;
+  <span class="pr">width</span>: <span class="nm">100%</span>; <span class="pr">height</span>: <span class="nm">3px</span>;
+  <span class="pr">background</span>: <span class="fn">var</span>(<span class="pv">--emerald</span>);
+  <span class="pr">transform-origin</span>: <span class="vl">left</span>;
+  <span class="pr">animation</span>: <span class="vl">progreso</span> <span class="vl">linear</span>;
+  <span class="pr">animation-timeline</span>: <span class="fn">scroll</span>(<span class="vl">root</span> <span class="vl">block</span>);
+}
+
+<span class="at">@keyframes</span> <span class="fn">progreso</span> {
+  <span class="nm">from</span> { <span class="pr">transform</span>: <span class="fn">scaleX</span>(<span class="nm">0</span>); }
+  <span class="nm">to</span>   { <span class="pr">transform</span>: <span class="fn">scaleX</span>(<span class="nm">1</span>); }
+}
+
+<span class="cm">/* ——— view() — progreso del elemento en pantalla ——— */</span>
+
+<span class="cm">/* Parallax con scroll */</span>
+<span class="sl">.parallax-img</span> {
+  <span class="pr">animation</span>: <span class="vl">parallax</span> <span class="vl">linear</span>;
+  <span class="pr">animation-timeline</span>: <span class="fn">view</span>();
+}
+
+<span class="at">@keyframes</span> <span class="fn">parallax</span> {
+  <span class="nm">from</span> { <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">-30px</span>); }
+  <span class="nm">to</span>   { <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">30px</span>); }
+}
+
+<span class="cm">/* Revelar al entrar en pantalla */</span>
+<span class="sl">.revelar</span> {
+  <span class="pr">animation</span>: <span class="vl">revelar linear both</span>;
+  <span class="pr">animation-timeline</span>: <span class="fn">view</span>();
+  <span class="pr">animation-range</span>: <span class="vl">entry 0% entry 30%</span>;
+  <span class="cm">/* Anima mientras el elemento entra en viewport */</span>
+}
+
+<span class="at">@keyframes</span> <span class="fn">revelar</span> {
+  <span class="nm">from</span> { <span class="pr">opacity</span>: <span class="nm">0</span>; <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">40px</span>); }
+  <span class="nm">to</span>   { <span class="pr">opacity</span>: <span class="nm">1</span>; <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">0</span>); }
+}
+
+<span class="cm">/* ——— Rangos de animación ——— */</span>
+<span class="cm">/* entry:        cuando el elemento entra al viewport */</span>
+<span class="cm">/* exit:         cuando sale del viewport */</span>
+<span class="cm">/* contain:      mientras está completamente en pantalla */</span>
+<span class="cm">/* cover:        mientras cubre alguna parte del scroll port */</span>
+<span class="cm">/* entry 0%:     cuando el borde inferior toca el fondo */</span>
+<span class="cm">/* entry 100%:   cuando el borde superior llega al fondo */</span>
+
+<span class="cm">/* ——— Named scroll timeline ——— */</span>
+<span class="sl">.contenedor-scroll</span> {
+  <span class="pr">overflow-y</span>: <span class="vl">scroll</span>;
+  <span class="pr">scroll-timeline-name</span>: <span class="pv">--mi-scroll</span>;
+  <span class="pr">scroll-timeline-axis</span>: <span class="vl">block</span>;
+}
+
+<span class="sl">.animado</span> {
+  <span class="pr">animation-timeline</span>: <span class="pv">--mi-scroll</span>;
+  <span class="pr">animation</span>: <span class="vl">mi-animacion linear</span>;
+}</code></pre>
+    </div>
+
+    <div class="note">
+      <div class="note-label">Soporte en 2024</div>
+      <p>Scroll-driven Animations tienen soporte en Chrome 115+, Edge 115+ y Firefox 110+. Safari lo implementó en versión 18.2 (2024). Usa <code class="inline">@supports (animation-timeline: scroll())</code> para detección de características.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S14 — SUBGRID -->
+  <section class="section" id="s14">
+    <div class="section-header"><div class="section-num">14</div><h2>Subgrid</h2></div>
+    <p><strong>Subgrid</strong> permite que un elemento hijo participe en el grid de su padre, compartiendo las pistas (columnas o filas) en lugar de crear una grid nueva. Resuelve el problema de alineación de columnas internas entre tarjetas.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— Problema sin subgrid ——— */</span>
+<span class="cm">/* Las tarjetas tienen contenidos de alturas distintas
+   y los elementos internos no se alinean */</span>
+
+<span class="cm">/* ——— Solución con subgrid ——— */</span>
+<span class="sl">.grid-tarjetas</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="nm">3</span>, <span class="nm">1fr</span>);
+  <span class="pr">gap</span>: <span class="nm">1rem</span>;
+  <span class="pr">grid-template-rows</span>: <span class="vl">auto auto 1fr auto</span>; <span class="cm">/* imagen titulo desc btn */</span>
+}
+
+<span class="sl">.tarjeta</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-row</span>: <span class="vl">span</span> <span class="nm">4</span>;          <span class="cm">/* ocupa las 4 filas del padre */</span>
+  <span class="pr">grid-template-rows</span>: <span class="vl">subgrid</span>; <span class="cm">/* usa las pistas del padre */</span>
+  <span class="pr">gap</span>: <span class="nm">0</span>;
+}
+
+<span class="cm">/* Ahora .img, .titulo, .desc, .btn de TODAS las tarjetas
+   están alineadas entre sí, independientemente del contenido */</span>
+
+<span class="sl">.tarjeta .img</span>    { <span class="pr">grid-row</span>: <span class="nm">1</span>; }
+<span class="sl">.tarjeta .titulo</span> { <span class="pr">grid-row</span>: <span class="nm">2</span>; }
+<span class="sl">.tarjeta .desc</span>   { <span class="pr">grid-row</span>: <span class="nm">3</span>; }
+<span class="sl">.tarjeta .btn</span>    { <span class="pr">grid-row</span>: <span class="nm">4</span>; }
+
+<span class="cm">/* ——— Subgrid en columnas ——— */</span>
+<span class="sl">.form-row</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-column</span>: <span class="vl">span</span> <span class="nm">3</span>;
+  <span class="pr">grid-template-columns</span>: <span class="vl">subgrid</span>; <span class="cm">/* columnas del padre */</span>
+}
+
+<span class="cm">/* ——— Dense placement ——— */</span>
+<span class="sl">.grid-galeria</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="nm">4</span>, <span class="nm">1fr</span>);
+  <span class="pr">grid-auto-flow</span>: <span class="vl">dense</span>; <span class="cm">/* rellena huecos automáticamente */</span>
+  <span class="pr">gap</span>: <span class="nm">8px</span>;
+}
+
+<span class="sl">.item-grande</span> { <span class="pr">grid-column</span>: <span class="vl">span</span> <span class="nm">2</span>; <span class="pr">grid-row</span>: <span class="vl">span</span> <span class="nm">2</span>; }
+<span class="sl">.item-ancho</span>  { <span class="pr">grid-column</span>: <span class="vl">span</span> <span class="nm">2</span>; }</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S15 — ASPECT-RATIO Y SIZING -->
+  <section class="section" id="s15">
+    <div class="section-header"><div class="section-num">15</div><h2>Aspect-ratio y sizing moderno</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— aspect-ratio ——— */</span>
+<span class="sl">.video-wrapper</span> { <span class="pr">aspect-ratio</span>: <span class="nm">16 / 9</span>; }
+<span class="sl">.avatar</span>        { <span class="pr">aspect-ratio</span>: <span class="nm">1 / 1</span>; }   <span class="cm">/* cuadrado */</span>
+<span class="sl">.carta</span>         { <span class="pr">aspect-ratio</span>: <span class="nm">2.5 / 3.5</span>; } <span class="cm">/* carta de juego */</span>
+<span class="sl">.a4</span>            { <span class="pr">aspect-ratio</span>: <span class="nm">210 / 297</span>; }
+
+<span class="cm">/* ——— fit-content() ——— */</span>
+<span class="sl">.boton</span> {
+  <span class="pr">width</span>: <span class="fn">fit-content</span>(<span class="nm">200px</span>);
+  <span class="cm">/* Tan ancho como el contenido, máximo 200px */</span>
+}
+
+<span class="sl">.grid-auto</span> {
+  <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="nm">3</span>, <span class="fn">fit-content</span>(<span class="nm">200px</span>));
+}
+
+<span class="cm">/* ——— min-content, max-content, fit-content ——— */</span>
+<span class="sl">.tabla</span> {
+  <span class="pr">grid-template-columns</span>:
+    <span class="vl">min-content</span>    <span class="cm">/* tan estrecho como la palabra más larga */</span>
+    <span class="nm">1fr</span>            <span class="cm">/* flexible */</span>
+    <span class="vl">max-content</span>;   <span class="cm">/* tan ancho como necesite sin wrap */</span>
+}
+
+<span class="cm">/* ——— contain ——— */</span>
+<span class="sl">.widget</span> {
+  <span class="pr">contain</span>: <span class="vl">layout style paint</span>;
+  <span class="cm">/* Aísla el widget: cambios internos no afuera */</span>
+  <span class="cm">/* contain: strict = layout + style + paint + size */</span>
+}
+
+<span class="cm">/* ——— content-visibility ——— */</span>
+<span class="sl">.seccion-larga</span> {
+  <span class="pr">content-visibility</span>: <span class="vl">auto</span>;
+  <span class="cm">/* El navegador omite renderizar si está fuera del viewport.
+     Mejora enormemente el rendimiento de páginas largas. */</span>
+  <span class="pr">contain-intrinsic-size</span>: <span class="nm">0 500px</span>; <span class="cm">/* tamaño estimado */</span>
+}
+
+<span class="cm">/* ——— field-sizing (formularios) ——— */</span>
+<span class="sl">textarea</span> {
+  <span class="pr">field-sizing</span>: <span class="vl">content</span>;
+  <span class="cm">/* Textarea que crece con su contenido. ¡Sin JS! */</span>
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S16 — TIPOGRAFÍA AVANZADA -->
+  <section class="section" id="s16">
+    <div class="section-header"><div class="section-num">16</div><h2>Tipografía avanzada</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— font-variant avanzado ——— */</span>
+<span class="sl">.numeros-tabla</span> {
+  <span class="pr">font-variant-numeric</span>: <span class="vl">tabular-nums</span>;  <span class="cm">/* misma anchura */</span>
+  <span class="cm">/* oldstyle-nums, lining-nums, slashed-zero, ordinal */</span>
+}
+
+<span class="sl">.versalitas</span> {
+  <span class="pr">font-variant-caps</span>: <span class="vl">small-caps</span>;
+  <span class="cm">/* all-small-caps, petite-caps, unicase */</span>
+}
+
+<span class="cm">/* ——— font-feature-settings ——— */</span>
+<span class="sl">.opentype</span> {
+  <span class="pr">font-feature-settings</span>:
+    <span class="st">"liga"</span> <span class="nm">1</span>,    <span class="cm">/* ligaduras estándar */</span>
+    <span class="st">"dlig"</span> <span class="nm">1</span>,    <span class="cm">/* ligaduras discrecionales */</span>
+    <span class="st">"kern"</span> <span class="nm">1</span>,    <span class="cm">/* kerning */</span>
+    <span class="st">"ss01"</span> <span class="nm">1</span>,    <span class="cm">/* stylistic set 1 */</span>
+    <span class="st">"onum"</span> <span class="nm">1</span>;    <span class="cm">/* old-style figures */</span>
+}
+
+<span class="cm">/* ——— Variable fonts ——— */</span>
+<span class="sl">@font-face</span> {
+  <span class="pr">font-family</span>: <span class="st">'MiVariable'</span>;
+  <span class="pr">src</span>: <span class="fn">url</span>(<span class="st">'variable.woff2'</span>) <span class="fn">format</span>(<span class="st">'woff2-variations'</span>);
+  <span class="pr">font-weight</span>: <span class="nm">100 900</span>;
+  <span class="pr">font-style</span>: <span class="vl">oblique 0deg 20deg</span>;
+}
+
+<span class="sl">.titulo-variable</span> {
+  <span class="pr">font-family</span>: <span class="st">'MiVariable'</span>;
+  <span class="pr">font-weight</span>: <span class="nm">650</span>;              <span class="cm">/* cualquier valor entre 100-900 */</span>
+  <span class="pr">font-variation-settings</span>:
+    <span class="st">"wght"</span> <span class="nm">650</span>,                  <span class="cm">/* peso */</span>
+    <span class="st">"wdth"</span> <span class="nm">90</span>,                   <span class="cm">/* anchura */</span>
+    <span class="st">"OPSZ"</span> <span class="nm">32</span>,                   <span class="cm">/* optical size */</span>
+    <span class="st">"GRAD"</span> <span class="nm">-50</span>;                  <span class="cm">/* grado */</span>
+}
+
+<span class="cm">/* ——— text-wrap: balance y pretty ——— */</span>
+<span class="sl">h1, h2, h3</span> {
+  <span class="pr">text-wrap</span>: <span class="vl">balance</span>;
+  <span class="cm">/* Distribuye el texto equitativamente entre líneas.
+     Evita que la última línea tenga 1-2 palabras sueltas */</span>
+}
+
+<span class="sl">p</span> {
+  <span class="pr">text-wrap</span>: <span class="vl">pretty</span>;
+  <span class="cm">/* Evita "huérfanas" (última línea de 1 palabra) en párrafos */</span>
+}
+
+<span class="cm">/* ——— Columns de texto ——— */</span>
+<span class="sl">.articulo</span> {
+  <span class="pr">columns</span>: <span class="nm">2</span> <span class="nm">300px</span>;        <span class="cm">/* máx 2 columnas, mín 300px cada una */</span>
+  <span class="pr">column-gap</span>: <span class="nm">2rem</span>;
+  <span class="pr">column-rule</span>: <span class="nm">1px</span> <span class="vl">solid #D6CCBA</span>; <span class="cm">/* separador entre columnas */</span>
+  <span class="pr">orphans</span>: <span class="nm">3</span>;               <span class="cm">/* mín 3 líneas al inicio de columna */</span>
+  <span class="pr">widows</span>: <span class="nm">3</span>;                <span class="cm">/* mín 3 líneas al final de columna */</span>
+}
+
+<span class="sl">.sin-corte</span> {
+  <span class="pr">break-inside</span>: <span class="vl">avoid-column</span>;  <span class="cm">/* no cortar dentro de columnas */</span>
+  <span class="pr">column-span</span>: <span class="vl">all</span>;             <span class="cm">/* abarca todas las columnas */</span>
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S17 — WRITING MODES Y LOGICAL PROPERTIES -->
+  <section class="section" id="s17">
+    <div class="section-header"><div class="section-num">17</div><h2>Writing modes y Logical Properties</h2></div>
+    <p>Las <strong>Logical Properties</strong> reemplazan las propiedades físicas (top, left, width, height) por propiedades relativas a la dirección del texto, lo que hace los layouts naturalmente compatibles con idiomas RTL (árabe, hebreo) y verticales (japonés, chino).</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— Propiedades físicas vs lógicas ——— */</span>
+<span class="cm">/* FÍSICAS (evitar en proyectos i18n) → LÓGICAS (usar) */</span>
+
+<span class="cm">/* width  → inline-size   height → block-size */</span>
+<span class="sl">.elemento</span> {
+  <span class="pr">inline-size</span>: <span class="nm">100%</span>;         <span class="cm">/* = width en modo LTR */</span>
+  <span class="pr">block-size</span>: <span class="nm">200px</span>;         <span class="cm">/* = height en modo LTR */</span>
+  <span class="pr">min-inline-size</span>: <span class="nm">200px</span>;   <span class="cm">/* = min-width */</span>
+  <span class="pr">max-block-size</span>: <span class="nm">400px</span>;    <span class="cm">/* = max-height */</span>
+}
+
+<span class="cm">/* margin/padding/border: inline (horizontal) / block (vertical) */</span>
+<span class="sl">.texto</span> {
+  <span class="pr">margin-inline</span>: <span class="vl">auto</span>;         <span class="cm">/* = margin-left + margin-right */</span>
+  <span class="pr">margin-block</span>: <span class="nm">1rem</span>;          <span class="cm">/* = margin-top + margin-bottom */</span>
+  <span class="pr">padding-inline-start</span>: <span class="nm">1rem</span>; <span class="cm">/* = padding-left en LTR */</span>
+  <span class="pr">padding-inline-end</span>: <span class="nm">1rem</span>;   <span class="cm">/* = padding-right en LTR */</span>
+  <span class="pr">border-block-end</span>: <span class="nm">1px</span> <span class="vl">solid #ddd</span>; <span class="cm">/* = border-bottom */</span>
+}
+
+<span class="cm">/* inset: shorthand para top/right/bottom/left */</span>
+<span class="sl">.abs</span> {
+  <span class="pr">position</span>: <span class="vl">absolute</span>;
+  <span class="pr">inset</span>: <span class="nm">0</span>;                 <span class="cm">/* = top:0 right:0 bottom:0 left:0 */</span>
+  <span class="pr">inset</span>: <span class="nm">10px 20px</span>;         <span class="cm">/* = top:10px right:20px bottom:10px left:20px */</span>
+  <span class="pr">inset-inline</span>: <span class="nm">0</span>;          <span class="cm">/* = left:0 right:0 */</span>
+  <span class="pr">inset-block-start</span>: <span class="nm">10px</span>; <span class="cm">/* = top:10px */</span>
+}
+
+<span class="cm">/* ——— writing-mode ——— */</span>
+<span class="sl">.vertical-rl</span> { <span class="pr">writing-mode</span>: <span class="vl">vertical-rl</span>; }  <span class="cm">/* japonés */</span>
+<span class="sl">.vertical-lr</span> { <span class="pr">writing-mode</span>: <span class="vl">vertical-lr</span>; }  <span class="cm">/* texto lateral */</span>
+<span class="sl">.horizontal</span>  { <span class="pr">writing-mode</span>: <span class="vl">horizontal-tb</span>; }
+
+<span class="cm">/* Texto girado para sidebar labels */</span>
+<span class="sl">.sidebar-label</span> {
+  <span class="pr">writing-mode</span>: <span class="vl">vertical-lr</span>;
+  <span class="pr">text-orientation</span>: <span class="vl">mixed</span>;
+  <span class="pr">transform</span>: <span class="fn">rotate</span>(<span class="nm">180deg</span>);
+}
+
+<span class="cm">/* ——— direction ——— */</span>
+<span class="sl">[lang="ar"]</span>, <span class="sl">[dir="rtl"]</span> { <span class="pr">direction</span>: <span class="vl">rtl</span>; }</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo — Writing modes</div>
+      <div class="demo-area" style="gap:20px;">
+        <div class="wm-box" style="writing-mode:horizontal-tb;min-width:80px;">horizontal-tb</div>
+        <div class="wm-box" style="writing-mode:vertical-rl;">vertical-rl</div>
+        <div class="wm-box" style="writing-mode:vertical-lr;transform:none;">vertical-lr</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S18 — BUENAS PRÁCTICAS -->
+  <section class="section" id="s18">
+    <div class="section-header"><div class="section-num">18</div><h2>Buenas prácticas de CSS avanzado</h2></div>
+
+    <ul class="checklist">
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><strong>Usa @layer desde el inicio</strong> en proyectos medianos y grandes. Declara el orden al principio del archivo principal: <code class="inline">@layer reset, base, layout, components, utilities;</code></li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><strong>Sistema de tokens con Custom Properties</strong>: crea un set de variables para colores, fuentes, radios, sombras y espaciados antes de escribir cualquier selector.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><strong>Prefiere transform y opacity</strong> para animaciones. Nunca animes propiedades que provoquen reflow (<code class="inline">width</code>, <code class="inline">height</code>, <code class="inline">top</code>, <code class="inline">margin</code>) en loops.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Incluye siempre <code class="inline">@media (prefers-reduced-motion: reduce)</code> para desactivar animaciones a quienes las han deshabilitado en su SO.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Usa <strong>Logical Properties</strong> (<code class="inline">margin-inline</code>, <code class="inline">padding-block</code>, <code class="inline">inset</code>) en proyectos que necesiten soporte RTL o multilingüe.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Aplica <strong><code class="inline">content-visibility: auto</code></strong> en secciones largas fuera del viewport para mejorar el First Contentful Paint.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Para gradientes, <strong>usa OKLCH</strong> en lugar de HSL o sRGB: los gradientes son perceptualmente uniformes y evitan el "gris muerto" a la mitad.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecak="round"/></svg></div>Usa <strong><code class="inline">:focus-visible</code></strong> en lugar de <code class="inline">:focus</code> para estilos de teclado que no se activen con el ratón.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Verifica soporte con <code class="inline">@supports (property: value) { }</code> antes de usar características muy nuevas en producción.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Organiza el CSS en orden: <em>variables → reset → base → layout → componentes → modificadores → utilidades → media queries</em>. Nombra secciones con comentarios.</li>
+    </ul>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S19 — REFERENCIA RÁPIDA -->
+  <section class="section" id="s19">
+    <div class="section-header"><div class="section-num">19</div><h2>Referencia rápida de CSS Avanzado</h2></div>
+
+    <h3>Características CSS modernas y su soporte</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Característica</th><th>Soporte</th><th>Descripción clave</th></tr>
+        <tr><td><code>@layer</code></td><td>95%+</td><td>Organiza la cascada por capas con prioridad explícita</td></tr>
+        <tr><td><code>@scope</code></td><td>88%+</td><td>Limita estilos a un componente sin fugas</td></tr>
+        <tr><td><code>@starting-style</code></td><td>88%+</td><td>Anima la entrada al DOM de elementos display:none</td></tr>
+        <tr><td><code>@property</code></td><td>90%+</td><td>Tipado de variables CSS + animaciones</td></tr>
+        <tr><td><code>:has()</code></td><td>92%+</td><td>Selector de padre, lógica avanzada en CSS puro</td></tr>
+        <tr><td><code>:is() / :where()</code></td><td>97%+</td><td>Grupos de selectores, con/sin especificidad</td></tr>
+        <tr><td><code>color-mix()</code></td><td>88%+</td><td>Mezcla colores en cualquier espacio de color</td></tr>
+        <tr><td><code>oklch / oklab</code></td><td>88%+</td><td>Colores perceptualmente uniformes</td></tr>
+        <tr><td><code>subgrid</code></td><td>93%+</td><td>Hijos que participan en el grid del padre</td></tr>
+        <tr><td><code>container queries</code></td><td>93%+</td><td>Responsive por contenedor, no viewport</td></tr>
+        <tr><td><code>scroll-timeline</code></td><td>85%+</td><td>Animaciones controladas por el scroll</td></tr>
+        <tr><td><code>view-transition</code></td><td>72%+</td><td>Transiciones suaves entre páginas/estados</td></tr>
+        <tr><td><code>content-visibility</code></td><td>88%+</td><td>Rende­ring lazy de secciones fuera del viewport</td></tr>
+        <tr><td><code>field-sizing</code></td><td>78%+</td><td>Inputs que crecen con su contenido</td></tr>
+        <tr><td><code>text-wrap: balance</code></td><td>88%+</td><td>Distribuye texto uniformemente entre líneas</td></tr>
+        <tr><td><code>backdrop-filter</code></td><td>92%+</td><td>Blur/saturate del fondo detrás del elemento</td></tr>
+        <tr><td><code>clip-path: path()</code></td><td>88%+</td><td>Cualquier forma SVG como clip</td></tr>
+        <tr><td>Variable fonts</td><td>95%+</td><td>Una sola fuente con pesos y anchos continuos</td></tr>
+      </table>
+    </div>
+
+    <h3>Cheatsheet: propiedades avanzadas más usadas</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Propiedad</th><th>Valores clave</th><th>Para qué sirve</th></tr>
+        <tr><td><code>animation-timeline</code></td><td>scroll(), view(), --named</td><td>Scroll-driven animations</td></tr>
+        <tr><td><code>animation-range</code></td><td>entry, exit, contain, cover</td><td>Rango del viewport para scroll anim.</td></tr>
+        <tr><td><code>view-transition-name</code></td><td>nombre único</td><td>Animar elemento específico entre páginas</td></tr>
+        <tr><td><code>container-type</code></td><td>inline-size, size, normal</td><td>Declarar contenedor para @container</td></tr>
+        <tr><td><code>contain</code></td><td>layout, style, paint, strict</td><td>Aislar renderizado del componente</td></tr>
+        <tr><td><code>content-visibility</code></td><td>auto, hidden, visible</td><td>Lazy render de secciones</td></tr>
+        <tr><td><code>isolation</code></td><td>isolate, auto</td><td>Crear stacking context para blend modes</td></tr>
+        <tr><td><code>mix-blend-mode</code></td><td>multiply, screen, overlay…</td><td>Modo de mezcla con el fondo</td></tr>
+        <tr><td><code>backdrop-filter</code></td><td>blur(), saturate()…</td><td>Filtro sobre lo que hay detrás</td></tr>
+        <tr><td><code>scroll-snap-type</code></td><td>x mandatory, y proximity</td><td>Carousel / scroll snapping</td></tr>
+        <tr><td><code>overscroll-behavior</code></td><td>none, contain, auto</td><td>Controla el scroll chain</td></tr>
+        <tr><td><code>font-variation-settings</code></td><td>"wght" 650, "wdth" 90…</td><td>Controlar ejes de fuentes variables</td></tr>
+        <tr><td><code>text-wrap</code></td><td>balance, pretty, stable</td><td>Control tipográfico de saltos de línea</td></tr>
+        <tr><td><code>writing-mode</code></td><td>horizontal-tb, vertical-rl</td><td>Dirección de escritura</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- SERIES FOOTER -->
+  <div class="series-footer">
+    <div class="series-footer-label">Serie: Manuales de Programación &amp; Diseño Web</div>
+    <div class="series-vols">
+      
+      <a href="manual-html.html"> 
+        <span class="vol-chip done">Vol. 1 — HTML</span>
+      </a>
+
+      <a href="manual-css.html"> 
+        <span class="vol-chip done">Vol. 2 — CSS</span>
+      </a>
+
+      <a href="manual-javascript.html"> 
+        <span class="vol-chip done">Vol. 3 — JavaScript</span>
+      </a>
+
+      <a href="manual-responsive.html"> 
+        <span class="vol-chip done">Vol. 4 — Responsive &amp; Mobile-First</span>
+      </a>
+
+      <a href="manual-css-avanzado.html"> 
+        <span class="vol-chip current">Vol. 5 — CSS Avanzado (este manual)</span>
+      </a>
+
+      <a href="manual-js-avanzado.html"> 
+        <span class="vol-chip">Vol. 6 — JavaScript Avanzado</span>
+      </a>
+      
+    </div>
+  </div>
+
+</main>
+
+<button class="sidebar-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+<a href="#" class="back-top" id="backTop" title="Volver arriba">↑</a>
+
+<script>
+// =============================================
+// SIDEBAR MOBILE
+// =============================================
+const sidebar = document.getElementById('sidebar');
+const toggle  = document.getElementById('menuToggle');
+
+toggle.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  toggle.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
+});
+
+sidebar.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggle.textContent = '☰';
+  });
+});
+
+// =============================================
+// PROGRESS BAR + ACTIVE NAV + BACK TO TOP
+// =============================================
+const sections    = document.querySelectorAll('.section');
+const navLinks    = document.querySelectorAll('.nav-link');
+const progressBar = document.getElementById('progressBar');
+const backTop     = document.getElementById('backTop');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (docH > 0 ? (scrollTop / docH * 100) : 0) + '%';
+  backTop.classList.toggle('visible', scrollTop > 400);
+
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 90) current = s.id; });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+
+// =============================================
+// TABS
+// =============================================
+function showTab(name, groupId) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('tab-' + name);
+  if (target) target.classList.add('active');
+  group.querySelectorAll('.tab-btn').forEach(btn => {
+    const fn = btn.getAttribute('onclick') || '';
+    if (fn.includes("'" + name + "'")) btn.classList.add('active');
+  });
+}
+
+// =============================================
+// CUSTOM PROPERTIES DEMO
+// =============================================
+const cvBox  = document.getElementById('cvBox');
+const cvHue  = document.getElementById('cvHue');
+const cvSat  = document.getElementById('cvSat');
+const cvSize = document.getElementById('cvSize');
+
+function updateCV() {
+  const h = cvHue.value, s = cvSat.value, sz = cvSize.value;
+  cvBox.style.background = `hsl(${h}, ${s}%, 50%)`;
+  cvBox.style.width  = sz + 'px';
+  cvBox.style.height = sz + 'px';
+  document.getElementById('cvHueVal').textContent  = h;
+  document.getElementById('cvSatVal').textContent  = s + '%';
+  document.getElementById('cvSizeVal').textContent = sz + 'px';
+}
+
+[cvHue, cvSat, cvSize].forEach(el => el.addEventListener('input', updateCV));
+
+// =============================================
+// FILTER CYCLE DEMO
+// =============================================
+const filterCycles = [
+  '',
+  'grayscale(1)',
+  'blur(4px)',
+  'sepia(.8) hue-rotate(15deg)',
+  'saturate(2) brightness(1.1)',
+  'contrast(2)',
+  'invert(1)',
+  'hue-rotate(90deg) saturate(1.5)',
+];
+const filterIdx = {};
+
+function cycleFilter(el) {
+  const id = el.id;
+  filterIdx[id] = ((filterIdx[id] || 0) + 1) % filterCycles.length;
+  el.style.filter = filterCycles[filterIdx[id]];
+}
+
+// =============================================
+// SCROLL CARDS DEMO (IntersectionObserver)
+// =============================================
+const scrollDemo = document.getElementById('scrollDemo');
+const scrollCards = scrollDemo?.querySelectorAll('[data-scroll]');
+
+if (scrollCards && 'IntersectionObserver' in window) {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { root: scrollDemo, threshold: 0.1 });
+  scrollCards.forEach(card => obs.observe(card));
+}
+</script>
+</body>
+</html>

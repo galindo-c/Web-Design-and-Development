@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual HTML — Guía Completa</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f12;
+    --surface: #13161b;
+    --surface2: #1a1e25;
+    --border: #252b35;
+    --accent: #f0a500;
+    --accent2: #e05b3a;
+    --accent3: #3ab8f0;
+    --text: #e8eaf0;
+    --text-muted: #6b7385;
+    --text-dim: #9aa0b0;
+    --code-bg: #0a0c10;
+    --green: #4ade80;
+    --purple: #a78bfa;
+    --pink: #f472b6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0;
+    width: 270px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding-bottom: 40px;
+  }
+  #sidebar::-webkit-scrollbar { width: 4px; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
+  .sidebar-logo h1 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 900; color: var(--text); line-height: 1.1; margin-top: 4px; }
+  .sidebar-logo span { color: var(--accent); }
+
+  .sidebar-search {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-search input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .sidebar-search input:focus { border-color: var(--accent); }
+  .sidebar-search input::placeholder { color: var(--text-muted); }
+
+  .sidebar-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 16px 24px 6px;
+  }
+  .sidebar-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 24px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13.5px;
+    border-left: 2px solid transparent;
+    transition: all .15s;
+  }
+  .sidebar-link:hover, .sidebar-link.active {
+    color: var(--text);
+    background: var(--surface2);
+    border-left-color: var(--accent);
+  }
+  .sidebar-link .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: background .15s;
+  }
+  .sidebar-link:hover .dot, .sidebar-link.active .dot { background: var(--accent); }
+
+  /* ── MAIN ── */
+  #main {
+    margin-left: 270px;
+    padding: 0 60px 100px;
+    max-width: 1100px;
+  }
+
+    /* =============================================
+     SERIES FOOTER
+     ============================================= */
+  .series-footer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    margin-top: 48px;
+  }
+
+  .series-footer-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-muted); margin-bottom: 14px; }
+
+  .series-vols { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .series-vols a {
+  text-decoration: none;   /* Quita el subrayado */
+  color: inherit;          /* Mantiene el color del texto del span */
+}
+
+
+  .vol-chip {
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: 12px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    background: var(--gray-50);
+  }
+  
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 60px;
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 62px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 580px;
+    line-height: 1.8;
+  }
+  .hero-badges {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  .badge {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid;
+  }
+  .badge-orange { color: var(--accent); border-color: var(--accent); background: rgba(240,165,0,.07); }
+  .badge-blue   { color: var(--accent3); border-color: var(--accent3); background: rgba(58,184,240,.07); }
+  .badge-red    { color: var(--accent2); border-color: var(--accent2); background: rgba(224,91,58,.07); }
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-bottom: 80px;
+    scroll-margin-top: 30px;
+  }
+  .section-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(240,165,0,.1);
+    border: 1px solid rgba(240,165,0,.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  .section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .section h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 36px 0 14px;
+  }
+  .section h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 24px 0 10px;
+  }
+  .section p { color: var(--text-dim); margin-bottom: 14px; line-height: 1.8; }
+
+  /* ── CODE ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    position: relative;
+  }
+  pre::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 10px; right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+  }
+  p code, li code {
+    background: var(--surface2);
+    color: var(--accent);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+
+  /* Syntax highlighting */
+  .ht { color: #e06c75; }       /* tag */
+  .ha { color: #d19a66; }       /* attr */
+  .hv { color: #98c379; }       /* value */
+  .hc { color: #5c6370; font-style: italic; } /* comment */
+  .hs { color: #abb2bf; }       /* structure */
+  .hk { color: #c678dd; }       /* keyword */
+  .htext { color: #e8eaf0; }    /* text */
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0 28px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--accent);
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+  tr:hover td { background: var(--surface2); }
+  td code { font-family: 'JetBrains Mono', monospace; color: var(--accent3); font-size: 13px; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-left: 3px solid;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .callout-tip    { background: rgba(74,222,128,.05); border-color: var(--green); color: #a3f0bb; }
+  .callout-warn   { background: rgba(240,165,0,.06); border-color: var(--accent); color: #fcd68a; }
+  .callout-info   { background: rgba(58,184,240,.06); border-color: var(--accent3); color: #93d9f5; }
+  .callout-danger { background: rgba(224,91,58,.06); border-color: var(--accent2); color: #f5a48a; }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; opacity: .8; }
+
+  /* ── CARD GRID ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    transition: border-color .2s, transform .2s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card-tag { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent3); margin-bottom: 6px; }
+  .card-name { font-weight: 600; font-size: 14px; color: var(--text); margin-bottom: 4px; }
+  .card-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── DEMO BOX ── */
+  .demo {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0 28px;
+  }
+  .demo-bar {
+    background: var(--surface);
+    padding: 8px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .demo-content {
+    padding: 24px;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .demo-content h1 { font-size: 24px; margin-bottom: 8px; color: var(--text); font-family: 'Fraunces', serif; }
+  .demo-content h2 { font-size: 20px; margin: 16px 0 8px; color: var(--text); }
+  .demo-content h3 { font-size: 16px; margin: 12px 0 6px; color: var(--text); }
+  .demo-content p  { margin-bottom: 10px; color: var(--text-dim); }
+  .demo-content a  { color: var(--accent3); text-decoration: underline; }
+  .demo-content ul, .demo-content ol { padding-left: 22px; margin: 8px 0; color: var(--text-dim); }
+  .demo-content table { margin: 0; }
+
+  /* ── LISTS ── */
+  .section ul, .section ol {
+    color: var(--text-dim);
+    padding-left: 22px;
+    margin: 10px 0 16px;
+  }
+  .section li { margin-bottom: 6px; line-height: 1.7; }
+
+  /* ── SEARCH HIGHLIGHT ── */
+  .search-hidden { display: none; }
+  mark { background: rgba(240,165,0,.25); color: var(--accent); border-radius: 2px; }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 2px;
+    background: var(--accent);
+    z-index: 9999;
+    transition: width .1s;
+  }
+
+  /* ── BACK TO TOP ── */
+  .back-top {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--accent);
+    color: #000;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .3s;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 200;
+  }
+  .back-top.visible { opacity: 1; }
+
+  /* ── MOBILE ── */
+  .hamburger {
+    display: none;
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 300;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    width: 38px; height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    align-items: center; justify-content: center;
+  }
+
+  @media (max-width: 900px) {
+    #sidebar { transform: translateX(-100%); transition: transform .3s; }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0; padding: 60px 20px 80px; }
+    .hamburger { display: flex; }
+    .hero h1 { font-size: 38px; }
+  }
+
+  /* ── TAG COLORS ── */
+  .tag-block { color: #e06c75; }
+  .tag-inline { color: #61afef; }
+  .tag-meta { color: #c678dd; }
+  .tag-form { color: #98c379; }
+  .tag-media { color: #e5c07b; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="tag">&lt;/manual&gt;</div>
+    <h1>HTML<br><span>Completo</span></h1>
+  </div>
+
+  <div class="sidebar-search">
+    <input type="text" id="searchInput" placeholder="Buscar en el manual…" oninput="searchContent(this.value)">
+  </div>
+
+  <div class="sidebar-section-title">Introducción</div>
+  <a href="#intro" class="sidebar-link"><span class="dot"></span> ¿Qué es HTML?</a>
+  <a href="#historia" class="sidebar-link"><span class="dot"></span> Historia y versiones</a>
+  <a href="#como-funciona" class="sidebar-link"><span class="dot"></span> Cómo funciona</a>
+
+  <div class="sidebar-section-title">Estructura</div>
+  <a href="#estructura-basica" class="sidebar-link"><span class="dot"></span> Estructura básica</a>
+  <a href="#head" class="sidebar-link"><span class="dot"></span> La etiqueta &lt;head&gt;</a>
+  <a href="#body" class="sidebar-link"><span class="dot"></span> La etiqueta &lt;body&gt;</a>
+  <a href="#doctype" class="sidebar-link"><span class="dot"></span> DOCTYPE</a>
+
+  <div class="sidebar-section-title">Etiquetas</div>
+  <a href="#etiquetas-texto" class="sidebar-link"><span class="dot"></span> Texto y Tipografía</a>
+  <a href="#etiquetas-listas" class="sidebar-link"><span class="dot"></span> Listas</a>
+  <a href="#etiquetas-enlaces" class="sidebar-link"><span class="dot"></span> Enlaces</a>
+  <a href="#etiquetas-imagenes" class="sidebar-link"><span class="dot"></span> Imágenes y Media</a>
+  <a href="#etiquetas-tablas" class="sidebar-link"><span class="dot"></span> Tablas</a>
+  <a href="#etiquetas-formularios" class="sidebar-link"><span class="dot"></span> Formularios</a>
+  <a href="#etiquetas-semanticas" class="sidebar-link"><span class="dot"></span> Semánticas HTML5</a>
+  <a href="#etiquetas-contenedores" class="sidebar-link"><span class="dot"></span> Contenedores</a>
+  <a href="#etiquetas-meta" class="sidebar-link"><span class="dot"></span> Meta etiquetas</a>
+
+  <div class="sidebar-section-title">Atributos</div>
+  <a href="#atributos-globales" class="sidebar-link"><span class="dot"></span> Atributos globales</a>
+  <a href="#atributos-eventos" class="sidebar-link"><span class="dot"></span> Atributos de evento</a>
+
+  <div class="sidebar-section-title">Maquetación</div>
+  <a href="#maquetacion" class="sidebar-link"><span class="dot"></span> Principios de Layout</a>
+  <a href="#maquetacion-semantica" class="sidebar-link"><span class="dot"></span> Layout Semántico</a>
+  <a href="#maquetacion-ejemplos" class="sidebar-link"><span class="dot"></span> Ejemplos completos</a>
+
+  <div class="sidebar-section-title">Referencia</div>
+  <a href="#buenas-practicas" class="sidebar-link"><span class="dot"></span> Buenas prácticas</a>
+  <a href="#accesibilidad" class="sidebar-link"><span class="dot"></span> Accesibilidad</a>
+  <a href="#seo" class="sidebar-link"><span class="dot"></span> SEO básico</a>
+  <a href="#referencia-rapida" class="sidebar-link"><span class="dot"></span> Referencia rápida</a>
+</nav>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main id="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Manual de Programación Web · Vol. 01</div>
+    <h1>HTML<br><span>Fundamentos</span></h1>
+    <p>La guía más completa para entender HTML desde cero. Etiquetas, estructura, maquetación, semántica y buenas prácticas, todo en un solo lugar.</p>
+    <div class="hero-badges">
+      <span class="badge badge-orange">HTML5</span>
+      <span class="badge badge-blue">Semántico</span>
+      <span class="badge badge-red">Accesible</span>
+    </div>
+  </div>
+
+
+  <!-- ═══════ 1. QUÉ ES HTML ═══════ -->
+  <section class="section" id="intro">
+    <div class="section-header">
+      <span class="section-number">01</span>
+      <h2>¿Qué es HTML?</h2>
+    </div>
+
+    <p><strong>HTML</strong> (HyperText Markup Language) es el <em>lenguaje de marcado</em> estándar para crear páginas web. No es un lenguaje de programación, sino un lenguaje que describe la <strong>estructura y el contenido</strong> de una página mediante etiquetas.</p>
+
+    <p>Cada página web que ves en tu navegador está construida, en su base, sobre HTML. CSS le da estilos y JavaScript le añade interactividad, pero HTML es el esqueleto.</p>
+
+    <div class="callout callout-info">
+      <strong>💡 Analogía</strong>
+      Piensa en HTML como los cimientos y paredes de una casa. CSS sería la pintura y decoración, y JavaScript sería la electricidad e instalaciones.
+    </div>
+
+    <h3>¿Qué puede hacer HTML?</h3>
+    <ul>
+      <li>Estructurar texto en párrafos, títulos, listas</li>
+      <li>Insertar imágenes, videos y audio</li>
+      <li>Crear formularios para recopilar datos</li>
+      <li>Establecer enlaces entre páginas</li>
+      <li>Definir la semántica del contenido (qué es cada cosa)</li>
+      <li>Incrustar contenido externo (mapas, iframes)</li>
+    </ul>
+  </section>
+
+
+  <!-- ═══════ 2. HISTORIA ═══════ -->
+  <section class="section" id="historia">
+    <div class="section-header">
+      <span class="section-number">02</span>
+      <h2>Historia y versiones</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Versión</th><th>Año</th><th>Características clave</th></tr></thead>
+        <tbody>
+          <tr><td>HTML 1.0</td><td>1993</td><td>Primera versión, solo texto y enlaces básicos</td></tr>
+          <tr><td>HTML 2.0</td><td>1995</td><td>Formularios, tablas básicas</td></tr>
+          <tr><td>HTML 3.2</td><td>1997</td><td>Tablas avanzadas, applets Java</td></tr>
+          <tr><td>HTML 4.01</td><td>1999</td><td>CSS, separación de presentación y estructura</td></tr>
+          <tr><td>XHTML 1.0</td><td>2000</td><td>HTML más estricto basado en XML</td></tr>
+          <tr><td><strong>HTML5</strong></td><td>2014</td><td>Semántica, multimedia nativa, Canvas, APIs web</td></tr>
+          <tr><td>HTML Living Standard</td><td>Hoy</td><td>Estándar vivo mantenido por WHATWG</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-tip">
+      <strong>✅ Hoy en día</strong>
+      Siempre usa <code>HTML5</code>. Es el estándar actual, compatible con todos los navegadores modernos y tiene etiquetas semánticas muy útiles.
+    </div>
+  </section>
+
+
+  <!-- ═══════ 3. CÓMO FUNCIONA ═══════ -->
+  <section class="section" id="como-funciona">
+    <div class="section-header">
+      <span class="section-number">03</span>
+      <h2>Cómo funciona</h2>
+    </div>
+
+    <p>Un archivo HTML es simplemente un archivo de texto con extensión <code>.html</code>. El navegador lo <strong>interpreta (parsea)</strong> y construye el <strong>DOM</strong> (Document Object Model), una representación en árbol del documento.</p>
+
+    <h3>El árbol DOM</h3>
+    <pre data-label="árbol dom"><code><span class="htext">Document
+└── html
+    ├── head
+    │   ├── meta
+    │   ├── title
+    │   └── link
+    └── body
+        ├── header
+        ├── main
+        │   ├── h1
+        │   └── p
+        └── footer</span></code></pre>
+
+    <h3>Anatomía de una etiqueta</h3>
+    <pre data-label="html"><code><span class="hs">&lt;</span><span class="ht">p</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"intro"</span><span class="hs">&gt;</span><span class="htext">Este es un párrafo</span><span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+
+<span class="hc"><!-- Estructura:
+  &lt;  — apertura
+  p  — nombre de la etiqueta
+  class="intro" — atributo y valor
+  &gt;  — cierre apertura
+  Este es un párrafo — contenido
+  &lt;/p&gt; — etiqueta de cierre --></span></code></pre>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-tag">&lt;etiqueta&gt;</div>
+        <div class="card-name">Apertura</div>
+        <div class="card-desc">Marca el inicio del elemento</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;/etiqueta&gt;</div>
+        <div class="card-name">Cierre</div>
+        <div class="card-desc">Marca el final del elemento</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;etiqueta /&gt;</div>
+        <div class="card-name">Auto-cierre</div>
+        <div class="card-desc">Elementos vacíos como &lt;br&gt;, &lt;img&gt;</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════ 4. ESTRUCTURA BÁSICA ═══════ -->
+  <section class="section" id="estructura-basica">
+    <div class="section-header">
+      <span class="section-number">04</span>
+      <h2>Estructura básica de un documento HTML</h2>
+    </div>
+
+    <p>Todo archivo HTML debe tener esta estructura mínima:</p>
+
+    <pre data-label="index.html"><code><span class="hs">&lt;!</span><span class="ht">DOCTYPE</span> <span class="ha">html</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">html</span> <span class="ha">lang</span><span class="hs">=</span><span class="hv">"es"</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">head</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">charset</span><span class="hs">=</span><span class="hv">"UTF-8"</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"viewport"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"width=device-width, initial-scale=1.0"</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">title</span><span class="hs">&gt;</span><span class="htext">Mi primera página</span><span class="hs">&lt;/</span><span class="ht">title</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">head</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">body</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">h1</span><span class="hs">&gt;</span><span class="htext">¡Hola Mundo!</span><span class="hs">&lt;/</span><span class="ht">h1</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span><span class="htext">Mi primera página web.</span><span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">body</span><span class="hs">&gt;</span>
+
+<span class="hs">&lt;/</span><span class="ht">html</span><span class="hs">&gt;</span></code></pre>
+
+    <div class="callout callout-warn">
+      <strong>⚠️ Importante</strong>
+      Esta estructura es OBLIGATORIA. Sin ella, los navegadores intentan "adivinar" cómo renderizar la página, lo que puede causar comportamientos inesperados.
+    </div>
+  </section>
+
+
+  <!-- ═══════ 5. HEAD ═══════ -->
+  <section class="section" id="head">
+    <div class="section-header">
+      <span class="section-number">05</span>
+      <h2>La etiqueta &lt;head&gt;</h2>
+    </div>
+
+    <p>El <code>&lt;head&gt;</code> contiene <strong>metadatos</strong> (información sobre el documento, no visible en la página). El navegador y los motores de búsqueda la usan para configurar y entender la página.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Etiqueta</th><th>Para qué sirve</th><th>¿Obligatoria?</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;meta charset&gt;</code></td><td>Define la codificación de caracteres (UTF-8)</td><td>✅ Sí</td></tr>
+          <tr><td><code>&lt;meta viewport&gt;</code></td><td>Controla el zoom en dispositivos móviles</td><td>✅ Sí (responsive)</td></tr>
+          <tr><td><code>&lt;title&gt;</code></td><td>Título de la pestaña del navegador y SEO</td><td>✅ Sí</td></tr>
+          <tr><td><code>&lt;meta name="description"&gt;</code></td><td>Descripción para buscadores (SEO)</td><td>Recomendada</td></tr>
+          <tr><td><code>&lt;link rel="stylesheet"&gt;</code></td><td>Vincula archivo CSS externo</td><td>No</td></tr>
+          <tr><td><code>&lt;link rel="icon"&gt;</code></td><td>Favicon de la página</td><td>No</td></tr>
+          <tr><td><code>&lt;script&gt;</code></td><td>JavaScript (preferible al final del body)</td><td>No</td></tr>
+          <tr><td><code>&lt;style&gt;</code></td><td>CSS interno</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="head completo"><code><span class="hs">&lt;</span><span class="ht">head</span><span class="hs">&gt;</span>
+  <span class="hc">&lt;!-- Codificación: SIEMPRE primero --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">charset</span><span class="hs">=</span><span class="hv">"UTF-8"</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Responsivo --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"viewport"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"width=device-width, initial-scale=1.0"</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- SEO --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"description"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"Descripción corta de la página (máx 160 chars)"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"author"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"Tu Nombre"</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Título --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">title</span><span class="hs">&gt;</span><span class="htext">Título de la página | Sitio Web</span><span class="hs">&lt;/</span><span class="ht">title</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- CSS externo --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">link</span> <span class="ha">rel</span><span class="hs">=</span><span class="hv">"stylesheet"</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"estilos.css"</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Favicon --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">link</span> <span class="ha">rel</span><span class="hs">=</span><span class="hv">"icon"</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"favicon.ico"</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">head</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 6. BODY ═══════ -->
+  <section class="section" id="body">
+    <div class="section-header">
+      <span class="section-number">06</span>
+      <h2>La etiqueta &lt;body&gt;</h2>
+    </div>
+
+    <p>El <code>&lt;body&gt;</code> contiene <strong>todo el contenido visible</strong> de la página: texto, imágenes, botones, formularios, etc. Es donde pasas la mayor parte del tiempo en HTML.</p>
+
+    <div class="callout callout-tip">
+      <strong>💡 Regla de oro</strong>
+      Los scripts <code>&lt;script src="..."&gt;</code> deben colocarse justo antes del <code>&lt;/body&gt;</code> para no bloquear la carga del contenido visible.
+    </div>
+
+    <pre data-label="body"><code><span class="hs">&lt;</span><span class="ht">body</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Todo el contenido visible va aquí --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">header</span><span class="hs">&gt;</span><span class="htext">...</span><span class="hs">&lt;/</span><span class="ht">header</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">main</span><span class="hs">&gt;</span><span class="htext">...</span><span class="hs">&lt;/</span><span class="ht">main</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">footer</span><span class="hs">&gt;</span><span class="htext">...</span><span class="hs">&lt;/</span><span class="ht">footer</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Scripts al final --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">script</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"app.js"</span><span class="hs">&gt;&lt;/</span><span class="ht">script</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">body</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 7. DOCTYPE ═══════ -->
+  <section class="section" id="doctype">
+    <div class="section-header">
+      <span class="section-number">07</span>
+      <h2>DOCTYPE</h2>
+    </div>
+
+    <p>La declaración <code>&lt;!DOCTYPE html&gt;</code> no es una etiqueta HTML, es una instrucción al navegador sobre qué versión de HTML usar. Siempre va en la primera línea.</p>
+
+    <pre data-label="html"><code><span class="hc">&lt;!-- HTML5 (el que debes usar siempre) --&gt;</span>
+<span class="hs">&lt;!</span><span class="ht">DOCTYPE</span> <span class="ha">html</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- HTML 4.01 (obsoleto) --&gt;</span>
+<span class="hc">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+  "http://www.w3.org/TR/html4/strict.dtd"&gt;</span></code></pre>
+
+    <div class="callout callout-warn">
+      <strong>⚠️ Sin DOCTYPE</strong>
+      El navegador entra en "quirks mode" (modo antiguo) y renderiza la página como si fuera HTML antiguo, causando bugs visuales impredecibles.
+    </div>
+  </section>
+
+
+  <!-- ═══════ 8. TEXTO Y TIPOGRAFÍA ═══════ -->
+  <section class="section" id="etiquetas-texto">
+    <div class="section-header">
+      <span class="section-number">08</span>
+      <h2>Etiquetas de Texto y Tipografía</h2>
+    </div>
+
+    <h3>Encabezados (h1 – h6)</h3>
+    <p>Los encabezados definen jerarquía de contenido. Hay 6 niveles, del más importante (<code>h1</code>) al menos importante (<code>h6</code>).</p>
+
+    <div class="callout callout-warn">
+      <strong>⚠️ Regla SEO</strong>
+      Solo debe existir <strong>un único &lt;h1&gt;</strong> por página. Es el título principal y los motores de búsqueda le dan máxima importancia.
+    </div>
+
+    <pre data-label="html"><code><span class="hs">&lt;</span><span class="ht">h1</span><span class="hs">&gt;</span><span class="htext">Título principal (único por página)</span><span class="hs">&lt;/</span><span class="ht">h1</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">h2</span><span class="hs">&gt;</span><span class="htext">Sección principal</span><span class="hs">&lt;/</span><span class="ht">h2</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">h3</span><span class="hs">&gt;</span><span class="htext">Subsección</span><span class="hs">&lt;/</span><span class="ht">h3</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">h4</span><span class="hs">&gt;</span><span class="htext">Sub-subsección</span><span class="hs">&lt;/</span><span class="ht">h4</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">h5</span><span class="hs">&gt;</span><span class="htext">Nivel 5 (poco usado)</span><span class="hs">&lt;/</span><span class="ht">h5</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">h6</span><span class="hs">&gt;</span><span class="htext">Nivel 6 (poco usado)</span><span class="hs">&lt;/</span><span class="ht">h6</span><span class="hs">&gt;</span></code></pre>
+
+    <div class="demo">
+      <div class="demo-bar">Vista previa</div>
+      <div class="demo-content">
+        <h1>Heading 1</h1>
+        <h2>Heading 2</h2>
+        <h3>Heading 3</h3>
+      </div>
+    </div>
+
+    <h3>Párrafos y texto en línea</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Etiqueta</th><th>Para qué sirve</th><th>Tipo</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;p&gt;</code></td><td>Párrafo de texto</td><td>Bloque</td></tr>
+          <tr><td><code>&lt;strong&gt;</code></td><td>Texto <strong>importante</strong> (negrita semántica)</td><td>Inline</td></tr>
+          <tr><td><code>&lt;em&gt;</code></td><td>Texto <em>enfatizado</em> (cursiva semántica)</td><td>Inline</td></tr>
+          <tr><td><code>&lt;b&gt;</code></td><td>Negrita sin énfasis semántico</td><td>Inline</td></tr>
+          <tr><td><code>&lt;i&gt;</code></td><td>Cursiva sin énfasis semántico</td><td>Inline</td></tr>
+          <tr><td><code>&lt;u&gt;</code></td><td>Subrayado</td><td>Inline</td></tr>
+          <tr><td><code>&lt;s&gt;</code></td><td><s>Tachado</s></td><td>Inline</td></tr>
+          <tr><td><code>&lt;mark&gt;</code></td><td>Texto resaltado</td><td>Inline</td></tr>
+          <tr><td><code>&lt;small&gt;</code></td><td>Texto pequeño (aclaraciones)</td><td>Inline</td></tr>
+          <tr><td><code>&lt;sup&gt;</code></td><td>Superíndice: x²</td><td>Inline</td></tr>
+          <tr><td><code>&lt;sub&gt;</code></td><td>Subíndice: H₂O</td><td>Inline</td></tr>
+          <tr><td><code>&lt;code&gt;</code></td><td>Código en línea</td><td>Inline</td></tr>
+          <tr><td><code>&lt;pre&gt;</code></td><td>Texto preformateado (respeta espacios)</td><td>Bloque</td></tr>
+          <tr><td><code>&lt;blockquote&gt;</code></td><td>Cita larga</td><td>Bloque</td></tr>
+          <tr><td><code>&lt;q&gt;</code></td><td>Cita corta en línea</td><td>Inline</td></tr>
+          <tr><td><code>&lt;abbr&gt;</code></td><td>Abreviatura con tooltip</td><td>Inline</td></tr>
+          <tr><td><code>&lt;br&gt;</code></td><td>Salto de línea</td><td>Vacío</td></tr>
+          <tr><td><code>&lt;hr&gt;</code></td><td>Línea horizontal divisoria</td><td>Vacío</td></tr>
+          <tr><td><code>&lt;span&gt;</code></td><td>Contenedor inline genérico</td><td>Inline</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="html"><code><span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>
+  Este texto tiene una palabra <span class="hs">&lt;</span><span class="ht">strong</span><span class="hs">&gt;</span>importante<span class="hs">&lt;/</span><span class="ht">strong</span><span class="hs">&gt;</span>
+  y otra <span class="hs">&lt;</span><span class="ht">em</span><span class="hs">&gt;</span>enfatizada<span class="hs">&lt;/</span><span class="ht">em</span><span class="hs">&gt;</span>.
+<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+
+<span class="hs">&lt;</span><span class="ht">blockquote</span> <span class="ha">cite</span><span class="hs">=</span><span class="hv">"https://fuente.com"</span><span class="hs">&gt;</span>
+  <span class="htext">El código siempre se escribe para dos audiencias:
+  la máquina y los humanos.</span>
+<span class="hs">&lt;/</span><span class="ht">blockquote</span><span class="hs">&gt;</span>
+
+<span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>H<span class="hs">&lt;</span><span class="ht">sub</span><span class="hs">&gt;</span>2<span class="hs">&lt;/</span><span class="ht">sub</span><span class="hs">&gt;</span>O es la fórmula del agua. E=mc<span class="hs">&lt;</span><span class="ht">sup</span><span class="hs">&gt;</span>2<span class="hs">&lt;/</span><span class="ht">sup</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+
+<span class="hs">&lt;</span><span class="ht">abbr</span> <span class="ha">title</span><span class="hs">=</span><span class="hv">"HyperText Markup Language"</span><span class="hs">&gt;</span>HTML<span class="hs">&lt;/</span><span class="ht">abbr</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 9. LISTAS ═══════ -->
+  <section class="section" id="etiquetas-listas">
+    <div class="section-header">
+      <span class="section-number">09</span>
+      <h2>Listas</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Etiqueta</th><th>Tipo</th><th>Uso</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;ul&gt;</code></td><td>Lista desordenada</td><td>Elementos sin orden específico</td></tr>
+          <tr><td><code>&lt;ol&gt;</code></td><td>Lista ordenada</td><td>Pasos, ranking, secuencias</td></tr>
+          <tr><td><code>&lt;li&gt;</code></td><td>Elemento de lista</td><td>Dentro de ul u ol</td></tr>
+          <tr><td><code>&lt;dl&gt;</code></td><td>Lista de definiciones</td><td>Glosarios, términos</td></tr>
+          <tr><td><code>&lt;dt&gt;</code></td><td>Término a definir</td><td>Dentro de dl</td></tr>
+          <tr><td><code>&lt;dd&gt;</code></td><td>Definición del término</td><td>Dentro de dl</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="html"><code><span class="hc">&lt;!-- Lista desordenada --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">ul</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>HTML<span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>CSS<span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>JavaScript<span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">ul</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Lista ordenada --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">ol</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>Aprender HTML<span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>Aprender CSS<span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>Aprender JavaScript<span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">ol</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Lista de definiciones --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">dl</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">dt</span><span class="hs">&gt;</span>HTML<span class="hs">&lt;/</span><span class="ht">dt</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">dd</span><span class="hs">&gt;</span>Lenguaje de marcado para páginas web<span class="hs">&lt;/</span><span class="ht">dd</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">dt</span><span class="hs">&gt;</span>CSS<span class="hs">&lt;/</span><span class="ht">dt</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">dd</span><span class="hs">&gt;</span>Lenguaje de estilos para dar diseño visual<span class="hs">&lt;/</span><span class="ht">dd</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">dl</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Listas anidadas --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">ul</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>Frontend
+    <span class="hs">&lt;</span><span class="ht">ul</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>HTML<span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span>CSS<span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">ul</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">ul</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 10. ENLACES ═══════ -->
+  <section class="section" id="etiquetas-enlaces">
+    <div class="section-header">
+      <span class="section-number">10</span>
+      <h2>Enlaces — &lt;a&gt;</h2>
+    </div>
+
+    <p>La etiqueta <code>&lt;a&gt;</code> (anchor) crea hipervínculos. Es fundamental para la navegación web.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Atributo</th><th>Valor</th><th>Para qué sirve</th></tr></thead>
+        <tbody>
+          <tr><td><code>href</code></td><td>URL o ruta</td><td>Destino del enlace (obligatorio)</td></tr>
+          <tr><td><code>target</code></td><td><code>_blank</code>, <code>_self</code></td><td>Dónde abrir el enlace</td></tr>
+          <tr><td><code>rel</code></td><td><code>noopener noreferrer</code></td><td>Seguridad para links externos</td></tr>
+          <tr><td><code>download</code></td><td>nombre archivo</td><td>Fuerza descarga en lugar de navegar</td></tr>
+          <tr><td><code>title</code></td><td>texto</td><td>Tooltip al pasar el cursor</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="html"><code><span class="hc">&lt;!-- Enlace externo --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"https://google.com"</span> <span class="ha">target</span><span class="hs">=</span><span class="hv">"_blank"</span> <span class="ha">rel</span><span class="hs">=</span><span class="hv">"noopener noreferrer"</span><span class="hs">&gt;</span>
+  Ir a Google
+<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Enlace interno (misma carpeta) --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"contacto.html"</span><span class="hs">&gt;</span>Contacto<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Enlace a sección (ancla) --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"#seccion-1"</span><span class="hs">&gt;</span>Ir a Sección 1<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">section</span> <span class="ha">id</span><span class="hs">=</span><span class="hv">"seccion-1"</span><span class="hs">&gt;</span>...<span class="hs">&lt;/</span><span class="ht">section</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Email y teléfono --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"mailto:correo@ejemplo.com"</span><span class="hs">&gt;</span>Enviar email<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"tel:+1234567890"</span><span class="hs">&gt;</span>Llamar<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Descarga --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"archivo.pdf"</span> <span class="ha">download</span><span class="hs">=</span><span class="hv">"mi-documento.pdf"</span><span class="hs">&gt;</span>Descargar PDF<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span></code></pre>
+
+    <div class="callout callout-danger">
+      <strong>🔒 Seguridad</strong>
+      Siempre usa <code>rel="noopener noreferrer"</code> con <code>target="_blank"</code>. Sin esto, la página destino puede acceder a tu ventana vía <code>window.opener</code>.
+    </div>
+  </section>
+
+
+  <!-- ═══════ 11. IMÁGENES ═══════ -->
+  <section class="section" id="etiquetas-imagenes">
+    <div class="section-header">
+      <span class="section-number">11</span>
+      <h2>Imágenes y Media</h2>
+    </div>
+
+    <h3>Imágenes — &lt;img&gt;</h3>
+    <p>La etiqueta <code>&lt;img&gt;</code> es auto-cerrada (vacía). No tiene etiqueta de cierre.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Atributo</th><th>Obligatorio</th><th>Para qué sirve</th></tr></thead>
+        <tbody>
+          <tr><td><code>src</code></td><td>✅ Sí</td><td>Ruta o URL de la imagen</td></tr>
+          <tr><td><code>alt</code></td><td>✅ Sí</td><td>Texto alternativo (accesibilidad y SEO)</td></tr>
+          <tr><td><code>width</code></td><td>No</td><td>Ancho en píxeles</td></tr>
+          <tr><td><code>height</code></td><td>No</td><td>Alto en píxeles (evita layout shift)</td></tr>
+          <tr><td><code>loading</code></td><td>No</td><td><code>lazy</code> = carga diferida</td></tr>
+          <tr><td><code>srcset</code></td><td>No</td><td>Imágenes responsivas múltiples</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="html"><code><span class="hc">&lt;!-- Imagen básica --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">img</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"foto.jpg"</span> <span class="ha">alt</span><span class="hs">=</span><span class="hv">"Descripción de la imagen"</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Con dimensiones y lazy loading --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">img</span>
+  <span class="ha">src</span><span class="hs">=</span><span class="hv">"foto.jpg"</span>
+  <span class="ha">alt</span><span class="hs">=</span><span class="hv">"Foto de perfil"</span>
+  <span class="ha">width</span><span class="hs">=</span><span class="hv">"400"</span>
+  <span class="ha">height</span><span class="hs">=</span><span class="hv">"300"</span>
+  <span class="ha">loading</span><span class="hs">=</span><span class="hv">"lazy"</span>
+<span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Responsiva con srcset --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">img</span>
+  <span class="ha">src</span><span class="hs">=</span><span class="hv">"imagen-800.jpg"</span>
+  <span class="ha">srcset</span><span class="hs">=</span><span class="hv">"imagen-400.jpg 400w,
+          imagen-800.jpg 800w,
+          imagen-1200.jpg 1200w"</span>
+  <span class="ha">sizes</span><span class="hs">=</span><span class="hv">"(max-width: 600px) 400px, 800px"</span>
+  <span class="ha">alt</span><span class="hs">=</span><span class="hv">"Imagen responsiva"</span>
+<span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Imagen con caption --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">figure</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">img</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"grafico.png"</span> <span class="ha">alt</span><span class="hs">=</span><span class="hv">"Gráfico de ventas"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">figcaption</span><span class="hs">&gt;</span>Fig. 1: Ventas del año 2024<span class="hs">&lt;/</span><span class="ht">figcaption</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">figure</span><span class="hs">&gt;</span></code></pre>
+
+    <h3>Video — &lt;video&gt;</h3>
+    <pre data-label="html"><code><span class="hs">&lt;</span><span class="ht">video</span> <span class="ha">controls</span> <span class="ha">width</span><span class="hs">=</span><span class="hv">"640"</span> <span class="ha">poster</span><span class="hs">=</span><span class="hv">"preview.jpg"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">source</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"video.mp4"</span>  <span class="ha">type</span><span class="hs">=</span><span class="hv">"video/mp4"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">source</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"video.webm"</span> <span class="ha">type</span><span class="hs">=</span><span class="hv">"video/webm"</span><span class="hs">&gt;</span>
+  <span class="htext">Tu navegador no soporta video HTML5.</span>
+<span class="hs">&lt;/</span><span class="ht">video</span><span class="hs">&gt;</span></code></pre>
+
+    <h3>Audio — &lt;audio&gt;</h3>
+    <pre data-label="html"><code><span class="hs">&lt;</span><span class="ht">audio</span> <span class="ha">controls</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">source</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"cancion.mp3"</span> <span class="ha">type</span><span class="hs">=</span><span class="hv">"audio/mpeg"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">source</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"cancion.ogg"</span> <span class="ha">type</span><span class="hs">=</span><span class="hv">"audio/ogg"</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">audio</span><span class="hs">&gt;</span></code></pre>
+
+    <div class="callout callout-tip">
+      <strong>✅ Buena práctica</strong>
+      Siempre incluye múltiples formatos de video/audio para compatibilidad cruzada entre navegadores.
+    </div>
+  </section>
+
+
+  <!-- ═══════ 12. TABLAS ═══════ -->
+  <section class="section" id="etiquetas-tablas">
+    <div class="section-header">
+      <span class="section-number">12</span>
+      <h2>Tablas</h2>
+    </div>
+
+    <p>Las tablas son para <strong>datos tabulares</strong> (filas y columnas con relación). <strong>No deben usarse para maquetación</strong> (para eso está CSS Flexbox/Grid).</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Etiqueta</th><th>Para qué sirve</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;table&gt;</code></td><td>Contenedor principal de la tabla</td></tr>
+          <tr><td><code>&lt;thead&gt;</code></td><td>Grupo de encabezado (semántico)</td></tr>
+          <tr><td><code>&lt;tbody&gt;</code></td><td>Grupo del cuerpo de datos</td></tr>
+          <tr><td><code>&lt;tfoot&gt;</code></td><td>Grupo del pie de tabla (totales)</td></tr>
+          <tr><td><code>&lt;tr&gt;</code></td><td>Fila de la tabla</td></tr>
+          <tr><td><code>&lt;th&gt;</code></td><td>Celda encabezado (negrita, centrado)</td></tr>
+          <tr><td><code>&lt;td&gt;</code></td><td>Celda de dato</td></tr>
+          <tr><td><code>&lt;caption&gt;</code></td><td>Título descriptivo de la tabla</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="html"><code><span class="hs">&lt;</span><span class="ht">table</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">caption</span><span class="hs">&gt;</span>Resultados del trimestre<span class="hs">&lt;/</span><span class="ht">caption</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">thead</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">tr</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">th</span> <span class="ha">scope</span><span class="hs">=</span><span class="hv">"col"</span><span class="hs">&gt;</span>Producto<span class="hs">&lt;/</span><span class="ht">th</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">th</span> <span class="ha">scope</span><span class="hs">=</span><span class="hv">"col"</span><span class="hs">&gt;</span>Ventas<span class="hs">&lt;/</span><span class="ht">th</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">th</span> <span class="ha">scope</span><span class="hs">=</span><span class="hv">"col"</span><span class="hs">&gt;</span>Ingresos<span class="hs">&lt;/</span><span class="ht">th</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">tr</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">thead</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">tbody</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">tr</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">td</span><span class="hs">&gt;</span>Producto A<span class="hs">&lt;/</span><span class="ht">td</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">td</span><span class="hs">&gt;</span>150<span class="hs">&lt;/</span><span class="ht">td</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">td</span><span class="hs">&gt;</span>$3,000<span class="hs">&lt;/</span><span class="ht">td</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">tr</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">tr</span><span class="hs">&gt;</span>
+      <span class="hc">&lt;!-- colspan fusiona columnas, rowspan fusiona filas --&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">td</span> <span class="ha">colspan</span><span class="hs">=</span><span class="hv">"2"</span><span class="hs">&gt;</span>Producto B + C<span class="hs">&lt;/</span><span class="ht">td</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">td</span><span class="hs">&gt;</span>$5,200<span class="hs">&lt;/</span><span class="ht">td</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">tr</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">tbody</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">tfoot</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">tr</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">td</span><span class="hs">&gt;</span>Total<span class="hs">&lt;/</span><span class="ht">td</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">td</span><span class="hs">&gt;</span>350<span class="hs">&lt;/</span><span class="ht">td</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">td</span><span class="hs">&gt;</span><span class="hs">&lt;</span><span class="ht">strong</span><span class="hs">&gt;</span>$8,200<span class="hs">&lt;/</span><span class="ht">strong</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">td</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">tr</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">tfoot</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">table</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 13. FORMULARIOS ═══════ -->
+  <section class="section" id="etiquetas-formularios">
+    <div class="section-header">
+      <span class="section-number">13</span>
+      <h2>Formularios</h2>
+    </div>
+
+    <p>Los formularios permiten al usuario enviar datos. Son esenciales para login, registro, búsquedas, contacto, etc.</p>
+
+    <h3>Etiqueta &lt;form&gt;</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Atributo</th><th>Valores</th><th>Para qué sirve</th></tr></thead>
+        <tbody>
+          <tr><td><code>action</code></td><td>URL</td><td>Adónde se envían los datos</td></tr>
+          <tr><td><code>method</code></td><td><code>get</code>, <code>post</code></td><td>Cómo se envían los datos</td></tr>
+          <tr><td><code>enctype</code></td><td><code>multipart/form-data</code></td><td>Necesario para subir archivos</td></tr>
+          <tr><td><code>novalidate</code></td><td>—</td><td>Desactiva validación HTML5</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Tipos de &lt;input&gt;</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>type</th><th>Para qué</th><th>Ejemplo visual</th></tr></thead>
+        <tbody>
+          <tr><td><code>text</code></td><td>Texto genérico</td><td>Nombre, apellido</td></tr>
+          <tr><td><code>email</code></td><td>Correo electrónico (valida formato)</td><td>usuario@ejemplo.com</td></tr>
+          <tr><td><code>password</code></td><td>Contraseña (oculta caracteres)</td><td>••••••••</td></tr>
+          <tr><td><code>number</code></td><td>Número (con flechas)</td><td>Edad, cantidad</td></tr>
+          <tr><td><code>tel</code></td><td>Teléfono</td><td>+1 234 567 890</td></tr>
+          <tr><td><code>url</code></td><td>URL (valida formato)</td><td>https://...</td></tr>
+          <tr><td><code>date</code></td><td>Fecha con selector</td><td>2024-01-15</td></tr>
+          <tr><td><code>time</code></td><td>Hora</td><td>14:30</td></tr>
+          <tr><td><code>checkbox</code></td><td>Casilla de verificación</td><td>☐ Acepto términos</td></tr>
+          <tr><td><code>radio</code></td><td>Selección única del grupo</td><td>○ Opción A ○ Opción B</td></tr>
+          <tr><td><code>range</code></td><td>Deslizador numérico</td><td>—●————</td></tr>
+          <tr><td><code>color</code></td><td>Selector de color</td><td>🎨</td></tr>
+          <tr><td><code>file</code></td><td>Selector de archivo</td><td>Subir archivo</td></tr>
+          <tr><td><code>hidden</code></td><td>Campo oculto (sin UI)</td><td>Tokens, IDs</td></tr>
+          <tr><td><code>submit</code></td><td>Botón de envío</td><td>[Enviar]</td></tr>
+          <tr><td><code>reset</code></td><td>Botón de limpieza</td><td>[Limpiar]</td></tr>
+          <tr><td><code>search</code></td><td>Campo de búsqueda</td><td>🔍 Buscar...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="formulario completo"><code><span class="hs">&lt;</span><span class="ht">form</span> <span class="ha">action</span><span class="hs">=</span><span class="hv">"/enviar"</span> <span class="ha">method</span><span class="hs">=</span><span class="hv">"post"</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Siempre vincular label con input --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">label</span> <span class="ha">for</span><span class="hs">=</span><span class="hv">"nombre"</span><span class="hs">&gt;</span>Nombre:<span class="hs">&lt;/</span><span class="ht">label</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">input</span>
+    <span class="ha">type</span><span class="hs">=</span><span class="hv">"text"</span>
+    <span class="ha">id</span><span class="hs">=</span><span class="hv">"nombre"</span>
+    <span class="ha">name</span><span class="hs">=</span><span class="hv">"nombre"</span>
+    <span class="ha">placeholder</span><span class="hs">=</span><span class="hv">"Tu nombre completo"</span>
+    <span class="ha">required</span>
+    <span class="ha">minlength</span><span class="hs">=</span><span class="hv">"2"</span>
+    <span class="ha">maxlength</span><span class="hs">=</span><span class="hv">"50"</span>
+  <span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">label</span> <span class="ha">for</span><span class="hs">=</span><span class="hv">"email"</span><span class="hs">&gt;</span>Email:<span class="hs">&lt;/</span><span class="ht">label</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">input</span> <span class="ha">type</span><span class="hs">=</span><span class="hv">"email"</span> <span class="ha">id</span><span class="hs">=</span><span class="hv">"email"</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"email"</span> <span class="ha">required</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Select --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">label</span> <span class="ha">for</span><span class="hs">=</span><span class="hv">"pais"</span><span class="hs">&gt;</span>País:<span class="hs">&lt;/</span><span class="ht">label</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">select</span> <span class="ha">id</span><span class="hs">=</span><span class="hv">"pais"</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"pais"</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">option</span> <span class="ha">value</span><span class="hs">=</span><span class="hv">""</span><span class="hs">&gt;</span>-- Selecciona --<span class="hs">&lt;/</span><span class="ht">option</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">optgroup</span> <span class="ha">label</span><span class="hs">=</span><span class="hv">"Latinoamérica"</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">option</span> <span class="ha">value</span><span class="hs">=</span><span class="hv">"mx"</span><span class="hs">&gt;</span>México<span class="hs">&lt;/</span><span class="ht">option</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">option</span> <span class="ha">value</span><span class="hs">=</span><span class="hv">"co"</span><span class="hs">&gt;</span>Colombia<span class="hs">&lt;/</span><span class="ht">option</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">optgroup</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">select</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Área de texto --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">label</span> <span class="ha">for</span><span class="hs">=</span><span class="hv">"mensaje"</span><span class="hs">&gt;</span>Mensaje:<span class="hs">&lt;/</span><span class="ht">label</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">textarea</span> <span class="ha">id</span><span class="hs">=</span><span class="hv">"mensaje"</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"mensaje"</span> <span class="ha">rows</span><span class="hs">=</span><span class="hv">"5"</span> <span class="ha">cols</span><span class="hs">=</span><span class="hv">"40"</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">textarea</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Checkbox --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">input</span> <span class="ha">type</span><span class="hs">=</span><span class="hv">"checkbox"</span> <span class="ha">id</span><span class="hs">=</span><span class="hv">"terminos"</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"terminos"</span> <span class="ha">required</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">label</span> <span class="ha">for</span><span class="hs">=</span><span class="hv">"terminos"</span><span class="hs">&gt;</span>Acepto los términos<span class="hs">&lt;/</span><span class="ht">label</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Botones --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">button</span> <span class="ha">type</span><span class="hs">=</span><span class="hv">"submit"</span><span class="hs">&gt;</span>Enviar<span class="hs">&lt;/</span><span class="ht">button</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">button</span> <span class="ha">type</span><span class="hs">=</span><span class="hv">"reset"</span><span class="hs">&gt;</span>Limpiar<span class="hs">&lt;/</span><span class="ht">button</span><span class="hs">&gt;</span>
+
+<span class="hs">&lt;/</span><span class="ht">form</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 14. SEMÁNTICAS HTML5 ═══════ -->
+  <section class="section" id="etiquetas-semanticas">
+    <div class="section-header">
+      <span class="section-number">14</span>
+      <h2>Etiquetas Semánticas HTML5</h2>
+    </div>
+
+    <p>Las etiquetas semánticas <strong>describen el significado</strong> del contenido, no solo su apariencia. Mejoran SEO, accesibilidad y mantenimiento.</p>
+
+    <div class="callout callout-info">
+      <strong>📌 ¿Por qué semántica?</strong>
+      Un lector de pantalla puede navegar por los landmarks semánticos. Google entiende mejor la estructura de tu contenido. Tú mismo entiendes el código más fácilmente.
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-tag">&lt;header&gt;</div>
+        <div class="card-name">Cabecera</div>
+        <div class="card-desc">Encabezado de página o sección. Logo, nav principal.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;nav&gt;</div>
+        <div class="card-name">Navegación</div>
+        <div class="card-desc">Conjunto de enlaces de navegación principales.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;main&gt;</div>
+        <div class="card-name">Contenido principal</div>
+        <div class="card-desc">El contenido único de la página. Solo uno por doc.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;article&gt;</div>
+        <div class="card-name">Artículo</div>
+        <div class="card-desc">Contenido independiente: post, noticia, comentario.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;section&gt;</div>
+        <div class="card-name">Sección</div>
+        <div class="card-desc">Grupo temático con encabezado propio.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;aside&gt;</div>
+        <div class="card-name">Contenido lateral</div>
+        <div class="card-desc">Sidebar, anuncios, contenido relacionado.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;footer&gt;</div>
+        <div class="card-name">Pie de página</div>
+        <div class="card-desc">Copyright, links legales, contacto, redes sociales.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;figure&gt;</div>
+        <div class="card-name">Figura</div>
+        <div class="card-desc">Imagen, diagrama o código con leyenda.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;figcaption&gt;</div>
+        <div class="card-name">Leyenda</div>
+        <div class="card-desc">Pie de imagen dentro de &lt;figure&gt;.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;time&gt;</div>
+        <div class="card-name">Fecha/Hora</div>
+        <div class="card-desc">Fecha legible por máquinas con datetime="".</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;address&gt;</div>
+        <div class="card-name">Dirección</div>
+        <div class="card-desc">Información de contacto del autor/organización.</div>
+      </div>
+      <div class="card">
+        <div class="card-tag">&lt;details&gt;</div>
+        <div class="card-name">Desplegable</div>
+        <div class="card-desc">Contenido expandible/colapsable nativo.</div>
+      </div>
+    </div>
+
+    <pre data-label="ejemplo semántico"><code><span class="hs">&lt;</span><span class="ht">article</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">header</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">h2</span><span class="hs">&gt;</span>Título del artículo<span class="hs">&lt;/</span><span class="ht">h2</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">time</span> <span class="ha">datetime</span><span class="hs">=</span><span class="hv">"2025-04-11"</span><span class="hs">&gt;</span>11 de abril de 2025<span class="hs">&lt;/</span><span class="ht">time</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">header</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">section</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">h3</span><span class="hs">&gt;</span>Introducción<span class="hs">&lt;/</span><span class="ht">h3</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>Contenido del artículo...<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">section</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">figure</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">img</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"foto.jpg"</span> <span class="ha">alt</span><span class="hs">=</span><span class="hv">"Descripción"</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">figcaption</span><span class="hs">&gt;</span>Foto del autor en el evento<span class="hs">&lt;/</span><span class="ht">figcaption</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">figure</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">footer</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">address</span><span class="hs">&gt;</span>Por <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"mailto:autor@email.com"</span><span class="hs">&gt;</span>Juan García<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">address</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">footer</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">article</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Details/Summary (acordeón nativo) --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">details</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">summary</span><span class="hs">&gt;</span>¿Qué es HTML? (clic para expandir)<span class="hs">&lt;/</span><span class="ht">summary</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>HTML es el lenguaje de marcado estándar...<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">details</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 15. CONTENEDORES ═══════ -->
+  <section class="section" id="etiquetas-contenedores">
+    <div class="section-header">
+      <span class="section-number">15</span>
+      <h2>Contenedores genéricos</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Etiqueta</th><th>Tipo</th><th>Uso</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;div&gt;</code></td><td>Bloque</td><td>Agrupar elementos, layout con CSS</td></tr>
+          <tr><td><code>&lt;span&gt;</code></td><td>Inline</td><td>Aplicar estilos a texto en línea</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <strong>⚠️ &lt;div&gt; vs Semántica</strong>
+      Usa <code>&lt;div&gt;</code> solo cuando no haya etiqueta semántica apropiada. Antes de usar <code>&lt;div&gt;</code>, pregúntate: ¿existe &lt;section&gt;, &lt;article&gt;, &lt;nav&gt;, &lt;aside&gt; que mejor describe esto?
+    </div>
+
+    <pre data-label="html"><code><span class="hc">&lt;!-- div: contenedor genérico de bloque --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">div</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"card"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">h3</span><span class="hs">&gt;</span>Título<span class="hs">&lt;/</span><span class="ht">h3</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>Contenido de la tarjeta<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">div</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- span: resaltar parte de un texto --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>El precio es <span class="hs">&lt;</span><span class="ht">span</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"precio"</span><span class="hs">&gt;</span>$299<span class="hs">&lt;/</span><span class="ht">span</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 16. META ETIQUETAS ═══════ -->
+  <section class="section" id="etiquetas-meta">
+    <div class="section-header">
+      <span class="section-number">16</span>
+      <h2>Meta etiquetas</h2>
+    </div>
+
+    <pre data-label="meta tags completas"><code><span class="hs">&lt;</span><span class="ht">head</span><span class="hs">&gt;</span>
+  <span class="hc">&lt;!-- Básicas --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">charset</span><span class="hs">=</span><span class="hv">"UTF-8"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"viewport"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"width=device-width, initial-scale=1.0"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"description"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"Descripción de la página (máx 160 chars)"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"keywords"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"html, web, tutorial"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"author"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"Tu Nombre"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"robots"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"index, follow"</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Open Graph (redes sociales) --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">property</span><span class="hs">=</span><span class="hv">"og:title"</span>       <span class="ha">content</span><span class="hs">=</span><span class="hv">"Título para compartir"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">property</span><span class="hs">=</span><span class="hv">"og:description"</span>  <span class="ha">content</span><span class="hs">=</span><span class="hv">"Descripción al compartir"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">property</span><span class="hs">=</span><span class="hv">"og:image"</span>       <span class="ha">content</span><span class="hs">=</span><span class="hv">"https://sitio.com/og.jpg"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">property</span><span class="hs">=</span><span class="hv">"og:url"</span>         <span class="ha">content</span><span class="hs">=</span><span class="hv">"https://sitio.com/pagina"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">property</span><span class="hs">=</span><span class="hv">"og:type"</span>        <span class="ha">content</span><span class="hs">=</span><span class="hv">"website"</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- Twitter Card --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"twitter:card"</span>        <span class="ha">content</span><span class="hs">=</span><span class="hv">"summary_large_image"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"twitter:title"</span>       <span class="ha">content</span><span class="hs">=</span><span class="hv">"Título en Twitter"</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">head</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 17. ATRIBUTOS GLOBALES ═══════ -->
+  <section class="section" id="atributos-globales">
+    <div class="section-header">
+      <span class="section-number">17</span>
+      <h2>Atributos globales</h2>
+    </div>
+
+    <p>Los atributos globales pueden usarse en <strong>cualquier etiqueta HTML</strong>.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Atributo</th><th>Para qué sirve</th><th>Ejemplo</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>Identificador único en la página</td><td><code>id="menu"</code></td></tr>
+          <tr><td><code>class</code></td><td>Clase(s) para CSS/JS (pueden repetirse)</td><td><code>class="btn btn-primary"</code></td></tr>
+          <tr><td><code>style</code></td><td>Estilos inline (evitar en lo posible)</td><td><code>style="color:red"</code></td></tr>
+          <tr><td><code>title</code></td><td>Tooltip informativo al hover</td><td><code>title="Más info"</code></td></tr>
+          <tr><td><code>lang</code></td><td>Idioma del elemento</td><td><code>lang="en"</code></td></tr>
+          <tr><td><code>dir</code></td><td>Dirección del texto</td><td><code>dir="rtl"</code></td></tr>
+          <tr><td><code>hidden</code></td><td>Oculta el elemento</td><td><code>hidden</code></td></tr>
+          <tr><td><code>tabindex</code></td><td>Orden de tabulación</td><td><code>tabindex="1"</code></td></tr>
+          <tr><td><code>contenteditable</code></td><td>Permite editar el contenido</td><td><code>contenteditable="true"</code></td></tr>
+          <tr><td><code>draggable</code></td><td>Permite arrastrar el elemento</td><td><code>draggable="true"</code></td></tr>
+          <tr><td><code>data-*</code></td><td>Datos personalizados para JS</td><td><code>data-id="42"</code></td></tr>
+          <tr><td><code>aria-*</code></td><td>Accesibilidad (ARIA)</td><td><code>aria-label="Menú"</code></td></tr>
+          <tr><td><code>role</code></td><td>Rol ARIA del elemento</td><td><code>role="dialog"</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="html"><code><span class="hc">&lt;!-- Uso de data-* para JavaScript --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">button</span>
+  <span class="ha">id</span><span class="hs">=</span><span class="hv">"btn-comprar"</span>
+  <span class="ha">class</span><span class="hs">=</span><span class="hv">"btn btn-primary"</span>
+  <span class="ha">data-producto-id</span><span class="hs">=</span><span class="hv">"123"</span>
+  <span class="ha">data-precio</span><span class="hs">=</span><span class="hv">"299"</span>
+  <span class="ha">aria-label</span><span class="hs">=</span><span class="hv">"Comprar producto"</span>
+<span class="hs">&gt;</span>
+  Comprar
+<span class="hs">&lt;/</span><span class="ht">button</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 18. MAQUETACIÓN ═══════ -->
+  <section class="section" id="maquetacion">
+    <div class="section-header">
+      <span class="section-number">18</span>
+      <h2>Principios de Maquetación HTML</h2>
+    </div>
+
+    <p>La <strong>maquetación</strong> (layout) define cómo se organiza visualmente el contenido. En HTML, la estructura semántica sienta las bases; CSS Flexbox y Grid hacen la disposición visual.</p>
+
+    <h3>Elementos bloque vs. elementos inline</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Bloque (Block)</th><th>Inline</th></tr></thead>
+        <tbody>
+          <tr><td>Ocupa todo el ancho disponible</td><td>Solo ocupa su propio ancho</td></tr>
+          <tr><td>Siempre empieza en nueva línea</td><td>Fluye dentro del texto</td></tr>
+          <tr><td><code>div, p, h1-h6, section, article, ul, ol, table, form...</code></td><td><code>span, a, strong, em, img, input, button...</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Estructura típica de una página</h3>
+    <pre data-label="estructura-pagina.html"><code><span class="hs">&lt;!</span><span class="ht">DOCTYPE</span> <span class="ha">html</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">html</span> <span class="ha">lang</span><span class="hs">=</span><span class="hv">"es"</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">head</span><span class="hs">&gt;</span>...<span class="hs">&lt;/</span><span class="ht">head</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">body</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- 1. CABECERA --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">header</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/"</span><span class="hs">&gt;</span><span class="hs">&lt;</span><span class="ht">img</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"logo.svg"</span> <span class="ha">alt</span><span class="hs">=</span><span class="hv">"Logo"</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">nav</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">ul</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span><span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/"</span><span class="hs">&gt;</span>Inicio<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span><span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/sobre"</span><span class="hs">&gt;</span>Sobre mí<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">li</span><span class="hs">&gt;</span><span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/contacto"</span><span class="hs">&gt;</span>Contacto<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">li</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;/</span><span class="ht">ul</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">nav</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">header</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- 2. HERO (sección destacada) --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">section</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"hero"</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">h1</span><span class="hs">&gt;</span>Título principal de la página<span class="hs">&lt;/</span><span class="ht">h1</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>Subtítulo o descripción breve<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"#inicio"</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"cta"</span><span class="hs">&gt;</span>Comenzar<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">section</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- 3. CONTENIDO PRINCIPAL + SIDEBAR --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">main</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">div</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"layout"</span><span class="hs">&gt;</span>
+
+      <span class="hs">&lt;</span><span class="ht">article</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">h2</span><span class="hs">&gt;</span>Artículo principal<span class="hs">&lt;/</span><span class="ht">h2</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>Contenido...<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;/</span><span class="ht">article</span><span class="hs">&gt;</span>
+
+      <span class="hs">&lt;</span><span class="ht">aside</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">h2</span><span class="hs">&gt;</span>Contenido relacionado<span class="hs">&lt;/</span><span class="ht">h2</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">ul</span><span class="hs">&gt;</span>...<span class="hs">&lt;/</span><span class="ht">ul</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;/</span><span class="ht">aside</span><span class="hs">&gt;</span>
+
+    <span class="hs">&lt;/</span><span class="ht">div</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">main</span><span class="hs">&gt;</span>
+
+  <span class="hc">&lt;!-- 4. PIE DE PÁGINA --&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">footer</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>&amp;copy; 2025 Mi Sitio. Todos los derechos reservados.<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">nav</span> <span class="ha">aria-label</span><span class="hs">=</span><span class="hv">"Footer"</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/privacidad"</span><span class="hs">&gt;</span>Privacidad<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/terminos"</span><span class="hs">&gt;</span>Términos<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">nav</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">footer</span><span class="hs">&gt;</span>
+
+<span class="hs">&lt;/</span><span class="ht">body</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">html</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 19. LAYOUT SEMÁNTICO ═══════ -->
+  <section class="section" id="maquetacion-semantica">
+    <div class="section-header">
+      <span class="section-number">19</span>
+      <h2>Layout Semántico — Mapa visual</h2>
+    </div>
+
+    <div class="demo">
+      <div class="demo-bar">Mapa de regiones semánticas</div>
+      <div class="demo-content" style="padding:0; font-family: 'JetBrains Mono', monospace; font-size:12px;">
+        <div style="border:2px solid #e06c75; padding:12px; margin:8px; border-radius:6px;">
+          <div style="color:#e06c75; margin-bottom:8px; font-size:11px;">&lt;header&gt; — Encabezado global</div>
+          <div style="border:1px solid #61afef; padding:8px; border-radius:4px; color:#61afef; font-size:11px;">&lt;nav&gt; — Navegación principal</div>
+        </div>
+        <div style="border:2px solid #c678dd; padding:12px; margin:8px; border-radius:6px;">
+          <div style="color:#c678dd; margin-bottom:8px; font-size:11px;">&lt;main&gt; — Contenido principal (único)</div>
+          <div style="display:flex; gap:8px;">
+            <div style="flex:2; border:2px solid #98c379; padding:8px; border-radius:4px;">
+              <div style="color:#98c379; font-size:10px; margin-bottom:4px;">&lt;article&gt;</div>
+              <div style="border:1px solid #e5c07b; padding:6px; border-radius:3px; margin:4px 0;">
+                <div style="color:#e5c07b; font-size:10px;">&lt;section&gt;</div>
+              </div>
+              <div style="border:1px solid #e5c07b; padding:6px; border-radius:3px;">
+                <div style="color:#e5c07b; font-size:10px;">&lt;section&gt;</div>
+              </div>
+            </div>
+            <div style="flex:1; border:2px solid #56b6c2; padding:8px; border-radius:4px;">
+              <div style="color:#56b6c2; font-size:10px;">&lt;aside&gt;</div>
+              <div style="color:#6b7385; font-size:10px; margin-top:8px;">Sidebar / Complementario</div>
+            </div>
+          </div>
+        </div>
+        <div style="border:2px solid #abb2bf; padding:12px; margin:8px; border-radius:6px; color:#abb2bf; font-size:11px;">
+          &lt;footer&gt; — Pie de página global
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════ 20. EJEMPLOS COMPLETOS ═══════ -->
+  <section class="section" id="maquetacion-ejemplos">
+    <div class="section-header">
+      <span class="section-number">20</span>
+      <h2>Ejemplos completos de maquetación</h2>
+    </div>
+
+    <h3>Landing page mínima</h3>
+    <pre data-label="landing.html"><code><span class="hs">&lt;!</span><span class="ht">DOCTYPE</span> <span class="ha">html</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">html</span> <span class="ha">lang</span><span class="hs">=</span><span class="hv">"es"</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">head</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">charset</span><span class="hs">=</span><span class="hv">"UTF-8"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">meta</span> <span class="ha">name</span><span class="hs">=</span><span class="hv">"viewport"</span> <span class="ha">content</span><span class="hs">=</span><span class="hv">"width=device-width, initial-scale=1.0"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">title</span><span class="hs">&gt;</span>Mi Producto<span class="hs">&lt;/</span><span class="ht">title</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">link</span> <span class="ha">rel</span><span class="hs">=</span><span class="hv">"stylesheet"</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"styles.css"</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">head</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">body</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">header</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"header"</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/"</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"logo"</span><span class="hs">&gt;</span>Mi Producto<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">nav</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"#features"</span><span class="hs">&gt;</span>Características<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"#precios"</span><span class="hs">&gt;</span>Precios<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">nav</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">header</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">main</span><span class="hs">&gt;</span>
+    <span class="hc">&lt;!-- Hero --&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">section</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"hero"</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">h1</span><span class="hs">&gt;</span>Transforma tu flujo de trabajo<span class="hs">&lt;/</span><span class="ht">h1</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>La herramienta que necesitas para ser más productivo.<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/registro"</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"btn-cta"</span><span class="hs">&gt;</span>Prueba gratis<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">section</span><span class="hs">&gt;</span>
+
+    <span class="hc">&lt;!-- Features --&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">section</span> <span class="ha">id</span><span class="hs">=</span><span class="hv">"features"</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">h2</span><span class="hs">&gt;</span>Características<span class="hs">&lt;/</span><span class="ht">h2</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;</span><span class="ht">div</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"grid-3"</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">article</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"feature-card"</span><span class="hs">&gt;</span>
+          <span class="hs">&lt;</span><span class="ht">h3</span><span class="hs">&gt;</span>Rápido<span class="hs">&lt;/</span><span class="ht">h3</span><span class="hs">&gt;</span>
+          <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>Resultados en milisegundos.<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;/</span><span class="ht">article</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">article</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"feature-card"</span><span class="hs">&gt;</span>
+          <span class="hs">&lt;</span><span class="ht">h3</span><span class="hs">&gt;</span>Seguro<span class="hs">&lt;/</span><span class="ht">h3</span><span class="hs">&gt;</span>
+          <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>Cifrado de extremo a extremo.<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;/</span><span class="ht">article</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;</span><span class="ht">article</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"feature-card"</span><span class="hs">&gt;</span>
+          <span class="hs">&lt;</span><span class="ht">h3</span><span class="hs">&gt;</span>Escalable<span class="hs">&lt;/</span><span class="ht">h3</span><span class="hs">&gt;</span>
+          <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>Crece con tu negocio.<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+        <span class="hs">&lt;/</span><span class="ht">article</span><span class="hs">&gt;</span>
+      <span class="hs">&lt;/</span><span class="ht">div</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;/</span><span class="ht">section</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">main</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">footer</span><span class="hs">&gt;</span>
+    <span class="hs">&lt;</span><span class="ht">p</span><span class="hs">&gt;</span>&amp;copy; 2025 Mi Producto<span class="hs">&lt;/</span><span class="ht">p</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;/</span><span class="ht">footer</span><span class="hs">&gt;</span>
+
+  <span class="hs">&lt;</span><span class="ht">script</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"app.js"</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">script</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">body</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">html</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 21. BUENAS PRÁCTICAS ═══════ -->
+  <section class="section" id="buenas-practicas">
+    <div class="section-header">
+      <span class="section-number">21</span>
+      <h2>Buenas prácticas</h2>
+    </div>
+
+    <h3>✅ Hacer siempre</h3>
+    <ul>
+      <li>Usar etiquetas semánticas en lugar de <code>&lt;div&gt;</code> cuando sea posible</li>
+      <li>Incluir <code>alt</code> en todas las imágenes</li>
+      <li>Vincular cada <code>&lt;input&gt;</code> con su <code>&lt;label&gt;</code></li>
+      <li>Validar el HTML en <a href="https://validator.w3.org" target="_blank" rel="noopener noreferrer" style="color:var(--accent3)">validator.w3.org</a></li>
+      <li>Usar <code>lang</code> en el <code>&lt;html&gt;</code></li>
+      <li>Incluir <code>meta viewport</code> para diseño responsivo</li>
+      <li>Indentar el código para mayor legibilidad</li>
+      <li>Usar comillas en los valores de atributos</li>
+      <li>Escribir etiquetas en minúscula</li>
+      <li>Cerrar todas las etiquetas</li>
+    </ul>
+
+    <h3>❌ Evitar</h3>
+    <ul>
+      <li>Usar <code>&lt;table&gt;</code> para maquetación visual</li>
+      <li>Usar estilos inline (<code>style=""</code>) para todo</li>
+      <li>Usar <code>&lt;b&gt;</code> e <code>&lt;i&gt;</code> cuando debería ser <code>&lt;strong&gt;</code> y <code>&lt;em&gt;</code></li>
+      <li>Usar más de un <code>&lt;h1&gt;</code> por página</li>
+      <li>Saltarse niveles de encabezado (ir de h1 a h4 sin h2 y h3)</li>
+      <li>Usar <code>&lt;br&gt;</code> para crear espacios (usa CSS margin/padding)</li>
+      <li>Poner scripts en el <code>&lt;head&gt;</code> sin <code>defer</code></li>
+      <li>Imágenes sin <code>alt</code></li>
+      <li>Formularios sin <code>label</code></li>
+    </ul>
+
+    <pre data-label="❌ vs ✅"><code><span class="hc">&lt;!-- ❌ MAL: sin semántica --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">div</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"header"</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">div</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"nav"</span><span class="hs">&gt;</span><span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/"</span><span class="hs">&gt;</span>Inicio<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">div</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">div</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- ✅ BIEN: semántico --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">header</span><span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">nav</span><span class="hs">&gt;</span><span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/"</span><span class="hs">&gt;</span>Inicio<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span><span class="hs">&lt;/</span><span class="ht">nav</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">header</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- ❌ MAL: imagen sin alt --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">img</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"producto.jpg"</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- ✅ BIEN: con alt descriptivo --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">img</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"producto.jpg"</span> <span class="ha">alt</span><span class="hs">=</span><span class="hv">"Camiseta azul talla M"</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 22. ACCESIBILIDAD ═══════ -->
+  <section class="section" id="accesibilidad">
+    <div class="section-header">
+      <span class="section-number">22</span>
+      <h2>Accesibilidad (a11y)</h2>
+    </div>
+
+    <p>La accesibilidad web permite que personas con discapacidades puedan usar tu sitio. Las normas WCAG son el estándar internacional.</p>
+
+    <h3>Atributos ARIA esenciales</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Atributo</th><th>Para qué sirve</th></tr></thead>
+        <tbody>
+          <tr><td><code>aria-label</code></td><td>Etiqueta para lectores de pantalla</td></tr>
+          <tr><td><code>aria-labelledby</code></td><td>Referencia a otro elemento como etiqueta</td></tr>
+          <tr><td><code>aria-describedby</code></td><td>Descripción adicional para lectores de pantalla</td></tr>
+          <tr><td><code>aria-hidden="true"</code></td><td>Oculta el elemento de lectores de pantalla</td></tr>
+          <tr><td><code>aria-expanded</code></td><td>Estado expandido/colapsado (menú, acordeón)</td></tr>
+          <tr><td><code>aria-live</code></td><td>Anuncia cambios dinámicos en la página</td></tr>
+          <tr><td><code>role</code></td><td>Define el rol semántico del elemento</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="accesibilidad"><code><span class="hc">&lt;!-- Botón de menú hamburguesa accesible --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">button</span>
+  <span class="ha">aria-label</span><span class="hs">=</span><span class="hv">"Abrir menú de navegación"</span>
+  <span class="ha">aria-expanded</span><span class="hs">=</span><span class="hv">"false"</span>
+  <span class="ha">aria-controls</span><span class="hs">=</span><span class="hv">"menu-principal"</span>
+<span class="hs">&gt;</span>
+  <span class="hs">&lt;</span><span class="ht">span</span> <span class="ha">aria-hidden</span><span class="hs">=</span><span class="hv">"true"</span><span class="hs">&gt;</span>☰<span class="hs">&lt;/</span><span class="ht">span</span><span class="hs">&gt;</span>
+<span class="hs">&lt;/</span><span class="ht">button</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Imagen decorativa (oculta de lectores) --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">img</span> <span class="ha">src</span><span class="hs">=</span><span class="hv">"decoracion.svg"</span> <span class="ha">alt</span><span class="hs">=</span><span class="hv">""</span> <span class="ha">aria-hidden</span><span class="hs">=</span><span class="hv">"true"</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Skip link (saltar nav) --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"#main-content"</span> <span class="ha">class</span><span class="hs">=</span><span class="hv">"skip-link"</span><span class="hs">&gt;</span>
+  Saltar al contenido principal
+<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Tabla accesible --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">th</span> <span class="ha">scope</span><span class="hs">=</span><span class="hv">"col"</span><span class="hs">&gt;</span>Encabezado de columna<span class="hs">&lt;/</span><span class="ht">th</span><span class="hs">&gt;</span>
+<span class="hs">&lt;</span><span class="ht">th</span> <span class="ha">scope</span><span class="hs">=</span><span class="hv">"row"</span><span class="hs">&gt;</span>Encabezado de fila<span class="hs">&lt;/</span><span class="ht">th</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 23. SEO ═══════ -->
+  <section class="section" id="seo">
+    <div class="section-header">
+      <span class="section-number">23</span>
+      <h2>SEO básico con HTML</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Elemento</th><th>Impacto SEO</th><th>Buena práctica</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;title&gt;</code></td><td>⭐⭐⭐⭐⭐</td><td>Único por página, 50-60 caracteres</td></tr>
+          <tr><td><code>&lt;meta description&gt;</code></td><td>⭐⭐⭐⭐</td><td>Único, 150-160 caracteres, llamada a acción</td></tr>
+          <tr><td><code>&lt;h1&gt;</code></td><td>⭐⭐⭐⭐</td><td>Solo uno, contiene keyword principal</td></tr>
+          <tr><td><code>&lt;h2&gt;-&lt;h6&gt;</code></td><td>⭐⭐⭐</td><td>Estructura jerárquica lógica</td></tr>
+          <tr><td><code>alt</code> en imágenes</td><td>⭐⭐⭐</td><td>Descriptivo, incluye keywords relevantes</td></tr>
+          <tr><td><code>&lt;a&gt;</code> texto ancla</td><td>⭐⭐⭐</td><td>Descriptivo, no "clic aquí"</td></tr>
+          <tr><td>HTML semántico</td><td>⭐⭐⭐</td><td>Google entiende mejor la estructura</td></tr>
+          <tr><td><code>lang</code> en html</td><td>⭐⭐</td><td>Ayuda a indexar por idioma</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre data-label="seo-óptimo.html"><code><span class="hc">&lt;!-- Mal título --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">title</span><span class="hs">&gt;</span>Página 1<span class="hs">&lt;/</span><span class="ht">title</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Buen título --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">title</span><span class="hs">&gt;</span>Aprende HTML desde cero — Tutorial completo 2025<span class="hs">&lt;/</span><span class="ht">title</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Mal enlace --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/tutorial"</span><span class="hs">&gt;</span>Haz clic aquí<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span>
+
+<span class="hc">&lt;!-- Buen enlace --&gt;</span>
+<span class="hs">&lt;</span><span class="ht">a</span> <span class="ha">href</span><span class="hs">=</span><span class="hv">"/tutorial"</span><span class="hs">&gt;</span>Ver tutorial de HTML completo<span class="hs">&lt;/</span><span class="ht">a</span><span class="hs">&gt;</span></code></pre>
+  </section>
+
+
+  <!-- ═══════ 24. REFERENCIA RÁPIDA ═══════ -->
+  <section class="section" id="referencia-rapida">
+    <div class="section-header">
+      <span class="section-number">24</span>
+      <h2>Referencia rápida de etiquetas</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Etiqueta</th><th>Categoría</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td><code>&lt;!DOCTYPE&gt;</code></td><td>Meta</td><td>Declaración de versión HTML</td></tr>
+          <tr><td><code>&lt;html&gt;</code></td><td>Raíz</td><td>Elemento raíz del documento</td></tr>
+          <tr><td><code>&lt;head&gt;</code></td><td>Raíz</td><td>Metadatos del documento</td></tr>
+          <tr><td><code>&lt;body&gt;</code></td><td>Raíz</td><td>Contenido visible</td></tr>
+          <tr><td><code>&lt;meta&gt;</code></td><td>Meta</td><td>Metainformación</td></tr>
+          <tr><td><code>&lt;title&gt;</code></td><td>Meta</td><td>Título de la pestaña</td></tr>
+          <tr><td><code>&lt;link&gt;</code></td><td>Meta</td><td>Vincular recursos externos</td></tr>
+          <tr><td><code>&lt;style&gt;</code></td><td>Meta</td><td>CSS interno</td></tr>
+          <tr><td><code>&lt;script&gt;</code></td><td>Script</td><td>JavaScript</td></tr>
+          <tr><td><code>&lt;h1&gt;-&lt;h6&gt;</code></td><td>Texto</td><td>Encabezados jerárquicos</td></tr>
+          <tr><td><code>&lt;p&gt;</code></td><td>Texto</td><td>Párrafo</td></tr>
+          <tr><td><code>&lt;strong&gt;</code></td><td>Texto</td><td>Texto importante (negrita)</td></tr>
+          <tr><td><code>&lt;em&gt;</code></td><td>Texto</td><td>Texto enfatizado (cursiva)</td></tr>
+          <tr><td><code>&lt;br&gt;</code></td><td>Texto</td><td>Salto de línea</td></tr>
+          <tr><td><code>&lt;hr&gt;</code></td><td>Texto</td><td>Línea divisoria</td></tr>
+          <tr><td><code>&lt;blockquote&gt;</code></td><td>Texto</td><td>Cita larga</td></tr>
+          <tr><td><code>&lt;pre&gt;</code></td><td>Texto</td><td>Texto preformateado</td></tr>
+          <tr><td><code>&lt;code&gt;</code></td><td>Texto</td><td>Fragmento de código</td></tr>
+          <tr><td><code>&lt;mark&gt;</code></td><td>Texto</td><td>Texto resaltado</td></tr>
+          <tr><td><code>&lt;a&gt;</code></td><td>Enlace</td><td>Hipervínculo</td></tr>
+          <tr><td><code>&lt;img&gt;</code></td><td>Media</td><td>Imagen</td></tr>
+          <tr><td><code>&lt;video&gt;</code></td><td>Media</td><td>Video HTML5</td></tr>
+          <tr><td><code>&lt;audio&gt;</code></td><td>Media</td><td>Audio HTML5</td></tr>
+          <tr><td><code>&lt;figure&gt;</code></td><td>Media</td><td>Contenedor de figura</td></tr>
+          <tr><td><code>&lt;figcaption&gt;</code></td><td>Media</td><td>Pie de figura</td></tr>
+          <tr><td><code>&lt;ul&gt;</code></td><td>Lista</td><td>Lista desordenada</td></tr>
+          <tr><td><code>&lt;ol&gt;</code></td><td>Lista</td><td>Lista ordenada</td></tr>
+          <tr><td><code>&lt;li&gt;</code></td><td>Lista</td><td>Elemento de lista</td></tr>
+          <tr><td><code>&lt;dl&gt;</code></td><td>Lista</td><td>Lista de definiciones</td></tr>
+          <tr><td><code>&lt;table&gt;</code></td><td>Tabla</td><td>Tabla de datos</td></tr>
+          <tr><td><code>&lt;thead&gt;</code></td><td>Tabla</td><td>Encabezado de tabla</td></tr>
+          <tr><td><code>&lt;tbody&gt;</code></td><td>Tabla</td><td>Cuerpo de tabla</td></tr>
+          <tr><td><code>&lt;tr&gt;</code></td><td>Tabla</td><td>Fila de tabla</td></tr>
+          <tr><td><code>&lt;th&gt;</code></td><td>Tabla</td><td>Celda encabezado</td></tr>
+          <tr><td><code>&lt;td&gt;</code></td><td>Tabla</td><td>Celda de dato</td></tr>
+          <tr><td><code>&lt;form&gt;</code></td><td>Form</td><td>Formulario</td></tr>
+          <tr><td><code>&lt;input&gt;</code></td><td>Form</td><td>Campo de entrada</td></tr>
+          <tr><td><code>&lt;label&gt;</code></td><td>Form</td><td>Etiqueta de campo</td></tr>
+          <tr><td><code>&lt;select&gt;</code></td><td>Form</td><td>Lista desplegable</td></tr>
+          <tr><td><code>&lt;option&gt;</code></td><td>Form</td><td>Opción de select</td></tr>
+          <tr><td><code>&lt;textarea&gt;</code></td><td>Form</td><td>Área de texto</td></tr>
+          <tr><td><code>&lt;button&gt;</code></td><td>Form</td><td>Botón</td></tr>
+          <tr><td><code>&lt;fieldset&gt;</code></td><td>Form</td><td>Agrupar campos</td></tr>
+          <tr><td><code>&lt;legend&gt;</code></td><td>Form</td><td>Leyenda del fieldset</td></tr>
+          <tr><td><code>&lt;header&gt;</code></td><td>Semántica</td><td>Cabecera</td></tr>
+          <tr><td><code>&lt;footer&gt;</code></td><td>Semántica</td><td>Pie de página</td></tr>
+          <tr><td><code>&lt;main&gt;</code></td><td>Semántica</td><td>Contenido principal</td></tr>
+          <tr><td><code>&lt;nav&gt;</code></td><td>Semántica</td><td>Navegación</td></tr>
+          <tr><td><code>&lt;section&gt;</code></td><td>Semántica</td><td>Sección temática</td></tr>
+          <tr><td><code>&lt;article&gt;</code></td><td>Semántica</td><td>Artículo independiente</td></tr>
+          <tr><td><code>&lt;aside&gt;</code></td><td>Semántica</td><td>Contenido secundario</td></tr>
+          <tr><td><code>&lt;details&gt;</code></td><td>Semántica</td><td>Contenido expandible</td></tr>
+          <tr><td><code>&lt;summary&gt;</code></td><td>Semántica</td><td>Resumen de details</td></tr>
+          <tr><td><code>&lt;time&gt;</code></td><td>Semántica</td><td>Fecha/hora</td></tr>
+          <tr><td><code>&lt;address&gt;</code></td><td>Semántica</td><td>Información de contacto</td></tr>
+          <tr><td><code>&lt;div&gt;</code></td><td>Contenedor</td><td>Bloque genérico</td></tr>
+          <tr><td><code>&lt;span&gt;</code></td><td>Contenedor</td><td>Inline genérico</td></tr>
+          <tr><td><code>&lt;iframe&gt;</code></td><td>Embed</td><td>Incrustar otra página/mapa/video</td></tr>
+          <tr><td><code>&lt;canvas&gt;</code></td><td>Gráficos</td><td>Dibujo 2D con JavaScript</td></tr>
+          <tr><td><code>&lt;svg&gt;</code></td><td>Gráficos</td><td>Gráficos vectoriales escalables</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+    <!-- FOOTER DE SERIE -->
+  <div class="series-footer">
+    <div class="series-footer-label">Serie: Manuales de Programación &amp; Diseño Web</div>
+    <div class="series-vols">
+
+      <a href="manual-html.html">
+      <span class="vol-chip">Vol. 1 — Fundamentos de HTML</span> 
+      </a>
+
+      <a href="manual-css.html">
+        <span class="vol-chip current">Vol. 2 — CSS (este manual)</span>
+      </a>
+      
+
+      <a href="manual-javascript.html">
+        <span class="vol-chip">Vol. 3 — JavaScript básico</span>
+      </a>
+      
+      <a href="manual-responsive.html">
+        <span class="vol-chip">Vol. 4 — Responsive &amp; Mobile-First</span>
+      </a>
+      
+      <a href="manual-css-avanzado.html">
+        <span class="vol-chip">Vol. 5 — CSS Avanzado &amp; Preprocesadores</span>
+      </a>
+
+            <a href="manual-js-avanzado.html"> 
+        <span class="vol-chip">Vol. 6 — JavaScript Avanzado</span>
+      </a>
+      
+    </div>
+  </div>
+
+</main>
+
+<!-- Back to top -->
+<a href="#" class="back-top" id="backTop">↑</a>
+
+<script>
+  // ── PROGRESS BAR ──
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const pct = doc.scrollTop / (doc.scrollHeight - doc.clientHeight) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+    document.getElementById('backTop').classList.toggle('visible', doc.scrollTop > 300);
+  });
+
+  // ── ACTIVE SIDEBAR LINK ──
+  const sections = document.querySelectorAll('.section');
+  const links = document.querySelectorAll('.sidebar-link');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(s => obs.observe(s));
+
+  // ── SEARCH ──
+  function searchContent(q) {
+    q = q.trim().toLowerCase();
+    sections.forEach(sec => {
+      if (!q) { sec.classList.remove('search-hidden'); return; }
+      const text = sec.textContent.toLowerCase();
+      sec.classList.toggle('search-hidden', !text.includes(q));
+    });
+  }
+
+  // ── SIDEBAR MOBILE ──
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+  document.addEventListener('click', e => {
+    const sb = document.getElementById('sidebar');
+    if (!sb.contains(e.target) && e.target.id !== 'hamburger') {
+      sb.classList.remove('open');
+    }
+  });
+</script>
+</body>
+</html>

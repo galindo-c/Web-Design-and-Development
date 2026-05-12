@@ -1,0 +1,2764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Diseño Responsive — Serie Manuales de Programación Web Vol. 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   RESET & VARIABLES
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --coral:        #FF5C3A;
+  --coral-dark:   #CC3A1E;
+  --coral-light:  #FFF0ED;
+  --indigo:       #3D4EAC;
+  --indigo-dark:  #2B3880;
+  --indigo-light: #EEF0FB;
+  --mint:         #00A878;
+  --mint-light:   #E0F6F0;
+  --amber:        #F59E0B;
+  --amber-light:  #FEF3C7;
+  --cream:        #FDFCF8;
+  --cream2:       #F7F5EF;
+  --cream3:       #EDE9DF;
+  --ink:          #1C1917;
+  --ink-700:      #3D3A35;
+  --ink-500:      #6B6860;
+  --ink-300:      #A8A49C;
+  --ink-100:      #D6D2C8;
+  --text:         #1C1917;
+  --text-2:       #4A4740;
+  --text-3:       #7A776E;
+  --border:       #E5E1D8;
+  --border-soft:  #F0EDE6;
+  --code-bg:      #1C1917;
+  --sidebar-w:    272px;
+  --radius:       10px;
+  --radius-lg:    20px;
+  --shadow-sm:    0 1px 3px rgba(28,25,23,.06), 0 1px 2px rgba(28,25,23,.04);
+  --shadow-md:    0 4px 16px rgba(28,25,23,.08);
+  --shadow-coral: 0 8px 24px rgba(255,92,58,.2);
+  --font-display: 'Unbounded', system-ui, sans-serif;
+  --font-body:    'Instrument Sans', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --tr:           0.18s ease;
+}
+
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--text);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+::selection { background: var(--coral-light); color: var(--coral-dark); }
+
+/* Dot pattern */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--ink-100) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: .4;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* =============================================
+   SIDEBAR
+   ============================================= */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--ink);
+  color: rgba(255,255,255,.65);
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--tr);
+}
+
+.sidebar-brand {
+  padding: 28px 22px 22px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-brand::before {
+  content: '⊡';
+  position: absolute;
+  right: 16px; top: 16px;
+  font-size: 48px;
+  color: rgba(255,255,255,.04);
+  line-height: 1;
+}
+
+.sidebar-series {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 8px;
+}
+
+.sidebar-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+}
+
+.sidebar-vol {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  background: var(--coral);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.sidebar-nav { padding: 12px 0 24px; flex: 1; }
+
+.nav-group-label {
+  padding: 14px 20px 5px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 20px;
+  font-size: 12.5px;
+  color: rgba(255,255,255,.5);
+  text-decoration: none;
+  transition: all var(--tr);
+  border-left: 2px solid transparent;
+}
+
+.nav-link:hover { background: rgba(255,255,255,.05); color: rgba(255,255,255,.85); }
+
+.nav-link.active {
+  background: rgba(255,92,58,.1);
+  color: #FF8A72;
+  border-left-color: var(--coral);
+}
+
+.nav-num {
+  width: 20px; height: 20px;
+  border-radius: 5px;
+  background: rgba(255,255,255,.07);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 9px; font-weight: 500;
+  flex-shrink: 0;
+  color: rgba(255,255,255,.3);
+}
+
+.nav-link.active .nav-num { background: var(--coral); color: #fff; }
+
+/* =============================================
+   MAIN
+   ============================================= */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  max-width: 880px;
+  padding: 48px 56px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================
+   HERO
+   ============================================= */
+.hero {
+  position: relative;
+  margin-bottom: 60px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--ink);
+  padding: 52px 52px 48px;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 100% 0%, rgba(255,92,58,.25) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 0% 100%, rgba(61,78,172,.2) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,92,58,.18);
+  color: #FF8A72;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(255,92,58,.3);
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero h1 span { color: var(--coral); }
+
+.hero-sub {
+  font-size: 14.5px;
+  color: rgba(255,255,255,.6);
+  max-width: 520px;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; position: relative; z-index: 1; }
+
+.hero-tag {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.6);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+/* Device illustration in hero */
+.hero-devices {
+  position: absolute;
+  right: 40px;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  z-index: 1;
+  opacity: .18;
+}
+
+.dev-phone {
+  width: 36px; height: 64px;
+  border: 2px solid #fff;
+  border-radius: 6px;
+}
+
+.dev-tablet {
+  width: 56px; height: 72px;
+  border: 2px solid #fff;
+  border-radius: 5px;
+}
+
+.dev-desktop {
+  width: 88px; height: 60px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  position: relative;
+}
+
+.dev-desktop::after {
+  content: '';
+  position: absolute;
+  bottom: -10px; left: 50%;
+  transform: translateX(-50%);
+  width: 28px; height: 8px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+}
+
+/* =============================================
+   SECTIONS
+   ============================================= */
+.section {
+  margin-bottom: 60px;
+  scroll-margin-top: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--border);
+}
+
+.section-num {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--coral);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px; font-weight: 500;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-coral);
+}
+
+.section h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -.025em;
+}
+
+.section h3 {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--coral-dark);
+  margin: 28px 0 12px;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+p {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.78;
+  margin-bottom: .8rem;
+}
+
+p strong { font-weight: 600; color: var(--text); }
+
+/* =============================================
+   CODE BLOCKS
+   ============================================= */
+.code-wrap { position: relative; margin: 16px 0 20px; }
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #2C2A27;
+  border: 1px solid rgba(255,255,255,.06);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 8px 14px;
+}
+
+.code-dots { display: flex; gap: 5px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.code-dots span:nth-child(1) { background: #FF5C3A; }
+.code-dots span:nth-child(2) { background: #F59E0B; }
+.code-dots span:nth-child(3) { background: #00A878; }
+
+.code-lang {
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 500;
+  color: rgba(255,255,255,.3);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  overflow-x: auto;
+}
+
+.code-wrap pre { border-radius: 0 0 var(--radius) var(--radius); }
+
+pre code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: #CCC8C0;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+/* Syntax */
+.kw  { color: #FF79C6; }
+.pr  { color: #FFB86C; }
+.vl  { color: #A5D6FF; }
+.st  { color: #F1FA8C; }
+.nm  { color: #BD93F9; }
+.cm  { color: #6272A4; font-style: italic; }
+.sl  { color: #50FA7B; }
+.at  { color: #FF79C6; }
+.fn  { color: #8BE9FD; }
+.bo  { color: #BD93F9; }
+
+code.inline {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--cream2);
+  color: var(--coral-dark);
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+
+/* =============================================
+   TABLES
+   ============================================= */
+.table-wrap {
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+th {
+  background: var(--cream2);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text-3);
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-2);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--cream2); }
+td code { font-family: var(--font-mono); font-size: 11.5px; background: var(--cream2); color: var(--coral-dark); padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); }
+td strong { font-weight: 600; color: var(--text); }
+
+/* =============================================
+   CALLOUTS
+   ============================================= */
+.note, .tip, .warning, .danger {
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 13px 16px;
+  margin: 16px 0;
+  border-left: 3px solid;
+}
+
+.note { background: var(--indigo-light); border-color: var(--indigo); }
+.note-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--indigo); margin-bottom: 4px; font-family: var(--font-display); }
+.note p { font-size: 13px; color: var(--indigo-dark); margin: 0; }
+
+.tip { background: var(--coral-light); border-color: var(--coral); }
+.tip-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--coral-dark); margin-bottom: 4px; font-family: var(--font-display); }
+.tip p { font-size: 13px; color: var(--coral-dark); margin: 0; }
+
+.warning { background: var(--amber-light); border-color: var(--amber); }
+.warning-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: #92400E; margin-bottom: 4px; font-family: var(--font-display); }
+.warning p { font-size: 13px; color: #78350F; margin: 0; }
+
+.good-note { background: var(--mint-light); border-color: var(--mint); border-left: 3px solid; padding: 13px 16px; border-radius: 0 var(--radius) var(--radius) 0; margin: 16px 0; }
+.good-note-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--mint); margin-bottom: 4px; font-family: var(--font-display); }
+.good-note p { font-size: 13px; color: #065F46; margin: 0; }
+
+/* =============================================
+   DEVICE SIMULATOR
+   ============================================= */
+.device-simulator {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin: 16px 0 20px;
+}
+
+.sim-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.sim-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  font-size: 12px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-3);
+  transition: all var(--tr);
+}
+
+.sim-btn:hover { border-color: var(--coral); color: var(--coral); }
+.sim-btn.active { background: var(--coral); border-color: var(--coral); color: #fff; }
+
+.sim-screen-wrap {
+  display: flex;
+  justify-content: center;
+  transition: all .3s ease;
+}
+
+.sim-screen {
+  background: #fff;
+  border: 2px solid var(--ink-300);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: width .3s ease;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: var(--shadow-md);
+}
+
+.sim-screen.mobile  { max-width: 375px; }
+.sim-screen.tablet  { max-width: 768px; }
+.sim-screen.desktop { max-width: 100%; }
+
+.sim-content {
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+}
+
+.sim-nav {
+  background: var(--ink);
+  color: #fff;
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.sim-logo { font-weight: 600; color: var(--coral); font-size: 12px; }
+
+.sim-nav-links { display: flex; gap: 12px; }
+.sim-nav-links span { opacity: .7; cursor: default; }
+
+.sim-nav-burger { display: none; font-size: 16px; }
+
+.sim-body { padding: 14px; display: grid; gap: 12px; }
+
+.sim-hero-block {
+  background: linear-gradient(135deg, var(--coral), var(--indigo));
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.sim-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.sim-card {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.sim-card-title { font-weight: 600; color: var(--text); margin-bottom: 4px; font-size: 12px; }
+
+/* Mobile adjustments */
+.sim-screen.mobile .sim-nav-links { display: none; }
+.sim-screen.mobile .sim-nav-burger { display: block; }
+.sim-screen.mobile .sim-cards { grid-template-columns: 1fr; }
+.sim-screen.mobile .sim-hero-block { font-size: 14px; padding: 16px; }
+
+/* Tablet adjustments */
+.sim-screen.tablet .sim-cards { grid-template-columns: repeat(2, 1fr); }
+
+/* =============================================
+   BREAKPOINT RULER
+   ============================================= */
+.bp-ruler {
+  background: var(--ink);
+  border-radius: var(--radius);
+  padding: 20px 20px 14px;
+  margin: 16px 0 20px;
+  overflow-x: auto;
+}
+
+.bp-track {
+  position: relative;
+  height: 48px;
+  min-width: 500px;
+}
+
+.bp-bar {
+  position: absolute;
+  height: 32px;
+  top: 8px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.bp-bar.mobile  { left: 0%;    width: 20%; background: #FF8A72; }
+.bp-bar.sm      { left: 20%;   width: 20%; background: var(--amber); }
+.bp-bar.md      { left: 40%;   width: 15%; background: #7DD3FC; }
+.bp-bar.lg      { left: 55%;   width: 20%; background: #86EFAC; }
+.bp-bar.xl      { left: 75%;   width: 15%; background: var(--coral-light); color: var(--coral-dark); }
+.bp-bar.twoXl   { left: 90%;   width: 10%; background: #D8B4FE; color: var(--indigo-dark); }
+
+.bp-labels {
+  display: flex;
+  margin-top: 6px;
+  min-width: 500px;
+}
+
+.bp-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: rgba(255,255,255,.35);
+  flex: 1;
+  text-align: center;
+}
+
+/* =============================================
+   GRID + FLEX CARDS
+   ============================================= */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--coral);
+  margin-bottom: 10px;
+}
+
+.card pre { margin: 0; padding: 12px 14px; }
+
+/* =============================================
+   COMPARISON CARDS
+   ============================================= */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+
+.cmp { border-radius: var(--radius); overflow: hidden; border: 1px solid; }
+.cmp.good { border-color: rgba(0,168,120,.3); }
+.cmp.bad  { border-color: rgba(255,92,58,.3); }
+
+.cmp-label {
+  padding: 8px 14px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-display);
+}
+
+.cmp.good .cmp-label { background: var(--mint-light); color: var(--mint); }
+.cmp.bad  .cmp-label { background: var(--coral-light); color: var(--coral-dark); }
+.cmp pre  { margin: 0; border: none; border-radius: 0; border-top: 1px solid rgba(255,255,255,.05); }
+
+/* =============================================
+   TABS
+   ============================================= */
+.tab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  padding: 8px 18px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  color: var(--text-3);
+  background: transparent;
+  transition: all var(--tr);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--coral); border-bottom-color: var(--coral); }
+
+.tab-panel { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; }
+.tab-panel.active { display: block; }
+.tab-panel pre { border: none; border-radius: 0; margin: 0; }
+.tab-panel .code-header { border-radius: 0; }
+
+/* =============================================
+   CHECKLIST
+   ============================================= */
+.checklist { list-style: none; margin: 14px 0; }
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 0;
+  font-size: 13.5px;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border-soft);
+  line-height: 1.5;
+}
+
+.checklist li:last-child { border-bottom: none; }
+
+.ck-icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--coral);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+.ck-icon svg { width: 10px; height: 10px; }
+
+/* =============================================
+   CONCEPT CHIPS
+   ============================================= */
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin: 14px 0; }
+
+.concept-chip {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 11px 13px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--tr);
+}
+
+.concept-chip:hover { border-color: var(--coral); }
+.concept-name { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--coral-dark); margin-bottom: 3px; }
+.concept-desc { font-size: 11.5px; color: var(--text-3); line-height: 1.4; }
+
+/* =============================================
+   WHEN / USE CASES
+   ============================================= */
+.when-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; margin: 14px 0; }
+
+.when-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  transition: border-color var(--tr), box-shadow var(--tr);
+  box-shadow: var(--shadow-sm);
+}
+
+.when-card:hover { border-color: var(--coral); box-shadow: var(--shadow-coral); }
+.when-icon { font-size: 22px; margin-bottom: 8px; }
+.when-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.when-desc { font-size: 11px; color: var(--text-3); line-height: 1.4; }
+
+/* =============================================
+   INTERACTIVE DEMOS
+   ============================================= */
+.demo-box {
+  background: var(--cream2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 14px 0;
+}
+
+.demo-label {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--coral);
+  margin-bottom: 12px;
+}
+
+.demo-output {
+  background: var(--code-bg);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #CCC8C0;
+  min-height: 44px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 8px 18px;
+  background: var(--coral);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all .2s;
+  box-shadow: var(--shadow-coral);
+}
+
+.demo-btn:hover { background: var(--coral-dark); transform: translateY(-1px); }
+
+.demo-input {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.demo-input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(255,92,58,.1); }
+
+/* =============================================
+   VISUAL: VIEWPORT SIZES
+   ============================================= */
+.viewport-visual {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin: 16px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.vp-item { text-align: center; }
+
+.vp-screen {
+  background: var(--cream2);
+  border: 2px solid;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vp-screen.phone  { width: 56px;  height: 96px;  border-color: var(--coral);  color: var(--coral); border-radius: 10px; }
+.vp-screen.tablet { width: 96px;  height: 128px; border-color: var(--amber);  color: var(--amber); }
+.vp-screen.laptop { width: 152px; height: 100px; border-color: var(--indigo); color: var(--indigo); }
+.vp-screen.wide   { width: 200px; height: 112px; border-color: var(--mint);   color: var(--mint); }
+
+.vp-label { font-size: 11px; color: var(--text-3); font-weight: 500; }
+.vp-size  { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+
+/* =============================================
+   PROGRESS BAR & CONTROLS
+   ============================================= */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--coral), var(--indigo));
+  z-index: 999;
+  width: 0%;
+  transition: width .1s;
+}
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 48px; height: 48px;
+  background: var(--coral);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 300;
+  box-shadow: var(--shadow-coral);
+  align-items: center; justify-content: center;
+}
+
+.back-top {
+  position: fixed;
+  bottom: 24px;
+  left: calc(var(--sidebar-w) + 20px);
+  width: 38px; height: 38px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--text-3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--tr);
+  text-decoration: none;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.back-top.visible { opacity: 1; pointer-events: all; }
+.back-top:hover { background: var(--coral); color: #fff; border-color: var(--coral); }
+
+/* =============================================
+   DIVIDER
+   ============================================= */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 56px 0;
+  position: relative;
+}
+
+.divider::after {
+  content: '◆';
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--cream);
+  padding: 0 12px;
+  font-size: 10px;
+  color: var(--ink-100);
+}
+
+/* =============================================
+   SERIES FOOTER
+   ============================================= */
+.series-footer {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin-top: 48px;
+  box-shadow: var(--shadow-sm);
+}
+
+.series-footer-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--text-3);
+  margin-bottom: 14px;
+}
+
+.series-vols { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.series-vols a {
+  text-decoration: none;   /* Quita el subrayado */
+  color: inherit;          /* Mantiene el color del texto del span */
+}
+
+.vol-chip {
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  border: 1px solid var(--border);
+  color: var(--text-3);
+  background: var(--cream2);
+}
+
+.vol-chip.done    { color: var(--text-2); border-color: var(--ink-100); }
+.vol-chip.current { background: var(--coral-light); border-color: rgba(255,92,58,.35); color: var(--coral-dark); font-weight: 600; }
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 32px 24px 80px; }
+  .sidebar-toggle { display: flex; }
+  .hero { padding: 32px 28px; }
+  .hero h1 { font-size: 28px; }
+  .hero-devices { display: none; }
+  .compare, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .viewport-visual { gap: 12px; }
+  .vp-screen.wide { width: 140px; }
+  .vp-screen.laptop { width: 120px; }
+}
+
+@media (max-width: 560px) {
+  .main { padding: 24px 16px 80px; }
+  .hero h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-series">Serie: Programación &amp; Diseño Web</div>
+    <div class="sidebar-title">Diseño Responsive &amp; Mobile-First</div>
+    <span class="sidebar-vol">Vol. 4</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-group-label">Fundamentos</div>
+    <a href="#s01" class="nav-link active"><span class="nav-num">01</span>¿Qué es responsive?</a>
+    <a href="#s02" class="nav-link"><span class="nav-num">02</span>Viewport y meta tag</a>
+    <a href="#s03" class="nav-link"><span class="nav-num">03</span>Unidades relativas</a>
+    <div class="nav-group-label">Media Queries</div>
+    <a href="#s04" class="nav-link"><span class="nav-num">04</span>Media Queries</a>
+    <a href="#s05" class="nav-link"><span class="nav-num">05</span>Breakpoints</a>
+    <a href="#s06" class="nav-link"><span class="nav-num">06</span>Enfoque Mobile-First</a>
+    <div class="nav-group-label">Layout responsive</div>
+    <a href="#s07" class="nav-link"><span class="nav-num">07</span>Flexbox responsive</a>
+    <a href="#s08" class="nav-link"><span class="nav-num">08</span>CSS Grid responsive</a>
+    <a href="#s09" class="nav-link"><span class="nav-num">09</span>Container Queries</a>
+    <div class="nav-group-label">Tipografía e imágenes</div>
+    <a href="#s10" class="nav-link"><span class="nav-num">10</span>Tipografía fluida</a>
+    <a href="#s11" class="nav-link"><span class="nav-num">11</span>Imágenes responsivas</a>
+    <div class="nav-group-label">Componentes y patrones</div>
+    <a href="#s12" class="nav-link"><span class="nav-num">12</span>Navbar responsive</a>
+    <a href="#s13" class="nav-link"><span class="nav-num">13</span>Patrones comunes</a>
+    <div class="nav-group-label">Accesibilidad y rendimiento</div>
+    <a href="#s14" class="nav-link"><span class="nav-num">14</span>Accesibilidad</a>
+    <a href="#s15" class="nav-link"><span class="nav-num">15</span>Rendimiento</a>
+    <a href="#s16" class="nav-link"><span class="nav-num">16</span>Buenas prácticas</a>
+    <a href="#s17" class="nav-link"><span class="nav-num">17</span>Referencia rápida</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">
+      <span class="hero-badge">Serie: Programación &amp; Diseño Web</span>
+    </div>
+    <h1>Diseño<br><span>Responsive</span><br>&amp; Mobile-First</h1>
+    <p class="hero-sub">Aprende a construir interfaces que se adaptan perfectamente a cualquier pantalla: desde teléfonos de 320px hasta monitores ultrawide de 2560px, con técnicas modernas y un flujo de trabajo profesional.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Principiantes</span>
+      <span class="hero-tag">17 secciones</span>
+      <span class="hero-tag">Demos interactivas</span>
+      <span class="hero-tag">Container Queries</span>
+      <span class="hero-tag">Tipografía fluida</span>
+    </div>
+    <div class="hero-devices">
+      <div class="dev-phone"></div>
+      <div class="dev-tablet"></div>
+      <div class="dev-desktop"></div>
+    </div>
+  </div>
+
+  <!-- =============================================
+       S01 — QUÉ ES RESPONSIVE
+       ============================================= -->
+  <section class="section" id="s01">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2>¿Qué es el diseño responsive?</h2>
+    </div>
+
+    <p>El <strong>diseño web responsive</strong> (RWD, Responsive Web Design) es un enfoque de diseño y desarrollo que hace que las páginas web se vean y funcionen bien en cualquier dispositivo y tamaño de pantalla, sin necesidad de versiones separadas del sitio.</p>
+    <p>Fue introducido por Ethan Marcotte en 2010 y se basa en tres pilares técnicos fundamentales:</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-label">Pilar 1</div>
+        <div style="font-size:28px;margin-bottom:8px;">⬡</div>
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Rejillas fluidas</p>
+        <p style="font-size:12.5px;margin:0;">Layouts basados en porcentajes (%) en lugar de píxeles fijos.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Pilar 2</div>
+        <div style="font-size:28px;margin-bottom:8px;">◫</div>
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Imágenes flexibles</p>
+        <p style="font-size:12.5px;margin:0;">Imágenes que se escalan dentro de su contenedor sin desbordarse.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Pilar 3</div>
+        <div style="font-size:28px;margin-bottom:8px;">◈</div>
+        <p style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Media Queries</p>
+        <p style="font-size:12.5px;margin:0;">CSS condicional que aplica estilos según las características del dispositivo.</p>
+      </div>
+    </div>
+
+    <div class="viewport-visual">
+      <div class="vp-item">
+        <div class="vp-screen phone">📱<span>320px</span></div>
+        <div class="vp-label">Móvil pequeño</div>
+        <div class="vp-size">320–480px</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-screen tablet">📟<span>768px</span></div>
+        <div class="vp-label">Tablet</div>
+        <div class="vp-size">640–1024px</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-screen laptop">💻<span>1280px</span></div>
+        <div class="vp-label">Laptop</div>
+        <div class="vp-size">1024–1440px</div>
+      </div>
+      <div class="vp-item">
+        <div class="vp-screen wide">🖥<span>1920px</span></div>
+        <div class="vp-label">Monitor wide</div>
+        <div class="vp-size">1440px+</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <div class="note-label">Por qué importa</div>
+      <p>Más del 60% del tráfico web mundial llega desde dispositivos móviles. Google usa el índice <strong>Mobile-First</strong>: rastrea y posiciona las páginas basándose en su versión móvil. Un diseño no-responsive penaliza tanto la experiencia como el SEO.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S02 — VIEWPORT Y META TAG
+       ============================================= -->
+  <section class="section" id="s02">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2>Viewport y el meta tag esencial</h2>
+    </div>
+
+    <p>El <strong>viewport</strong> es el área visible de la página en el navegador. Sin el meta tag correcto, los móviles simulan una pantalla de escritorio y hacen zoom out, rompiendo cualquier diseño responsive.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">HTML</span></div>
+      <pre><code><span class="cm">&lt;!-- Obligatorio en el &lt;head&gt; de todo proyecto responsive --&gt;</span>
+<span class="sl">&lt;meta</span> <span class="pr">name</span>=<span class="st">"viewport"</span>
+      <span class="pr">content</span>=<span class="st">"width=device-width, initial-scale=1.0"</span><span class="sl">&gt;</span>
+
+<span class="cm">&lt;!-- Opciones del atributo content --&gt;</span>
+<span class="cm">&lt;!-- width=device-width    → ancho del viewport = ancho del dispositivo --&gt;</span>
+<span class="cm">&lt;!-- initial-scale=1.0    → sin zoom inicial --&gt;</span>
+<span class="cm">&lt;!-- maximum-scale=1.0    → deshabilita zoom del usuario (NO recomendado) --&gt;</span>
+<span class="cm">&lt;!-- user-scalable=no     → deshabilita zoom (MALO para accesibilidad) --&gt;</span></code></pre>
+    </div>
+
+    <div class="compare">
+      <div class="cmp good">
+        <div class="cmp-label">✓ Con meta viewport</div>
+        <pre><code style="font-size:11px;"><span class="cm">&lt;!-- El navegador usa el ancho</span>
+<span class="cm">real del dispositivo --&gt;</span>
+<span class="sl">&lt;meta</span> <span class="pr">name</span>=<span class="st">"viewport"</span>
+  <span class="pr">content</span>=<span class="st">"width=device-width,</span>
+<span class="st">           initial-scale=1.0"</span><span class="sl">&gt;</span>
+<span class="cm">&lt;!-- ✅ Layout funciona --&gt;</span>
+<span class="cm">&lt;!-- ✅ Media queries actúan --&gt;</span></code></pre>
+      </div>
+      <div class="cmp bad">
+        <div class="cmp-label">✗ Sin meta viewport</div>
+        <pre><code style="font-size:11px;"><span class="cm">&lt;!-- El móvil simula 980px</span>
+<span class="cm">de ancho y hace zoom out --&gt;</span>
+
+<span class="cm">&lt;!-- ❌ Texto diminuto --&gt;</span>
+<span class="cm">&lt;!-- ❌ Media queries no</span>
+<span class="cm">    se activan correctamente --&gt;</span>
+<span class="cm">&lt;!-- ❌ Usuario debe hacer zoom --&gt;</span></code></pre>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* CSS también tiene acceso al viewport */</span>
+<span class="sl">.hero</span> {
+  <span class="pr">width</span>:      <span class="nm">100vw</span>;     <span class="cm">/* 100% del ancho del viewport */</span>
+  <span class="pr">height</span>:     <span class="nm">100vh</span>;     <span class="cm">/* 100% del alto del viewport */</span>
+  <span class="pr">min-height</span>: <span class="nm">100svh</span>;   <span class="cm">/* Small Viewport Height — evita bug en móviles */</span>
+  <span class="pr">min-height</span>: <span class="nm">100dvh</span>;   <span class="cm">/* Dynamic Viewport Height — recomendado */</span>
+}
+
+<span class="cm">/* Unidades lógicas de viewport */</span>
+<span class="cm">/* vw — viewport width,   1vw = 1% del ancho   */</span>
+<span class="cm">/* vh — viewport height,  1vh = 1% del alto    */</span>
+<span class="cm">/* vmin — el menor entre vw y vh                */</span>
+<span class="cm">/* vmax — el mayor entre vw y vh                */</span>
+<span class="cm">/* svh/lvh/dvh — variantes para barras de UI    */</span></code></pre>
+    </div>
+
+    <div class="warning">
+      <div class="warning-label">El bug del 100vh en iOS</div>
+      <p>En iOS Safari, <code class="inline">100vh</code> incluye la barra del navegador aunque esté visible, causando un desplazamiento. Usa <code class="inline">100svh</code> (small viewport height) o <code class="inline">100dvh</code> (dynamic viewport height) para secciones a pantalla completa en móvil.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S03 — UNIDADES RELATIVAS
+       ============================================= -->
+  <section class="section" id="s03">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2>Unidades relativas</h2>
+    </div>
+
+    <p>Las unidades relativas son la base del diseño responsive. A diferencia de <code class="inline">px</code> (absoluto), se adaptan al contexto donde se usan.</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Unidad</th><th>Relativa a</th><th>Cuándo usar</th><th>Ejemplo</th></tr>
+        <tr><td><code>rem</code></td><td>font-size del elemento raíz (&lt;html&gt;, default 16px)</td><td>Tipografía, espaciados globales</td><td>1rem = 16px, 1.5rem = 24px</td></tr>
+        <tr><td><code>em</code></td><td>font-size del elemento padre</td><td>Padding/margin relativo al componente</td><td>Si padre=20px, 1em=20px</td></tr>
+        <tr><td><code>%</code></td><td>Dimensión del elemento padre</td><td>Anchos fluidos, imágenes</td><td>width: 50% = mitad del padre</td></tr>
+        <tr><td><code>vw</code></td><td>Ancho del viewport</td><td>Secciones full-width, tipografía fluida</td><td>1vw = 1% del viewport</td></tr>
+        <tr><td><code>vh</code></td><td>Alto del viewport</td><td>Secciones hero, sticky elements</td><td>100vh = pantalla completa</td></tr>
+        <tr><td><code>fr</code></td><td>Espacio disponible en grid</td><td>Columnas de CSS Grid</td><td>1fr = 1 fracción del espacio</td></tr>
+        <tr><td><code>ch</code></td><td>Ancho del carácter "0"</td><td>Ancho máximo de textos legibles</td><td>max-width: 65ch</td></tr>
+        <tr><td><code>clamp()</code></td><td>Función: min, ideal, max</td><td>Tipografía y espaciados fluidos</td><td>clamp(1rem, 2.5vw, 2rem)</td></tr>
+      </table>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— rem: tipografía escalable ——— */</span>
+<span class="sl">html</span>  { <span class="pr">font-size</span>: <span class="nm">16px</span>; }    <span class="cm">/* base */</span>
+<span class="sl">h1</span>    { <span class="pr">font-size</span>: <span class="nm">2.5rem</span>; }  <span class="cm">/* 40px */</span>
+<span class="sl">p</span>     { <span class="pr">font-size</span>: <span class="nm">1rem</span>; }    <span class="cm">/* 16px */</span>
+<span class="sl">small</span> { <span class="pr">font-size</span>: <span class="nm">0.875rem</span>; } <span class="cm">/* 14px */</span>
+
+<span class="cm">/* Si el usuario cambia el tamaño de fuente del navegador a 20px,
+   TODOS los rem se escalan proporcionalmente. ¡Accesibilidad gratis! */</span>
+
+<span class="cm">/* ——— % para layouts fluidos ——— */</span>
+<span class="sl">.contenedor</span> {
+  <span class="pr">width</span>:     <span class="nm">90%</span>;        <span class="cm">/* 90% del viewport */</span>
+  <span class="pr">max-width</span>: <span class="nm">1200px</span>;    <span class="cm">/* límite máximo */</span>
+  <span class="pr">margin</span>:    <span class="nm">0 auto</span>;     <span class="cm">/* centrar */</span>
+  <span class="pr">padding</span>:   <span class="nm">0 5%</span>;       <span class="cm">/* padding relativo */</span>
+}
+
+<span class="cm">/* ——— clamp(): el valor fluido perfecto ——— */</span>
+<span class="cm">/* Sintaxis: clamp(mínimo, ideal, máximo) */</span>
+
+<span class="sl">h1</span> {
+  <span class="pr">font-size</span>: <span class="fn">clamp</span>(<span class="nm">1.75rem</span>, <span class="nm">4vw</span>, <span class="nm">3rem</span>);
+  <span class="cm">/* Mínimo: 28px | Crece con 4vw | Máximo: 48px */</span>
+  <span class="cm">/* En 700px viewport: 4vw = 28px → 1.75rem</span>
+  <span class="cm">   En 1200px viewport: 4vw = 48px → 3rem (tope)   */</span>
+}
+
+<span class="sl">.seccion</span> {
+  <span class="pr">padding</span>: <span class="fn">clamp</span>(<span class="nm">2rem</span>, <span class="nm">5vw</span>, <span class="nm">6rem</span>);
+  <span class="cm">/* Espaciado fluido sin media queries */</span>
+}
+
+<span class="cm">/* ——— ch para ancho de columna de texto ——— */</span>
+<span class="sl">.articulo p</span> {
+  <span class="pr">max-width</span>: <span class="nm">65ch</span>;       <span class="cm">/* ~65 caracteres = longitud óptima de lectura */</span>
+}
+
+<span class="cm">/* ——— min() y max() ——— */</span>
+<span class="sl">.elemento</span> {
+  <span class="pr">width</span>:    <span class="fn">min</span>(<span class="nm">400px</span>, <span class="nm">90%</span>); <span class="cm">/* el menor: 400px fijo o 90% del padre */</span>
+  <span class="pr">padding</span>: <span class="fn">max</span>(<span class="nm">1rem</span>, <span class="nm">2vw</span>);  <span class="cm">/* el mayor: al menos 1rem */</span>
+}</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">▶ Demo — Cómo clamp() escala el texto</div>
+      <input class="demo-input" id="vw-input" type="range" min="320" max="1920" value="768" style="accent-color:var(--coral);padding:0;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-bottom:12px;font-family:var(--font-mono);">
+        <span>320px</span><span id="vw-val">768px viewport</span><span>1920px</span>
+      </div>
+      <div class="demo-output" id="demo-out-clamp">// Mueve el slider</div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S04 — MEDIA QUERIES
+       ============================================= -->
+  <section class="section" id="s04">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2>Media Queries</h2>
+    </div>
+
+    <p>Las <strong>media queries</strong> son la herramienta central del diseño responsive. Permiten aplicar bloques de CSS condicionalmente según las características del dispositivo o entorno.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* Sintaxis básica */</span>
+<span class="at">@media</span> (<span class="pr">condición</span>) {
+  <span class="cm">/* CSS que aplica cuando se cumple */</span>
+}
+
+<span class="cm">/* ——— Por ancho de pantalla (más común) ——— */</span>
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) { ... }   <span class="cm">/* pantallas ≥ 768px */</span>
+<span class="at">@media</span> (<span class="kw">max-width</span>: <span class="nm">767px</span>) { ... }   <span class="cm">/* pantallas &lt; 768px */</span>
+
+<span class="cm">/* ——— Rangos exactos ——— */</span>
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) <span class="kw">and</span> (<span class="kw">max-width</span>: <span class="nm">1023px</span>) { <span class="cm">/* tablets */</span> }
+
+<span class="cm">/* ——— Sintaxis moderna (range) — más legible ——— */</span>
+<span class="at">@media</span> (<span class="nm">768px</span> &lt;= <span class="kw">width</span> &lt; <span class="nm">1024px</span>) { <span class="cm">/* tablets — nueva sintaxis */</span> }
+<span class="at">@media</span> (<span class="kw">width</span> &gt;= <span class="nm">1024px</span>)           { <span class="cm">/* desktop y más */</span> }
+
+<span class="cm">/* ——— Orientación ——— */</span>
+<span class="at">@media</span> (<span class="kw">orientation</span>: <span class="vl">portrait</span>)  { <span class="cm">/* vertical */</span> }
+<span class="at">@media</span> (<span class="kw">orientation</span>: <span class="vl">landscape</span>) { <span class="cm">/* horizontal */</span> }
+
+<span class="cm">/* ——— Tipo de medio ——— */</span>
+<span class="at">@media</span> <span class="kw">screen</span>  { <span class="cm">/* pantallas */</span> }
+<span class="at">@media</span> <span class="kw">print</span>   { <span class="cm">/* impresión */</span> }
+
+<span class="cm">/* ——— Preferencias del usuario ——— */</span>
+<span class="at">@media</span> (<span class="kw">prefers-color-scheme</span>: <span class="vl">dark</span>)    { <span class="cm">/* modo oscuro */</span> }
+<span class="at">@media</span> (<span class="kw">prefers-reduced-motion</span>: <span class="vl">reduce</span>) { <span class="cm">/* sin animaciones */</span> }
+<span class="at">@media</span> (<span class="kw">prefers-contrast</span>: <span class="vl">more</span>)         { <span class="cm">/* contraste alto */</span> }
+
+<span class="cm">/* ——— Pantalla de alta resolución ——— */</span>
+<span class="at">@media</span> (<span class="kw">min-resolution</span>: <span class="nm">2dppx</span>)         { <span class="cm">/* retina/HiDPI */</span> }
+
+<span class="cm">/* ——— Combinar condiciones ——— */</span>
+<span class="at">@media</span> <span class="kw">screen</span> <span class="kw">and</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) { }
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) <span class="kw">or</span> (<span class="kw">orientation</span>: <span class="vl">landscape</span>) { }</code></pre>
+    </div>
+
+    <h3>Media queries en práctica</h3>
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* Modo oscuro automático con variables */</span>
+<span class="sl">:root</span> {
+  <span class="pr">--bg</span>:   <span class="vl">#FFFFFF</span>;
+  <span class="pr">--text</span>: <span class="vl">#1C1917</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">prefers-color-scheme</span>: <span class="vl">dark</span>) {
+  <span class="sl">:root</span> {
+    <span class="pr">--bg</span>:   <span class="vl">#1C1917</span>;
+    <span class="pr">--text</span>: <span class="vl">#F5F4F0</span>;
+  }
+}
+
+<span class="cm">/* Eliminar hover en dispositivos táctiles */</span>
+<span class="at">@media</span> (<span class="kw">hover</span>: <span class="vl">hover</span>) {
+  <span class="sl">.boton:hover</span> {
+    <span class="pr">background</span>: <span class="vl">var(--color-hover)</span>;
+  }
+}
+
+<span class="cm">/* Ocultar animaciones para usuarios que lo prefieren */</span>
+<span class="at">@media</span> (<span class="kw">prefers-reduced-motion</span>: <span class="vl">reduce</span>) {
+  <span class="sl">*, *::before, *::after</span> {
+    <span class="pr">animation-duration</span>:   <span class="nm">0.01ms</span> <span class="kw">!important</span>;
+    <span class="pr">transition-duration</span>:  <span class="nm">0.01ms</span> <span class="kw">!important</span>;
+    <span class="pr">scroll-behavior</span>:      <span class="vl">auto</span>   <span class="kw">!important</span>;
+  }
+}
+
+<span class="cm">/* Estilos de impresión */</span>
+<span class="at">@media</span> <span class="kw">print</span> {
+  <span class="sl">.sidebar, .nav, .footer, .ads</span> { <span class="pr">display</span>: <span class="vl">none</span>; }
+  <span class="sl">body</span>    { <span class="pr">font-size</span>: <span class="nm">12pt</span>; <span class="pr">color</span>: <span class="vl">#000</span>; }
+  <span class="sl">a::after</span> { <span class="pr">content</span>: <span class="st">" ("</span> <span class="fn">attr</span>(<span class="pr">href</span>) <span class="st">")"</span>; } <span class="cm">/* mostrar URLs */</span>
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S05 — BREAKPOINTS
+       ============================================= -->
+  <section class="section" id="s05">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2>Breakpoints</h2>
+    </div>
+
+    <p>Los <strong>breakpoints</strong> son los puntos de quiebre donde el diseño cambia para adaptarse a diferentes tamaños. No existe un estándar único, pero hay convenciones ampliamente aceptadas.</p>
+
+    <div class="bp-ruler">
+      <div class="bp-track">
+        <div class="bp-bar mobile">xs &lt;640</div>
+        <div class="bp-bar sm">sm 640+</div>
+        <div class="bp-bar md">md 768+</div>
+        <div class="bp-bar lg">lg 1024+</div>
+        <div class="bp-bar xl">xl 1280+</div>
+        <div class="bp-bar twoXl">2xl 1536+</div>
+      </div>
+      <div class="bp-labels">
+        <span class="bp-label">320</span>
+        <span class="bp-label">480</span>
+        <span class="bp-label">640</span>
+        <span class="bp-label">768</span>
+        <span class="bp-label">1024</span>
+        <span class="bp-label">1280</span>
+        <span class="bp-label">1536+</span>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Nombre</th><th>Breakpoint</th><th>Dispositivo típico</th><th>Media Query</th></tr>
+        <tr><td><strong>xs (base)</strong></td><td>&lt; 640px</td><td>Móviles pequeños</td><td>Estilos base (sin MQ)</td></tr>
+        <tr><td><strong>sm</strong></td><td>≥ 640px</td><td>Móviles grandes, phablets</td><td><code>@media (min-width: 640px)</code></td></tr>
+        <tr><td><strong>md</strong></td><td>≥ 768px</td><td>Tablets, iPad portrait</td><td><code>@media (min-width: 768px)</code></td></tr>
+        <tr><td><strong>lg</strong></td><td>≥ 1024px</td><td>Tablets landscape, laptops pequeños</td><td><code>@media (min-width: 1024px)</code></td></tr>
+        <tr><td><strong>xl</strong></td><td>≥ 1280px</td><td>Laptops, desktops</td><td><code>@media (min-width: 1280px)</code></td></tr>
+        <tr><td><strong>2xl</strong></td><td>≥ 1536px</td><td>Monitores grandes</td><td><code>@media (min-width: 1536px)</code></td></tr>
+      </table>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ✅ Sistema de breakpoints con variables */</span>
+<span class="sl">:root</span> {
+  <span class="pr">--bp-sm</span>: <span class="nm">640px</span>;
+  <span class="pr">--bp-md</span>: <span class="nm">768px</span>;
+  <span class="pr">--bp-lg</span>: <span class="nm">1024px</span>;
+  <span class="pr">--bp-xl</span>: <span class="nm">1280px</span>;
+}
+
+<span class="cm">/* Enfoque mobile-first (min-width) */</span>
+<span class="sl">.galeria</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-template-columns</span>: <span class="nm">1fr</span>;            <span class="cm">/* 1 col — base móvil */</span>
+  <span class="pr">gap</span>: <span class="nm">16px</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">640px</span>)  { <span class="sl">.galeria</span> { <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="nm">2</span>, <span class="nm">1fr</span>); } }
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">1024px</span>) { <span class="sl">.galeria</span> { <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="nm">3</span>, <span class="nm">1fr</span>); } }
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">1280px</span>) { <span class="sl">.galeria</span> { <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="nm">4</span>, <span class="nm">1fr</span>); } }
+
+<span class="cm">/* ⚠️ Elige breakpoints basándote en TU CONTENIDO, no en dispositivos.
+   Si el diseño se "rompe" a 730px, pon un breakpoint en 730px. */</span></code></pre>
+    </div>
+
+    <div class="tip">
+      <div class="tip-label">El consejo de los profesionales</div>
+      <p>Los mejores breakpoints son los que emergen del contenido, no los que coinciden con modelos de dispositivos específicos. Un iPhone 14 tiene un ancho diferente al iPhone 15. Diseña para el contenido, no para el dispositivo.</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S06 — MOBILE-FIRST
+       ============================================= -->
+  <section class="section" id="s06">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <h2>Enfoque Mobile-First</h2>
+    </div>
+
+    <p><strong>Mobile-First</strong> es una estrategia de diseño y desarrollo donde se empieza por la experiencia en pantallas pequeñas y se añade complejidad para pantallas mayores. Es el enfoque recomendado en la industria.</p>
+
+    <div class="compare">
+      <div class="cmp good">
+        <div class="cmp-label">✓ Mobile-First (min-width)</div>
+        <pre><code><span class="cm">/* Base: móvil */</span>
+<span class="sl">.grid</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-template-columns</span>: <span class="nm">1fr</span>;
+}
+
+<span class="cm">/* Tablet */</span>
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) {
+  <span class="sl">.grid</span> {
+    <span class="pr">grid-template-columns</span>:
+      <span class="fn">repeat</span>(<span class="nm">2</span>, <span class="nm">1fr</span>);
+  }
+}
+
+<span class="cm">/* Desktop */</span>
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">1024px</span>) {
+  <span class="sl">.grid</span> {
+    <span class="pr">grid-template-columns</span>:
+      <span class="fn">repeat</span>(<span class="nm">3</span>, <span class="nm">1fr</span>);
+  }
+}</code></pre>
+      </div>
+      <div class="cmp bad">
+        <div class="cmp-label">✗ Desktop-First (max-width)</div>
+        <pre><code><span class="cm">/* Base: desktop — malo */</span>
+<span class="sl">.grid</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-template-columns</span>:
+    <span class="fn">repeat</span>(<span class="nm">3</span>, <span class="nm">1fr</span>);
+}
+
+<span class="cm">/* Tablet */</span>
+<span class="at">@media</span> (<span class="kw">max-width</span>: <span class="nm">1023px</span>) {
+  <span class="sl">.grid</span> {
+    <span class="pr">grid-template-columns</span>:
+      <span class="fn">repeat</span>(<span class="nm">2</span>, <span class="nm">1fr</span>);
+  }
+}
+
+<span class="cm">/* Móvil — sobreescribiendo todo */</span>
+<span class="at">@media</span> (<span class="kw">max-width</span>: <span class="nm">767px</span>) {
+  <span class="sl">.grid</span> {
+    <span class="pr">grid-template-columns</span>: <span class="nm">1fr</span>;
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <h3>Por qué Mobile-First es mejor</h3>
+    <div class="concept-grid">
+      <div class="concept-chip">
+        <div class="concept-name">📱 Rendimiento</div>
+        <div class="concept-desc">Los móviles descargan solo el CSS base; los desktops descargan más pero tienen más capacidad.</div>
+      </div>
+      <div class="concept-chip">
+        <div class="concept-name">🔍 SEO</div>
+        <div class="concept-desc">Google usa Mobile-First indexing: el contenido móvil es el que posiciona.</div>
+      </div>
+      <div class="concept-chip">
+        <div class="concept-name">✍️ Simplicidad</div>
+        <div class="concept-desc">Es más fácil añadir complejidad que quitarla. Empieza simple.</div>
+      </div>
+      <div class="concept-chip">
+        <div class="concept-name">♿ Accesibilidad</div>
+        <div class="concept-desc">Las restricciones del móvil fuerzan diseños más claros y accesibles.</div>
+      </div>
+      <div class="concept-chip">
+        <div class="concept-name">🌍 Alcance</div>
+        <div class="concept-desc">En muchos países, el móvil es el único dispositivo de acceso a internet.</div>
+      </div>
+      <div class="concept-chip">
+        <div class="concept-name">⚡ Especificidad</div>
+        <div class="concept-desc">Con min-width, el CSS se acumula limpiamente; con max-width se sobreescribe.</div>
+      </div>
+    </div>
+
+    <!-- Demo simulator -->
+    <div class="device-simulator">
+      <div class="demo-label">▶ Demo — Simulador de dispositivos</div>
+      <div class="sim-controls">
+        <button class="sim-btn active" onclick="simDevice('mobile', this)">📱 Móvil (375px)</button>
+        <button class="sim-btn" onclick="simDevice('tablet', this)">📟 Tablet (768px)</button>
+        <button class="sim-btn" onclick="simDevice('desktop', this)">🖥 Desktop (completo)</button>
+      </div>
+      <div class="sim-screen-wrap">
+        <div class="sim-screen mobile" id="simScreen">
+          <div class="sim-content">
+            <div class="sim-nav">
+              <div class="sim-logo">MiSitio</div>
+              <div class="sim-nav-links">
+                <span>Inicio</span><span>Servicios</span><span>Contacto</span>
+              </div>
+              <div class="sim-nav-burger">☰</div>
+            </div>
+            <div class="sim-body">
+              <div class="sim-hero-block">Bienvenido a nuestro sitio web adaptable</div>
+              <div class="sim-cards">
+                <div class="sim-card"><div class="sim-card-title">Servicio 1</div>Descripción del primer servicio disponible.</div>
+                <div class="sim-card"><div class="sim-card-title">Servicio 2</div>Descripción del segundo servicio disponible.</div>
+                <div class="sim-card"><div class="sim-card-title">Servicio 3</div>Descripción del tercer servicio disponible.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S07 — FLEXBOX RESPONSIVE
+       ============================================= -->
+  <section class="section" id="s07">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <h2>Flexbox responsive</h2>
+    </div>
+
+    <p>Flexbox tiene propiedades intrínsecamente responsivas que pueden eliminar la necesidad de media queries en muchos casos.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— flex-wrap: el aliado del responsive ——— */</span>
+<span class="sl">.tarjetas</span> {
+  <span class="pr">display</span>:   <span class="vl">flex</span>;
+  <span class="pr">flex-wrap</span>: <span class="vl">wrap</span>;         <span class="cm">/* permite salto de línea */</span>
+  <span class="pr">gap</span>:       <span class="nm">16px</span>;
+}
+
+<span class="sl">.tarjeta</span> {
+  <span class="pr">flex</span>: <span class="nm">1 1 280px</span>;          <span class="cm">/* grow shrink basis */</span>
+  <span class="cm">/* Crece y se encoge, base de 280px.
+     En 600px: 2 tarjetas. En 400px: 1 tarjeta.
+     ¡Sin media queries! */</span>
+}
+
+<span class="cm">/* ——— Patrón: stack en móvil, fila en desktop ——— */</span>
+<span class="sl">.grupo</span> {
+  <span class="pr">display</span>:        <span class="vl">flex</span>;
+  <span class="pr">flex-direction</span>: <span class="vl">column</span>;    <span class="cm">/* columna en móvil */</span>
+  <span class="pr">gap</span>:            <span class="nm">16px</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) {
+  <span class="sl">.grupo</span> {
+    <span class="pr">flex-direction</span>: <span class="vl">row</span>;       <span class="cm">/* fila en tablet/desktop */</span>
+    <span class="pr">align-items</span>:    <span class="vl">center</span>;
+  }
+}
+
+<span class="cm">/* ——— flex-grow para llenar espacio disponible ——— */</span>
+<span class="sl">.barra-busqueda</span> {
+  <span class="pr">display</span>:     <span class="vl">flex</span>;
+  <span class="pr">gap</span>:         <span class="nm">8px</span>;
+}
+
+<span class="sl">.barra-busqueda input</span>  { <span class="pr">flex</span>: <span class="nm">1</span>; }       <span class="cm">/* ocupa todo el espacio */</span>
+<span class="sl">.barra-busqueda button</span> { <span class="pr">flex-shrink</span>: <span class="nm">0</span>; } <span class="cm">/* no se encoge */</span>
+
+<span class="cm">/* ——— Reordenar elementos en móvil ——— */</span>
+<span class="sl">.layout</span>   { <span class="pr">display</span>: <span class="vl">flex</span>; <span class="pr">flex-direction</span>: <span class="vl">column</span>; }
+<span class="sl">.sidebar</span>  { <span class="pr">order</span>: <span class="nm">2</span>; } <span class="cm">/* sidebar va después del contenido en móvil */</span>
+<span class="sl">.contenido</span> { <span class="pr">order</span>: <span class="nm">1</span>; } <span class="cm">/* contenido principal primero */</span>
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">1024px</span>) {
+  <span class="sl">.layout</span>   { <span class="pr">flex-direction</span>: <span class="vl">row</span>; }
+  <span class="sl">.sidebar</span>  { <span class="pr">order</span>: <span class="nm">1</span>; <span class="pr">width</span>: <span class="nm">280px</span>; <span class="pr">flex-shrink</span>: <span class="nm">0</span>; }
+  <span class="sl">.contenido</span> { <span class="pr">order</span>: <span class="nm">2</span>; <span class="pr">flex</span>: <span class="nm">1</span>; }
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S08 — GRID RESPONSIVE
+       ============================================= -->
+  <section class="section" id="s08">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <h2>CSS Grid responsive</h2>
+    </div>
+
+    <p>CSS Grid tiene funciones específicamente diseñadas para layouts responsivos, muchas de las cuales no requieren ninguna media query.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— auto-fit + minmax: el combo más poderoso ——— */</span>
+<span class="sl">.galeria</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="vl">auto-fit</span>, <span class="fn">minmax</span>(<span class="nm">220px</span>, <span class="nm">1fr</span>));
+  <span class="pr">gap</span>: <span class="nm">20px</span>;
+  <span class="cm">/* ✨ Sin media queries:
+     En 400px  → 1 columna (220px mínimo)
+     En 700px  → 2 columnas
+     En 900px  → 3 columnas
+     En 1200px → 4 columnas  */</span>
+}
+
+<span class="cm">/* ——— auto-fill vs auto-fit ——— */</span>
+<span class="sl">.con-fill</span> {
+  <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="vl">auto-fill</span>, <span class="fn">minmax</span>(<span class="nm">150px</span>, <span class="nm">1fr</span>));
+  <span class="cm">/* auto-fill: mantiene columnas vacías (espacio vacío) */</span>
+}
+
+<span class="sl">.con-fit</span> {
+  <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="vl">auto-fit</span>, <span class="fn">minmax</span>(<span class="nm">150px</span>, <span class="nm">1fr</span>));
+  <span class="cm">/* auto-fit: colapsa columnas vacías (elementos se expanden) */</span>
+}
+
+<span class="cm">/* ——— Layout de página con grid-template-areas ——— */</span>
+<span class="sl">.pagina</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">min-height</span>: <span class="nm">100vh</span>;
+  <span class="pr">grid-template-rows</span>: <span class="vl">auto 1fr auto</span>;
+  <span class="pr">grid-template-areas</span>:
+    <span class="st">"header"</span>
+    <span class="st">"main"</span>
+    <span class="st">"footer"</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">1024px</span>) {
+  <span class="sl">.pagina</span> {
+    <span class="pr">grid-template-columns</span>: <span class="nm">280px 1fr</span>;
+    <span class="pr">grid-template-areas</span>:
+      <span class="st">"header  header"</span>
+      <span class="st">"sidebar main"</span>
+      <span class="st">"footer  footer"</span>;
+  }
+  <span class="sl">.sidebar</span> { <span class="pr">grid-area</span>: <span class="vl">sidebar</span>; <span class="pr">display</span>: <span class="vl">block</span>; }
+}
+
+<span class="sl">header</span> { <span class="pr">grid-area</span>: <span class="vl">header</span>; }
+<span class="sl">main</span>   { <span class="pr">grid-area</span>: <span class="vl">main</span>; }
+<span class="sl">footer</span> { <span class="pr">grid-area</span>: <span class="vl">footer</span>; }
+<span class="sl">.sidebar</span> { <span class="pr">display</span>: <span class="vl">none</span>; } <span class="cm">/* oculto en móvil */</span>
+
+<span class="cm">/* ——— Elemento que ocupa más columnas en desktop ——— */</span>
+<span class="sl">.featured</span> {
+  <span class="pr">grid-column</span>: <span class="nm">1 / -1</span>;  <span class="cm">/* siempre ocupa todo el ancho */</span>
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) {
+  <span class="sl">.featured</span> {
+    <span class="pr">grid-column</span>: <span class="kw">span</span> <span class="nm">2</span>;  <span class="cm">/* 2 columnas en tablet */</span>
+  }
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S09 — CONTAINER QUERIES
+       ============================================= -->
+  <section class="section" id="s09">
+    <div class="section-header">
+      <div class="section-num">09</div>
+      <h2>Container Queries</h2>
+    </div>
+
+    <p>Las <strong>Container Queries</strong> (2023) son una revolución en el diseño responsive: en lugar de responder al tamaño de la <em>ventana</em>, los componentes responden al tamaño de su <em>contenedor padre</em>. Esto permite componentes verdaderamente reutilizables.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— Paso 1: definir el contenedor ——— */</span>
+<span class="sl">.tarjeta-wrapper</span> {
+  <span class="pr">container-type</span>: <span class="vl">inline-size</span>;  <span class="cm">/* monitorear ancho */</span>
+  <span class="pr">container-name</span>: <span class="vl">tarjeta</span>;        <span class="cm">/* nombre opcional */</span>
+  <span class="cm">/* Shorthand: container: tarjeta / inline-size; */</span>
+}
+
+<span class="cm">/* ——— Paso 2: usar @container en lugar de @media ——— */</span>
+<span class="sl">.tarjeta</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">flex-direction</span>: <span class="vl">column</span>;
+  <span class="pr">padding</span>: <span class="nm">16px</span>;
+}
+
+<span class="at">@container</span> <span class="vl">tarjeta</span> (<span class="kw">min-width</span>: <span class="nm">400px</span>) {
+  <span class="sl">.tarjeta</span> {
+    <span class="pr">flex-direction</span>: <span class="vl">row</span>;  <span class="cm">/* horizontal si el contenedor es amplio */</span>
+    <span class="pr">align-items</span>:    <span class="vl">center</span>;
+  }
+  <span class="sl">.tarjeta__imagen</span> {
+    <span class="pr">width</span>: <span class="nm">40%</span>;
+    <span class="pr">flex-shrink</span>: <span class="nm">0</span>;
+  }
+}
+
+<span class="cm">/* ——— Unidades de contenedor ——— */</span>
+<span class="sl">.tarjeta h2</span> {
+  <span class="pr">font-size</span>: <span class="fn">clamp</span>(<span class="nm">1rem</span>, <span class="nm">5cqi</span>, <span class="nm">1.5rem</span>);
+  <span class="cm">/* cqi = container query inline, como vw pero del contenedor */</span>
+}
+
+<span class="cm">/* Unidades de container:
+   cqw  — 1% del ancho del contenedor
+   cqh  — 1% del alto del contenedor
+   cqi  — 1% del inline-size del contenedor
+   cqb  — 1% del block-size del contenedor
+   cqmin / cqmax — menor / mayor entre cqi y cqb */</span>
+
+<span class="cm">/* ——— Ejemplo real: componente de producto ——— */</span>
+<span class="sl">.producto-wrapper</span> { <span class="pr">container-type</span>: <span class="vl">inline-size</span>; }
+
+<span class="sl">.producto</span> { <span class="pr">display</span>: <span class="vl">grid</span>; <span class="pr">gap</span>: <span class="nm">12px</span>; }
+
+<span class="at">@container</span> (<span class="kw">min-width</span>: <span class="nm">300px</span>) {
+  <span class="sl">.producto</span> { <span class="pr">grid-template-columns</span>: <span class="nm">120px 1fr</span>; }
+}
+
+<span class="at">@container</span> (<span class="kw">min-width</span>: <span class="nm">480px</span>) {
+  <span class="sl">.producto__precio</span>  { <span class="pr">font-size</span>: <span class="nm">1.4rem</span>; }
+  <span class="sl">.producto__boton</span>   { <span class="pr">display</span>: <span class="vl">flex</span>; }
+}</code></pre>
+    </div>
+
+    <div class="note">
+      <div class="note-label">Cuándo usar Container vs Media Queries</div>
+      <p>Usa <strong>media queries</strong> para cambios globales de layout (columnas de página, navbar). Usa <strong>container queries</strong> para componentes que se reutilizan en contextos con diferentes anchos (tarjetas en sidebar vs. en main, artículos en grid de 2 o 4 columnas).</p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S10 — TIPOGRAFÍA FLUIDA
+       ============================================= -->
+  <section class="section" id="s10">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Tipografía fluida</h2>
+    </div>
+
+    <p>La <strong>tipografía fluida</strong> se escala suavemente entre un tamaño mínimo y máximo sin saltos bruscos, usando <code class="inline">clamp()</code> o propiedades modernas.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— Sistema tipográfico fluido ——— */</span>
+<span class="sl">:root</span> {
+  <span class="cm">/* Fórmula: clamp(min, preferida, max) */</span>
+  <span class="pr">--text-xs</span>:   <span class="fn">clamp</span>(<span class="nm">0.75rem</span>,  <span class="nm">1.5vw</span>,  <span class="nm">0.875rem</span>); <span class="cm">/* 12–14px */</span>
+  <span class="pr">--text-sm</span>:   <span class="fn">clamp</span>(<span class="nm">0.875rem</span>, <span class="nm">1.8vw</span>,  <span class="nm">1rem</span>);    <span class="cm">/* 14–16px */</span>
+  <span class="pr">--text-base</span>: <span class="fn">clamp</span>(<span class="nm">1rem</span>,     <span class="nm">2vw</span>,    <span class="nm">1.125rem</span>); <span class="cm">/* 16–18px */</span>
+  <span class="pr">--text-lg</span>:   <span class="fn">clamp</span>(<span class="nm">1.125rem</span>, <span class="nm">2.5vw</span>,  <span class="nm">1.375rem</span>); <span class="cm">/* 18–22px */</span>
+  <span class="pr">--text-xl</span>:   <span class="fn">clamp</span>(<span class="nm">1.25rem</span>,  <span class="nm">3vw</span>,    <span class="nm">1.75rem</span>);  <span class="cm">/* 20–28px */</span>
+  <span class="pr">--text-2xl</span>:  <span class="fn">clamp</span>(<span class="nm">1.5rem</span>,   <span class="nm">3.5vw</span>,  <span class="nm">2.25rem</span>);  <span class="cm">/* 24–36px */</span>
+  <span class="pr">--text-3xl</span>:  <span class="fn">clamp</span>(<span class="nm">1.875rem</span>, <span class="nm">4.5vw</span>,  <span class="nm">3rem</span>);    <span class="cm">/* 30–48px */</span>
+  <span class="pr">--text-4xl</span>:  <span class="fn">clamp</span>(<span class="nm">2.25rem</span>,  <span class="nm">5.5vw</span>,  <span class="nm">4rem</span>);    <span class="cm">/* 36–64px */</span>
+
+  <span class="cm">/* Espaciados fluidos */</span>
+  <span class="pr">--space-sm</span>:  <span class="fn">clamp</span>(<span class="nm">0.75rem</span>, <span class="nm">2vw</span>,  <span class="nm">1rem</span>);
+  <span class="pr">--space-md</span>:  <span class="fn">clamp</span>(<span class="nm">1rem</span>,    <span class="nm">3vw</span>,  <span class="nm">1.5rem</span>);
+  <span class="pr">--space-lg</span>:  <span class="fn">clamp</span>(<span class="nm">1.5rem</span>,  <span class="nm">5vw</span>,  <span class="nm">3rem</span>);
+  <span class="pr">--space-xl</span>:  <span class="fn">clamp</span>(<span class="nm">2rem</span>,    <span class="nm">8vw</span>,  <span class="nm">5rem</span>);
+  <span class="pr">--space-2xl</span>: <span class="fn">clamp</span>(<span class="nm">3rem</span>,    <span class="nm">10vw</span>, <span class="nm">8rem</span>);
+}
+
+<span class="cm">/* Aplicación */</span>
+<span class="sl">body</span>  { <span class="pr">font-size</span>: <span class="vl">var(--text-base)</span>; }
+<span class="sl">h1</span>    { <span class="pr">font-size</span>: <span class="vl">var(--text-4xl)</span>; }
+<span class="sl">h2</span>    { <span class="pr">font-size</span>: <span class="vl">var(--text-3xl)</span>; }
+<span class="sl">h3</span>    { <span class="pr">font-size</span>: <span class="vl">var(--text-2xl)</span>; }
+
+<span class="sl">.hero</span> { <span class="pr">padding</span>: <span class="vl">var(--space-2xl)</span> <span class="vl">var(--space-lg)</span>; }
+
+<span class="cm">/* ——— Longitud óptima de lectura ——— */</span>
+<span class="sl">.articulo</span> {
+  <span class="pr">max-width</span>:   <span class="nm">65ch</span>;     <span class="cm">/* ~65 caracteres: óptimo para lectura */</span>
+  <span class="pr">margin</span>:      <span class="nm">0 auto</span>;
+  <span class="pr">line-height</span>: <span class="nm">1.7</span>;      <span class="cm">/* 1.5–1.8 para cuerpo de texto */</span>
+}
+
+<span class="cm">/* ——— font-size base responsive en :root ——— */</span>
+<span class="sl">html</span> {
+  <span class="pr">font-size</span>: <span class="fn">clamp</span>(<span class="nm">14px</span>, <span class="nm">1.5vw</span>, <span class="nm">18px</span>);
+  <span class="cm">/* Todos los rem se escalan automáticamente */</span>
+}</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">▶ Demo — Cómo se calcula clamp()</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+        <input class="demo-input" id="clamp-min" type="number" placeholder="Mínimo (rem)" value="1">
+        <input class="demo-input" id="clamp-vw"  type="number" placeholder="vw ideal" value="3">
+        <input class="demo-input" id="clamp-max" type="number" placeholder="Máximo (rem)" value="2">
+      </div>
+      <input class="demo-input" id="clamp-vp" type="range" min="320" max="1920" value="768" style="accent-color:var(--coral);padding:0;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-bottom:10px;font-family:var(--font-mono);">
+        <span>320px</span><span id="clamp-vp-val">768px</span><span>1920px</span>
+      </div>
+      <div class="demo-output" id="demo-out-clamp2">// Ajusta los valores</div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S11 — IMÁGENES RESPONSIVAS
+       ============================================= -->
+  <section class="section" id="s11">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Imágenes responsivas</h2>
+    </div>
+
+    <p>Las imágenes son el recurso más pesado de una página web. Servirlas correctamente en cada dispositivo es crucial para el rendimiento y la experiencia visual.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS + HTML</span></div>
+      <pre><code><span class="cm">/* ——— La regla CSS más importante ——— */</span>
+<span class="sl">img, video, iframe</span> {
+  <span class="pr">max-width</span>: <span class="nm">100%</span>;   <span class="cm">/* nunca desborda el contenedor */</span>
+  <span class="pr">height</span>:    <span class="vl">auto</span>;   <span class="cm">/* mantiene la proporción */</span>
+  <span class="pr">display</span>:   <span class="vl">block</span>;  <span class="cm">/* evita el espacio en línea */</span>
+}
+
+<span class="cm">/* ——— Aspect-ratio para reservar espacio ——— */</span>
+<span class="sl">.imagen-hero</span>  { <span class="pr">aspect-ratio</span>: <span class="nm">16/9</span>; <span class="pr">width</span>: <span class="nm">100%</span>; <span class="pr">object-fit</span>: <span class="vl">cover</span>; }
+<span class="sl">.avatar</span>        { <span class="pr">aspect-ratio</span>: <span class="nm">1/1</span>;  <span class="pr">width</span>: <span class="nm">60px</span>; <span class="pr">object-fit</span>: <span class="vl">cover</span>; <span class="pr">border-radius</span>: <span class="nm">50%</span>; }
+<span class="sl">.tarjeta-thumb</span> { <span class="pr">aspect-ratio</span>: <span class="nm">4/3</span>;  <span class="pr">width</span>: <span class="nm">100%</span>; <span class="pr">object-fit</span>: <span class="vl">cover</span>; }</code></pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">HTML</span></div>
+      <pre><code><span class="cm">&lt;!-- ——— srcset: diferentes tamaños de imagen ——— --&gt;</span>
+<span class="sl">&lt;img</span>
+  <span class="pr">src</span>=<span class="st">"imagen-800.jpg"</span>            <span class="cm">&lt;!-- fallback --&gt;</span>
+  <span class="pr">srcset</span>=<span class="st">"imagen-400.jpg  400w,
+          imagen-800.jpg  800w,
+          imagen-1200.jpg 1200w,
+          imagen-2400.jpg 2400w"</span>
+  <span class="pr">sizes</span>=<span class="st">"(max-width: 640px)  100vw,
+         (max-width: 1024px) 50vw,
+         33vw"</span>
+  <span class="pr">alt</span>=<span class="st">"Descripción"</span>
+  <span class="pr">loading</span>=<span class="st">"lazy"</span>
+  <span class="pr">decoding</span>=<span class="st">"async"</span>
+  <span class="pr">width</span>=<span class="st">"800"</span> <span class="pr">height</span>=<span class="st">"450"</span>         <span class="cm">&lt;!-- evita CLS --&gt;</span>
+<span class="sl">&gt;</span>
+
+<span class="cm">&lt;!-- ——— &lt;picture&gt;: art direction y formatos modernos ——— --&gt;</span>
+<span class="sl">&lt;picture&gt;</span>
+  <span class="cm">&lt;!-- Formato moderno (AVIF) --&gt;</span>
+  <span class="sl">&lt;source</span> <span class="pr">type</span>=<span class="st">"image/avif"</span>
+          <span class="pr">srcset</span>=<span class="st">"img.avif 1x, img@2x.avif 2x"</span><span class="sl">&gt;</span>
+
+  <span class="cm">&lt;!-- WebP para navegadores compatibles --&gt;</span>
+  <span class="sl">&lt;source</span> <span class="pr">type</span>=<span class="st">"image/webp"</span>
+          <span class="pr">srcset</span>=<span class="st">"img.webp 1x, img@2x.webp 2x"</span><span class="sl">&gt;</span>
+
+  <span class="cm">&lt;!-- Imagen diferente para móvil (art direction) --&gt;</span>
+  <span class="sl">&lt;source</span> <span class="pr">media</span>=<span class="st">"(max-width: 640px)"</span>
+          <span class="pr">srcset</span>=<span class="st">"img-vertical.jpg"</span><span class="sl">&gt;</span>
+
+  <span class="cm">&lt;!-- Fallback JPG --&gt;</span>
+  <span class="sl">&lt;img</span> <span class="pr">src</span>=<span class="st">"img.jpg"</span> <span class="pr">alt</span>=<span class="st">"Descripción"</span>
+       <span class="pr">loading</span>=<span class="st">"lazy"</span> <span class="pr">width</span>=<span class="st">"800"</span> <span class="pr">height</span>=<span class="st">"600"</span><span class="sl">&gt;</span>
+<span class="sl">&lt;/picture&gt;</span>
+
+<span class="cm">&lt;!-- ——— Imagen de fondo responsiva ——— --&gt;</span>
+<span class="cm">&lt;style&gt;</span>
+<span class="sl">.hero</span> {
+  <span class="pr">background-image</span>: <span class="fn">url</span>(<span class="st">'hero-sm.jpg'</span>);    <span class="cm">/* móvil: imagen pequeña */</span>
+  <span class="pr">background-size</span>: <span class="vl">cover</span>;
+  <span class="pr">background-position</span>: <span class="vl">center</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) {
+  <span class="sl">.hero</span> { <span class="pr">background-image</span>: <span class="fn">url</span>(<span class="st">'hero-md.jpg'</span>); }
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">1280px</span>) {
+  <span class="sl">.hero</span> { <span class="pr">background-image</span>: <span class="fn">url</span>(<span class="st">'hero-lg.jpg'</span>); }
+}
+<span class="cm">&lt;/style&gt;</span></code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Formato</th><th>Soporte</th><th>Compresión</th><th>Cuándo usar</th></tr>
+        <tr><td><strong>AVIF</strong></td><td>Moderno (95%+)</td><td>Excelente</td><td>Primera opción para fotos</td></tr>
+        <tr><td><strong>WebP</strong></td><td>Amplio (97%+)</td><td>Muy buena</td><td>Fallback de AVIF</td></tr>
+        <tr><td><strong>SVG</strong></td><td>Universal</td><td>Excelente para vectores</td><td>Logos, iconos, ilustraciones</td></tr>
+        <tr><td><strong>PNG</strong></td><td>Universal</td><td>Sin pérdida</td><td>Imágenes con transparencia</td></tr>
+        <tr><td><strong>JPEG</strong></td><td>Universal</td><td>Buena</td><td>Fallback universal para fotos</td></tr>
+        <tr><td><strong>GIF</strong></td><td>Universal</td><td>Mala</td><td>Usar video MP4/WebM en su lugar</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S12 — NAVBAR RESPONSIVE
+       ============================================= -->
+  <section class="section" id="s12">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Navbar responsive</h2>
+    </div>
+
+    <p>La navegación es uno de los elementos más complejos de hacer responsive. El patrón más común convierte el menú horizontal en un menú hamburguesa en móvil.</p>
+
+    <div class="tab-bar" id="navtabs">
+      <button class="tab-btn active" onclick="showTab('nav-html','navtabs')">HTML</button>
+      <button class="tab-btn" onclick="showTab('nav-css','navtabs')">CSS</button>
+      <button class="tab-btn" onclick="showTab('nav-js','navtabs')">JavaScript</button>
+    </div>
+
+    <div id="tab-nav-html" class="tab-panel active">
+      <pre><code><span class="sl">&lt;header&gt;</span>
+  <span class="sl">&lt;nav</span> <span class="pr">class</span>=<span class="st">"navbar"</span> <span class="pr">aria-label</span>=<span class="st">"Navegación principal"</span><span class="sl">&gt;</span>
+
+    <span class="sl">&lt;a</span> <span class="pr">href</span>=<span class="st">"/"</span> <span class="pr">class</span>=<span class="st">"navbar__logo"</span><span class="sl">&gt;</span>MiSitio<span class="sl">&lt;/a&gt;</span>
+
+    <span class="cm">&lt;!-- Botón hamburguesa (solo móvil) --&gt;</span>
+    <span class="sl">&lt;button</span>
+      <span class="pr">class</span>=<span class="st">"navbar__toggle"</span>
+      <span class="pr">aria-label</span>=<span class="st">"Abrir menú"</span>
+      <span class="pr">aria-expanded</span>=<span class="st">"false"</span>
+      <span class="pr">aria-controls</span>=<span class="st">"nav-menu"</span>
+    <span class="sl">&gt;</span>
+      <span class="sl">&lt;span&gt;&lt;/span&gt;</span>
+      <span class="sl">&lt;span&gt;&lt;/span&gt;</span>
+      <span class="sl">&lt;span&gt;&lt;/span&gt;</span>
+    <span class="sl">&lt;/button&gt;</span>
+
+    <span class="cm">&lt;!-- Lista de navegación --&gt;</span>
+    <span class="sl">&lt;ul</span> <span class="pr">class</span>=<span class="st">"navbar__menu"</span> <span class="pr">id</span>=<span class="st">"nav-menu"</span><span class="sl">&gt;</span>
+      <span class="sl">&lt;li&gt;&lt;a</span> <span class="pr">href</span>=<span class="st">"/"</span><span class="sl">&gt;</span>Inicio<span class="sl">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="sl">&lt;li&gt;&lt;a</span> <span class="pr">href</span>=<span class="st">"/servicios"</span><span class="sl">&gt;</span>Servicios<span class="sl">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="sl">&lt;li&gt;&lt;a</span> <span class="pr">href</span>=<span class="st">"/portafolio"</span><span class="sl">&gt;</span>Portafolio<span class="sl">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="sl">&lt;li&gt;&lt;a</span> <span class="pr">href</span>=<span class="st">"/contacto"</span><span class="sl">&gt;</span>Contacto<span class="sl">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="sl">&lt;/ul&gt;</span>
+
+  <span class="sl">&lt;/nav&gt;</span>
+<span class="sl">&lt;/header&gt;</span></code></pre>
+    </div>
+
+    <div id="tab-nav-css" class="tab-panel">
+      <pre><code><span class="sl">.navbar</span> {
+  <span class="pr">display</span>:         <span class="vl">flex</span>;
+  <span class="pr">align-items</span>:     <span class="vl">center</span>;
+  <span class="pr">justify-content</span>: <span class="vl">space-between</span>;
+  <span class="pr">padding</span>:         <span class="nm">0 24px</span>;
+  <span class="pr">height</span>:          <span class="nm">64px</span>;
+  <span class="pr">background</span>:      <span class="vl">white</span>;
+  <span class="pr">border-bottom</span>:   <span class="nm">1px</span> <span class="vl">solid #eee</span>;
+  <span class="pr">position</span>:        <span class="vl">sticky</span>;
+  <span class="pr">top</span>:             <span class="nm">0</span>;
+  <span class="pr">z-index</span>:         <span class="nm">100</span>;
+}
+
+<span class="sl">.navbar__logo</span>  { <span class="pr">font-weight</span>: <span class="nm">700</span>; <span class="pr">color</span>: <span class="vl">#FF5C3A</span>; <span class="pr">text-decoration</span>: <span class="vl">none</span>; }
+
+<span class="sl">.navbar__menu</span> {
+  <span class="pr">display</span>:   <span class="vl">flex</span>;
+  <span class="pr">gap</span>:       <span class="nm">8px</span>;
+  <span class="pr">list-style</span>: <span class="vl">none</span>;
+}
+
+<span class="sl">.navbar__menu a</span> {
+  <span class="pr">padding</span>:         <span class="nm">8px 12px</span>;
+  <span class="pr">border-radius</span>:   <span class="nm">6px</span>;
+  <span class="pr">text-decoration</span>: <span class="vl">none</span>;
+  <span class="pr">color</span>:           <span class="vl">#555</span>;
+  <span class="pr">font-size</span>:       <span class="nm">0.9rem</span>;
+  <span class="pr">transition</span>:      <span class="vl">background .15s</span>;
+}
+
+<span class="sl">.navbar__menu a:hover</span>    { <span class="pr">background</span>: <span class="vl">#f5f5f5</span>; }
+<span class="sl">.navbar__menu a[aria-current]</span> { <span class="pr">color</span>: <span class="vl">#FF5C3A</span>; <span class="pr">background</span>: <span class="vl">#FFF0ED</span>; }
+
+<span class="sl">.navbar__toggle</span> { <span class="pr">display</span>: <span class="vl">none</span>; } <span class="cm">/* oculto en desktop */</span>
+
+<span class="cm">/* ——— MÓVIL ——— */</span>
+<span class="at">@media</span> (<span class="kw">max-width</span>: <span class="nm">767px</span>) {
+  <span class="sl">.navbar__toggle</span> {
+    <span class="pr">display</span>: <span class="vl">flex</span>;
+    <span class="pr">flex-direction</span>: <span class="vl">column</span>;
+    <span class="pr">gap</span>: <span class="nm">5px</span>;
+    <span class="pr">padding</span>: <span class="nm">8px</span>;
+    <span class="pr">background</span>: <span class="vl">none</span>;
+    <span class="pr">border</span>: <span class="vl">none</span>;
+    <span class="pr">cursor</span>: <span class="vl">pointer</span>;
+  }
+
+  <span class="sl">.navbar__toggle span</span> {
+    <span class="pr">display</span>: <span class="vl">block</span>;
+    <span class="pr">width</span>:   <span class="nm">22px</span>;
+    <span class="pr">height</span>:  <span class="nm">2px</span>;
+    <span class="pr">background</span>: <span class="vl">#333</span>;
+    <span class="pr">transition</span>: <span class="vl">transform .25s, opacity .25s</span>;
+  }
+
+  <span class="cm">/* Animación a ✕ cuando está abierto */</span>
+  <span class="sl">.navbar__toggle[aria-expanded="true"] span:nth-child(1)</span>
+    { <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">7px</span>) <span class="fn">rotate</span>(<span class="nm">45deg</span>); }
+  <span class="sl">.navbar__toggle[aria-expanded="true"] span:nth-child(2)</span>
+    { <span class="pr">opacity</span>: <span class="nm">0</span>; }
+  <span class="sl">.navbar__toggle[aria-expanded="true"] span:nth-child(3)</span>
+    { <span class="pr">transform</span>: <span class="fn">translateY</span>(<span class="nm">-7px</span>) <span class="fn">rotate</span>(<span class="nm">-45deg</span>); }
+
+  <span class="sl">.navbar__menu</span> {
+    <span class="pr">display</span>:        <span class="vl">none</span>;
+    <span class="pr">flex-direction</span>: <span class="vl">column</span>;
+    <span class="pr">position</span>:       <span class="vl">absolute</span>;
+    <span class="pr">top</span>:            <span class="nm">64px</span>;
+    <span class="pr">left</span>:           <span class="nm">0</span>;
+    <span class="pr">right</span>:          <span class="nm">0</span>;
+    <span class="pr">background</span>:     <span class="vl">white</span>;
+    <span class="pr">padding</span>:        <span class="nm">12px 16px</span>;
+    <span class="pr">box-shadow</span>:     <span class="vl">0 8px 24px rgba(0,0,0,.1)</span>;
+    <span class="pr">border-top</span>:     <span class="nm">1px</span> <span class="vl">solid #eee</span>;
+  }
+
+  <span class="sl">.navbar__menu.open</span> { <span class="pr">display</span>: <span class="vl">flex</span>; }
+}</code></pre>
+    </div>
+
+    <div id="tab-nav-js" class="tab-panel">
+      <pre><code><span class="kw">const</span> <span class="vn">toggle</span> = <span class="fn">document</span>.<span class="fn">querySelector</span>(<span class="st">'.navbar__toggle'</span>);
+<span class="kw">const</span> <span class="vn">menu</span>   = <span class="fn">document</span>.<span class="fn">querySelector</span>(<span class="st">'.navbar__menu'</span>);
+
+<span class="vn">toggle</span>.<span class="fn">addEventListener</span>(<span class="st">'click', () =&gt; {</span>
+  <span class="kw">const</span> <span class="vn">isOpen</span> = <span class="vn">menu</span>.<span class="fn">classList</span>.<span class="fn">toggle</span>(<span class="st">'open'</span>);
+
+  <span class="cm">// Actualizar ARIA</span>
+  <span class="vn">toggle</span>.<span class="fn">setAttribute</span>(<span class="st">'aria-expanded'</span>, <span class="vn">isOpen</span>);
+  <span class="vn">toggle</span>.<span class="fn">setAttribute</span>(<span class="st">'aria-label'</span>,
+    <span class="vn">isOpen</span> ? <span class="st">'Cerrar menú'</span> : <span class="st">'Abrir menú'</span>);
+});
+
+<span class="cm">// Cerrar con Escape</span>
+<span class="fn">document</span>.<span class="fn">addEventListener</span>(<span class="st">'keydown', (e) =&gt; {</span>
+  <span class="kw">if</span> (<span class="vn">e</span>.<span class="vn">key</span> === <span class="st">'Escape'</span>) {
+    <span class="vn">menu</span>.<span class="fn">classList</span>.<span class="fn">remove</span>(<span class="st">'open'</span>);
+    <span class="vn">toggle</span>.<span class="fn">setAttribute</span>(<span class="st">'aria-expanded'</span>, <span class="st">'false'</span>);
+    <span class="vn">toggle</span>.<span class="fn">focus</span>();
+  }
+});
+
+<span class="cm">// Cerrar al hacer clic fuera</span>
+<span class="fn">document</span>.<span class="fn">addEventListener</span>(<span class="st">'click', (e) =&gt; {</span>
+  <span class="kw">if</span> (!<span class="vn">e</span>.<span class="vn">target</span>.<span class="fn">closest</span>(<span class="st">'.navbar'</span>)) {
+    <span class="vn">menu</span>.<span class="fn">classList</span>.<span class="fn">remove</span>(<span class="st">'open'</span>);
+    <span class="vn">toggle</span>.<span class="fn">setAttribute</span>(<span class="st">'aria-expanded'</span>, <span class="st">'false'</span>);
+  }
+});
+
+<span class="cm">// Cerrar al cambiar a desktop</span>
+<span class="kw">const</span> <span class="vn">mq</span> = <span class="fn">window</span>.<span class="fn">matchMedia</span>(<span class="st">'(min-width: 768px)'</span>);
+<span class="vn">mq</span>.<span class="fn">addEventListener</span>(<span class="st">'change', (e) =&gt; {</span>
+  <span class="kw">if</span> (<span class="vn">e</span>.<span class="vn">matches</span>) {
+    <span class="vn">menu</span>.<span class="fn">classList</span>.<span class="fn">remove</span>(<span class="st">'open'</span>);
+    <span class="vn">toggle</span>.<span class="fn">setAttribute</span>(<span class="st">'aria-expanded'</span>, <span class="st">'false'</span>);
+  }
+});</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S13 — PATRONES COMUNES
+       ============================================= -->
+  <section class="section" id="s13">
+    <div class="section-header">
+      <div class="section-num">13</div>
+      <h2>Patrones de layout responsive</h2>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— PATRÓN 1: Holy Grail — header, sidebar, main, footer ——— */</span>
+<span class="sl">.app</span> {
+  <span class="pr">display</span>:             <span class="vl">grid</span>;
+  <span class="pr">min-height</span>:          <span class="nm">100dvh</span>;
+  <span class="pr">grid-template-rows</span>:  <span class="vl">auto 1fr auto</span>;
+  <span class="pr">grid-template-areas</span>: <span class="st">"header" "main" "footer"</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">1024px</span>) {
+  <span class="sl">.app</span> {
+    <span class="pr">grid-template-columns</span>: <span class="nm">240px 1fr</span>;
+    <span class="pr">grid-template-areas</span>:
+      <span class="st">"header header"</span>
+      <span class="st">"sidebar main"</span>
+      <span class="st">"footer footer"</span>;
+  }
+}
+
+<span class="cm">/* ——— PATRÓN 2: Contenedor centrado con padding fluido ——— */</span>
+<span class="sl">.wrapper</span> {
+  <span class="pr">width</span>:     <span class="nm">min(1200px, 100%)</span>;
+  <span class="pr">margin</span>:    <span class="nm">0 auto</span>;
+  <span class="pr">padding</span>:   <span class="nm">0</span> <span class="fn">clamp</span>(<span class="nm">16px</span>, <span class="nm">5vw</span>, <span class="nm">48px</span>);
+}
+
+<span class="cm">/* ——— PATRÓN 3: Stack en móvil, horizontal en desktop ——— */</span>
+<span class="sl">.feature</span> {
+  <span class="pr">display</span>:        <span class="vl">flex</span>;
+  <span class="pr">flex-direction</span>: <span class="vl">column</span>;
+  <span class="pr">gap</span>:            <span class="nm">32px</span>;
+  <span class="pr">align-items</span>:    <span class="vl">center</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">768px</span>) {
+  <span class="sl">.feature</span>       { <span class="pr">flex-direction</span>: <span class="vl">row</span>; }
+  <span class="sl">.feature:nth-child(even)</span> { <span class="pr">flex-direction</span>: <span class="vl">row-reverse</span>; }
+}
+
+<span class="cm">/* ——— PATRÓN 4: Grid con mínimo sin media queries ——— */</span>
+<span class="sl">.auto-grid</span> {
+  <span class="pr">display</span>:              <span class="vl">grid</span>;
+  <span class="pr">grid-template-columns</span>: <span class="fn">repeat</span>(<span class="vl">auto-fit</span>, <span class="fn">minmax</span>(<span class="fn">min</span>(<span class="nm">300px</span>, <span class="nm">100%</span>), <span class="nm">1fr</span>));
+  <span class="pr">gap</span>:                  <span class="nm">20px</span>;
+}
+
+<span class="cm">/* ——— PATRÓN 5: Masonry (CSS Nativo) ——— */</span>
+<span class="sl">.masonry</span> {
+  <span class="pr">columns</span>:     <span class="fn">repeat</span>(<span class="vl">auto-fill</span>, <span class="fn">minmax</span>(<span class="nm">250px</span>, <span class="nm">1fr</span>));
+  <span class="pr">column-gap</span>:  <span class="nm">16px</span>;
+}
+
+<span class="sl">.masonry > *</span> { <span class="pr">break-inside</span>: <span class="vl">avoid</span>; <span class="pr">margin-bottom</span>: <span class="nm">16px</span>; }
+
+<span class="cm">/* ——— PATRÓN 6: Sticky sidebar en desktop ——— */</span>
+<span class="sl">.contenido-con-sidebar</span> {
+  <span class="pr">display</span>:              <span class="vl">grid</span>;
+  <span class="pr">gap</span>:                  <span class="nm">32px</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">min-width</span>: <span class="nm">1024px</span>) {
+  <span class="sl">.contenido-con-sidebar</span> {
+    <span class="pr">grid-template-columns</span>: <span class="nm">1fr 320px</span>;
+    <span class="pr">align-items</span>:          <span class="vl">start</span>;
+  }
+  <span class="sl">.sidebar</span> {
+    <span class="pr">position</span>: <span class="vl">sticky</span>;
+    <span class="pr">top</span>:      <span class="nm">80px</span>;           <span class="cm">/* altura del header */</span>
+    <span class="pr">max-height</span>: <span class="fn">calc</span>(<span class="nm">100vh</span> - <span class="nm">96px</span>);
+    <span class="pr">overflow-y</span>: <span class="vl">auto</span>;
+  }
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S14 — ACCESIBILIDAD
+       ============================================= -->
+  <section class="section" id="s14">
+    <div class="section-header">
+      <div class="section-num">14</div>
+      <h2>Accesibilidad en diseño responsive</h2>
+    </div>
+
+    <p>El diseño responsive y la accesibilidad van de la mano. Un sitio verdaderamente responsivo funciona para todos los usuarios: personas con discapacidades visuales, motoras, cognitivas, y quienes usan tecnologías asistivas.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— 1. Tamaños táctiles mínimos ——— */</span>
+<span class="sl">button, a, input, select, textarea</span> {
+  <span class="pr">min-height</span>: <span class="nm">44px</span>;   <span class="cm">/* WCAG recomienda 44×44px para áreas táctiles */</span>
+  <span class="pr">min-width</span>:  <span class="nm">44px</span>;
+}
+
+<span class="cm">/* ——— 2. Nunca eliminar el foco — personalízalo ——— */</span>
+<span class="sl">:focus-visible</span> {
+  <span class="pr">outline</span>:        <span class="nm">2px</span> <span class="vl">solid #FF5C3A</span>;
+  <span class="pr">outline-offset</span>: <span class="nm">2px</span>;
+  <span class="pr">border-radius</span>:  <span class="nm">3px</span>;
+}
+
+<span class="cm">/* ——— 3. Contraste de colores (WCAG AA: 4.5:1 para texto) ——— */</span>
+<span class="sl">.texto-cuerpo</span> { <span class="pr">color</span>: <span class="vl">#1C1917</span>; }    <span class="cm">/* 16:1 sobre blanco ✅ */</span>
+<span class="sl">.texto-muted</span>  { <span class="pr">color</span>: <span class="vl">#595550</span>; }    <span class="cm">/* 7:1 sobre blanco  ✅ */</span>
+<span class="cm">/* EVITAR: #999 sobre #fff → relación 2.85:1 ❌ */</span>
+
+<span class="cm">/* ——— 4. Tamaño de fuente mínimo legible ——— */</span>
+<span class="sl">body</span> { <span class="pr">font-size</span>: <span class="fn">clamp</span>(<span class="nm">1rem</span>, <span class="nm">2vw</span>, <span class="nm">1.125rem</span>); }
+<span class="cm">/* Nunca menos de 16px para texto de cuerpo */</span>
+
+<span class="cm">/* ——— 5. Usar rem (no px) para que escale con el usuario ——— */</span>
+<span class="sl">h1</span> { <span class="pr">font-size</span>: <span class="nm">2rem</span>; }    <span class="cm">/* ✅ escala si el usuario cambió la fuente base */</span>
+<span class="sl">h1</span> { <span class="pr">font-size</span>: <span class="nm">32px</span>; }   <span class="cm">/* ❌ fijo aunque el usuario quiera más grande */</span>
+
+<span class="cm">/* ——— 6. Animaciones opcionales ——— */</span>
+<span class="at">@media</span> (<span class="kw">prefers-reduced-motion</span>: <span class="vl">no-preference</span>) {
+  <span class="sl">.animado</span> { <span class="pr">transition</span>: <span class="vl">transform .3s ease</span>; }
+}
+
+<span class="cm">/* ——— 7. Zoom del usuario ——— */</span>
+<span class="sl">meta</span> [<span class="pr">name</span>=<span class="st">"viewport"</span>] {
+  <span class="cm">/* ✅ correcto */</span>
+  <span class="pr">content</span>: <span class="st">"width=device-width, initial-scale=1"</span>;
+  <span class="cm">/* ❌ NUNCA deshabilitar zoom */</span>
+  <span class="cm">/* content: "...user-scalable=no"  ← viola WCAG 1.4.4 */</span>
+}
+
+<span class="cm">/* ——— 8. Texto alternativo para imágenes de fondo ——— */</span>
+<span class="sl">.foto-perfil</span> {
+  <span class="pr">background-image</span>: <span class="fn">url</span>(<span class="st">'foto.jpg'</span>);
+  <span class="cm">/* ⚠️ Las imágenes de fondo no son accesibles para lectores de pantalla.
+     Usa &lt;img alt="..."&gt; para imágenes de contenido. */</span>
+}</code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Criterio WCAG</th><th>Nivel</th><th>Qué implica</th></tr>
+        <tr><td>1.4.3 — Contraste mínimo</td><td>AA</td><td>4.5:1 texto normal, 3:1 texto grande (18pt+)</td></tr>
+        <tr><td>1.4.4 — Redimensionar texto</td><td>AA</td><td>El texto debe ser usable al 200% de zoom sin pérdida de contenido</td></tr>
+        <tr><td>1.4.10 — Reflow</td><td>AA</td><td>En 320px de viewport no debe haber scroll horizontal para texto</td></tr>
+        <tr><td>2.5.5 — Tamaño del objetivo</td><td>AAA</td><td>Áreas táctiles de al menos 44×44px</td></tr>
+        <tr><td>2.5.8 — Tamaño del objetivo (mínimo)</td><td>AA (WCAG 2.2)</td><td>Al menos 24×24px, o espacio suficiente alrededor</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S15 — RENDIMIENTO
+       ============================================= -->
+  <section class="section" id="s15">
+    <div class="section-header">
+      <div class="section-num">15</div>
+      <h2>Rendimiento en sitios responsive</h2>
+    </div>
+
+    <p>Un buen diseño responsive también es un diseño performante. Las métricas de Core Web Vitals de Google penalizan los sitios lentos.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">HTML + CSS</span></div>
+      <pre><code><span class="cm">&lt;!-- ——— 1. Preload de recursos críticos ——— --&gt;</span>
+<span class="sl">&lt;link</span> <span class="pr">rel</span>=<span class="st">"preload"</span> <span class="pr">as</span>=<span class="st">"font"</span>
+  <span class="pr">href</span>=<span class="st">"fuente.woff2"</span>
+  <span class="pr">type</span>=<span class="st">"font/woff2"</span>
+  <span class="pr">crossorigin</span><span class="sl">&gt;</span>
+
+<span class="cm">&lt;!-- ——— 2. CSS crítico inline, resto diferido ——— --&gt;</span>
+<span class="sl">&lt;style&gt;</span>
+  <span class="cm">/* CSS above-the-fold inline */</span>
+  <span class="pr">body</span> { <span class="pr">margin</span>: <span class="nm">0</span>; <span class="pr">font-family</span>: <span class="vl">sans-serif</span>; }
+<span class="sl">&lt;/style&gt;</span>
+<span class="sl">&lt;link</span> <span class="pr">rel</span>=<span class="st">"stylesheet"</span> <span class="pr">href</span>=<span class="st">"estilos.css"</span>
+      <span class="pr">media</span>=<span class="st">"print"</span> <span class="pr">onload</span>=<span class="st">"this.media='all'"</span><span class="sl">&gt;</span>
+
+<span class="cm">&lt;!-- ——— 3. Imágenes lazy loading ——— --&gt;</span>
+<span class="sl">&lt;img</span> <span class="pr">src</span>=<span class="st">"foto.jpg"</span> <span class="pr">loading</span>=<span class="st">"lazy"</span>
+     <span class="pr">decoding</span>=<span class="st">"async"</span>
+     <span class="pr">width</span>=<span class="st">"800"</span> <span class="pr">height</span>=<span class="st">"450"</span>
+     <span class="pr">alt</span>=<span class="st">"..."</span><span class="sl">&gt;</span>
+
+<span class="cm">&lt;!-- ——— 4. Fuentes optimizadas ——— --&gt;</span>
+<span class="cm">&lt;style&gt;</span>
+<span class="at">@font-face</span> {
+  <span class="pr">font-family</span>:   <span class="st">'MiFuente'</span>;
+  <span class="pr">src</span>:           <span class="fn">url</span>(<span class="st">'fuente.woff2'</span>) <span class="vl">format('woff2')</span>;
+  <span class="pr">font-display</span>:  <span class="vl">swap</span>;  <span class="cm">/* muestra texto con fuente de sistema inmediatamente */</span>
+  <span class="pr">font-weight</span>:   <span class="nm">400 700</span>; <span class="cm">/* variable font range */</span>
+}
+<span class="cm">&lt;/style&gt;</span>
+
+<span class="cm">/* ——— 5. CSS para evitar layout shift (CLS) ——— */</span>
+<span class="sl">img</span>   { <span class="pr">aspect-ratio</span>: <span class="vl">attr(width) / attr(height)</span>; }  <span class="cm">/* reservar espacio */</span>
+<span class="sl">.anuncio</span> { <span class="pr">min-height</span>: <span class="nm">250px</span>; }                       <span class="cm">/* espacio para ads */</span>
+
+<span class="cm">/* ——— 6. Reducir repaints ——— */</span>
+<span class="sl">.animado</span> {
+  <span class="pr">will-change</span>: <span class="vl">transform</span>;  <span class="cm">/* hints al navegador (usar con cuidado) */</span>
+  <span class="pr">transform</span>:   <span class="fn">translateZ</span>(<span class="nm">0</span>); <span class="cm">/* promueve a capa GPU */</span>
+}
+
+<span class="cm">/* ——— 7. CSS custom media queries para cargar CSS específico ——— */</span>
+<span class="sl">&lt;link</span> <span class="pr">rel</span>=<span class="st">"stylesheet"</span> <span class="pr">href</span>=<span class="st">"tablet.css"</span>
+      <span class="pr">media</span>=<span class="st">"(min-width: 768px)"</span><span class="sl">&gt;</span>
+<span class="cm">&lt;!-- Solo se aplica en tablet, pero el navegador descarga ambos por
+     igual. Separa CSS sólo si el archivo es muy grande. --&gt;</span></code></pre>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Core Web Vital</th><th>Métrica</th><th>Objetivo</th><th>Qué afecta</th></tr>
+        <tr><td><strong>LCP</strong> (Largest Contentful Paint)</td><td>Tiempo de carga del elemento mayor</td><td>&lt; 2.5s</td><td>Imágenes, texto, background</td></tr>
+        <tr><td><strong>INP</strong> (Interaction to Next Paint)</td><td>Tiempo de respuesta a interacciones</td><td>&lt; 200ms</td><td>JavaScript, layout</td></tr>
+        <tr><td><strong>CLS</strong> (Cumulative Layout Shift)</td><td>Estabilidad visual</td><td>&lt; 0.1</td><td>Imágenes sin tamaño, fuentes</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S16 — BUENAS PRÁCTICAS
+       ============================================= -->
+  <section class="section" id="s16">
+    <div class="section-header">
+      <div class="section-num">16</div>
+      <h2>Buenas prácticas</h2>
+    </div>
+
+    <ul class="checklist">
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Incluye siempre <code class="inline">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code> en el <code class="inline">&lt;head&gt;</code>.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Diseña siempre <strong>Mobile-First</strong> con <code class="inline">min-width</code>. Empieza por el caso más restrictivo.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Usa <code class="inline">clamp()</code> para tipografía y espaciados que se escalen fluidamente sin media queries.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Prefiere <code class="inline">rem</code> sobre <code class="inline">px</code> para tipografía, para respetar las preferencias del usuario.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Añade siempre <code class="inline">max-width: 100%; height: auto;</code> a las imágenes para que no se desborden.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Especifica siempre <code class="inline">width</code> y <code class="inline">height</code> en las imágenes HTML para prevenir el Layout Shift (CLS).</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Prueba en dispositivos reales además de en el inspector del navegador. Los dispositivos reales revelan bugs de rendimiento y táctiles.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Nunca deshabilites el zoom con <code class="inline">user-scalable=no</code>. Viola WCAG y perjudica a usuarios con baja visión.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Usa <code class="inline">@media (prefers-reduced-motion: reduce)</code> para desactivar animaciones cuando el usuario lo prefiere.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Establece breakpoints basados en tu contenido, no en modelos de dispositivos concretos.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Usa <code class="inline">repeat(auto-fit, minmax(...))</code> en Grid para layouts responsivos sin media queries.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Verifica el contraste de colores con herramientas como WebAIM Contrast Checker. Mínimo 4.5:1 para texto normal.</li>
+    </ul>
+
+    <h3>Herramientas de testing</h3>
+    <div class="concept-grid">
+      <div class="concept-chip"><div class="concept-name">Chrome DevTools</div><div class="concept-desc">Device toolbar (Ctrl+Shift+M) para simular dispositivos y ver media queries activas</div></div>
+      <div class="concept-chip"><div class="concept-name">Firefox Responsive</div><div class="concept-desc">Vista de diseño responsivo con presets de dispositivos y orientación</div></div>
+      <div class="concept-chip"><div class="concept-name">Lighthouse</div><div class="concept-desc">Auditoría de rendimiento, accesibilidad y Core Web Vitals integrada en Chrome</div></div>
+      <div class="concept-chip"><div class="concept-name">PageSpeed Insights</div><div class="concept-desc">Análisis de rendimiento en tiempo real desde Google, datos de campo incluidos</div></div>
+      <div class="concept-chip"><div class="concept-name">BrowserStack</div><div class="concept-desc">Pruebas en dispositivos reales en la nube (iOS, Android, diferentes navegadores)</div></div>
+      <div class="concept-chip"><div class="concept-name">WebAIM Contrast</div><div class="concept-desc">Verificador de contraste de colores para cumplir WCAG AA/AAA</div></div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- =============================================
+       S17 — REFERENCIA RÁPIDA
+       ============================================= -->
+  <section class="section" id="s17">
+    <div class="section-header">
+      <div class="section-num">17</div>
+      <h2>Referencia rápida</h2>
+    </div>
+
+    <h3>Template base responsive</h3>
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">HTML</span></div>
+      <pre><code><span class="kw">&lt;!DOCTYPE html&gt;</span>
+<span class="sl">&lt;html</span> <span class="pr">lang</span>=<span class="st">"es"</span><span class="sl">&gt;</span>
+<span class="sl">&lt;head&gt;</span>
+  <span class="sl">&lt;meta</span> <span class="pr">charset</span>=<span class="st">"UTF-8"</span><span class="sl">&gt;</span>
+  <span class="sl">&lt;meta</span> <span class="pr">name</span>=<span class="st">"viewport"</span>
+        <span class="pr">content</span>=<span class="st">"width=device-width, initial-scale=1.0"</span><span class="sl">&gt;</span>
+  <span class="sl">&lt;title&gt;</span>Mi Sitio<span class="sl">&lt;/title&gt;</span>
+  <span class="sl">&lt;link</span> <span class="pr">rel</span>=<span class="st">"stylesheet"</span> <span class="pr">href</span>=<span class="st">"estilos.css"</span><span class="sl">&gt;</span>
+<span class="sl">&lt;/head&gt;</span>
+<span class="sl">&lt;body&gt;</span>
+  <span class="sl">&lt;header&gt;</span>...<span class="sl">&lt;/header&gt;</span>
+  <span class="sl">&lt;main&gt;</span>...<span class="sl">&lt;/main&gt;</span>
+  <span class="sl">&lt;footer&gt;</span>...<span class="sl">&lt;/footer&gt;</span>
+<span class="sl">&lt;/body&gt;</span>
+<span class="sl">&lt;/html&gt;</span></code></pre>
+    </div>
+
+    <h3>CSS reset responsive base</h3>
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">CSS</span></div>
+      <pre><code><span class="cm">/* ——— Reset responsive mínimo ——— */</span>
+<span class="sl">*, *::before, *::after</span> { <span class="pr">box-sizing</span>: <span class="vl">border-box</span>; }
+
+<span class="sl">html</span> {
+  <span class="pr">font-size</span>:       <span class="fn">clamp</span>(<span class="nm">14px</span>, <span class="nm">1.5vw</span>, <span class="nm">18px</span>);
+  <span class="pr">scroll-behavior</span>: <span class="vl">smooth</span>;
+}
+
+<span class="sl">body</span> {
+  <span class="pr">margin</span>:      <span class="nm">0</span>;
+  <span class="pr">font-family</span>: <span class="vl">system-ui, sans-serif</span>;
+  <span class="pr">line-height</span>: <span class="nm">1.6</span>;
+  <span class="pr">min-height</span>:  <span class="nm">100dvh</span>;
+}
+
+<span class="sl">img, video, svg</span> { <span class="pr">max-width</span>: <span class="nm">100%</span>; <span class="pr">height</span>: <span class="vl">auto</span>; <span class="pr">display</span>: <span class="vl">block</span>; }
+
+<span class="sl">p, h1, h2, h3, h4</span> { <span class="pr">overflow-wrap</span>: <span class="vl">break-word</span>; }
+
+<span class="sl">input, button, textarea, select</span> {
+  <span class="pr">font</span>:       <span class="vl">inherit</span>;
+  <span class="pr">min-height</span>: <span class="nm">44px</span>;
+}
+
+<span class="sl">:focus-visible</span> {
+  <span class="pr">outline</span>:        <span class="nm">2px</span> <span class="vl">solid currentColor</span>;
+  <span class="pr">outline-offset</span>: <span class="nm">3px</span>;
+}
+
+<span class="at">@media</span> (<span class="kw">prefers-reduced-motion</span>: <span class="vl">reduce</span>) {
+  <span class="sl">*, *::before, *::after</span> {
+    <span class="pr">animation-duration</span>:   <span class="nm">0.01ms</span> <span class="kw">!important</span>;
+    <span class="pr">transition-duration</span>:  <span class="nm">0.01ms</span> <span class="kw">!important</span>;
+    <span class="pr">scroll-behavior</span>:      <span class="vl">auto</span>   <span class="kw">!important</span>;
+  }
+}</code></pre>
+    </div>
+
+    <h3>Tabla de referencia de Media Queries</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Condición</th><th>Sintaxis</th><th>Cuándo usar</th></tr>
+        <tr><td>Pantalla ≥ N</td><td><code>@media (min-width: 768px)</code></td><td>Mobile-first (recomendado)</td></tr>
+        <tr><td>Pantalla &lt; N</td><td><code>@media (max-width: 767px)</code></td><td>Excepciones puntuales</td></tr>
+        <tr><td>Rango</td><td><code>@media (768px &lt;= width &lt; 1024px)</code></td><td>Estilos solo para tablet</td></tr>
+        <tr><td>Modo oscuro</td><td><code>@media (prefers-color-scheme: dark)</code></td><td>Tema oscuro automático</td></tr>
+        <tr><td>Sin animaciones</td><td><code>@media (prefers-reduced-motion: reduce)</code></td><td>Accesibilidad</td></tr>
+        <tr><td>Pantalla táctil</td><td><code>@media (hover: none) and (pointer: coarse)</code></td><td>Estilos táctiles</td></tr>
+        <tr><td>Retina/HiDPI</td><td><code>@media (min-resolution: 2dppx)</code></td><td>Imágenes 2x</td></tr>
+        <tr><td>Impresión</td><td><code>@media print</code></td><td>Estilos para imprimir</td></tr>
+        <tr><td>Modo retrato</td><td><code>@media (orientation: portrait)</code></td><td>Layouts verticales</td></tr>
+        <tr><td>Contraste alto</td><td><code>@media (prefers-contrast: more)</code></td><td>Accesibilidad visual</td></tr>
+      </table>
+    </div>
+
+    <h3>Cheatsheet de unidades responsivas</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Unidad</th><th>Se usa para</th><th>Ejemplo práctico</th></tr>
+        <tr><td><code>rem</code></td><td>Tipografía y espaciados escalables</td><td><code>font-size: 1.125rem</code></td></tr>
+        <tr><td><code>em</code></td><td>Padding relativo al tamaño del componente</td><td><code>padding: 0.5em 1em</code></td></tr>
+        <tr><td><code>%</code></td><td>Anchos fluidos</td><td><code>width: 90%</code></td></tr>
+        <tr><td><code>vw/vh</code></td><td>Secciones, hero, elementos a pantalla completa</td><td><code>height: 100dvh</code></td></tr>
+        <tr><td><code>fr</code></td><td>Columnas de grid</td><td><code>grid-template-columns: 1fr 2fr</code></td></tr>
+        <tr><td><code>ch</code></td><td>Ancho máximo de texto</td><td><code>max-width: 65ch</code></td></tr>
+        <tr><td><code>clamp()</code></td><td>Valores fluidos mín-ideal-máx</td><td><code>font-size: clamp(1rem, 2.5vw, 1.5rem)</code></td></tr>
+        <tr><td><code>min()/max()</code></td><td>Límites inteligentes</td><td><code>width: min(600px, 100%)</code></td></tr>
+        <tr><td><code>cqi</code></td><td>Tipografía relativa al contenedor</td><td><code>font-size: clamp(1rem, 5cqi, 1.5rem)</code></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- SERIES FOOTER -->
+  <div class="series-footer">
+    <div class="series-footer-label">Serie: Manuales de Programación &amp; Diseño Web</div>
+    <div class="series-vols">
+
+      <a href="manual-html.html"> 
+        <span class="vol-chip done">Vol. 1 — Fundamentos de HTML</span>
+      </a>
+      
+      <a href="manual-css.html"> 
+        <span class="vol-chip done">Vol. 2 — CSS</span>
+      </a>
+      
+      <a href="manual-javascript.html">
+         <span class="vol-chip done">Vol. 3 — JavaScript Básico</span>
+      </a>
+     
+      <a href="manual-responsive.html"> 
+        <span class="vol-chip current">Vol. 4 — Responsive &amp; Mobile-First (este manual)</span>
+      </a>
+      <a href="manual-css-avanzado.html"> 
+        <span class="vol-chip">Vol. 5 — CSS Avanzado</span>
+      </a>
+      
+      <a href="manual-javascript.html"> 
+        <span class="vol-chip">Vol. 6 — JavaScript Avanzado</span>
+      </a>
+
+    </div>
+  </div>
+
+</main>
+
+<button class="sidebar-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+<a href="#" class="back-top" id="backTop" title="Volver arriba">↑</a>
+
+<script>
+// =============================================
+// SIDEBAR MOBILE
+// =============================================
+const sidebar = document.getElementById('sidebar');
+const toggle  = document.getElementById('menuToggle');
+
+toggle.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  toggle.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
+});
+
+sidebar.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggle.textContent = '☰';
+  });
+});
+
+// =============================================
+// PROGRESS BAR + ACTIVE NAV + BACK TO TOP
+// =============================================
+const sections    = document.querySelectorAll('.section');
+const navLinks    = document.querySelectorAll('.nav-link');
+const progressBar = document.getElementById('progressBar');
+const backTop     = document.getElementById('backTop');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (docH > 0 ? (scrollTop / docH * 100) : 0) + '%';
+  backTop.classList.toggle('visible', scrollTop > 400);
+
+  let current = '';
+  sections.forEach(s => { if (scrollY >= s.offsetTop - 90) current = s.id; });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+
+// =============================================
+// TABS
+// =============================================
+function showTab(name, groupId) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + name)?.classList.add('active');
+  group.querySelectorAll('.tab-btn').forEach(btn => {
+    const match = btn.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+    if (match === name) btn.classList.add('active');
+  });
+}
+
+// =============================================
+// DEVICE SIMULATOR
+// =============================================
+function simDevice(type, btn) {
+  document.querySelectorAll('.sim-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const screen = document.getElementById('simScreen');
+  screen.className = 'sim-screen ' + type;
+}
+
+// =============================================
+// DEMO CLAMP SLIDER (S03)
+// =============================================
+const vwInput = document.getElementById('vw-input');
+if (vwInput) {
+  vwInput.addEventListener('input', () => {
+    const vp = parseInt(vwInput.value);
+    document.getElementById('vw-val').textContent = vp + 'px viewport';
+
+    const calc = (minR, vwP, maxR, vpPx) => {
+      const minPx  = minR * 16;
+      const maxPx  = maxR * 16;
+      const idealPx = (vwP / 100) * vpPx;
+      const result  = Math.max(minPx, Math.min(maxPx, idealPx));
+      return { minPx, idealPx: idealPx.toFixed(1), maxPx, result: result.toFixed(1) };
+    };
+
+    const h1  = calc(1.75, 4, 3, vp);
+    const p   = calc(1, 2, 1.125, vp);
+    const pad = calc(2, 5, 6, vp);
+
+    document.getElementById('demo-out-clamp').textContent =
+`viewport: ${vp}px
+
+h1 { font-size: clamp(1.75rem, 4vw, 3rem) }
+  4vw → ${h1.idealPx}px | min: ${h1.minPx}px | max: ${h1.maxPx}px
+  → resultado: ${h1.result}px
+
+p  { font-size: clamp(1rem, 2vw, 1.125rem) }
+  2vw → ${p.idealPx}px  | min: ${p.minPx}px  | max: ${p.maxPx}px
+  → resultado: ${p.result}px
+
+.seccion { padding: clamp(2rem, 5vw, 6rem) }
+  5vw → ${pad.idealPx}px | min: ${pad.minPx}px | max: ${pad.maxPx}px
+  → resultado: ${pad.result}px`;
+  });
+  vwInput.dispatchEvent(new Event('input'));
+}
+
+// =============================================
+// DEMO CLAMP BUILDER (S10)
+// =============================================
+function updateClamp2() {
+  const min = parseFloat(document.getElementById('clamp-min').value) || 1;
+  const vw  = parseFloat(document.getElementById('clamp-vw').value)  || 3;
+  const max = parseFloat(document.getElementById('clamp-max').value) || 2;
+  const vp  = parseInt(document.getElementById('clamp-vp').value)    || 768;
+  document.getElementById('clamp-vp-val').textContent = vp + 'px';
+
+  const minPx   = min * 16;
+  const maxPx   = max * 16;
+  const idealPx = (vw / 100) * vp;
+  const result  = Math.max(minPx, Math.min(maxPx, idealPx));
+
+  document.getElementById('demo-out-clamp2').textContent =
+`font-size: clamp(${min}rem, ${vw}vw, ${max}rem)
+
+Viewport: ${vp}px
+  ${vw}vw → ${idealPx.toFixed(1)}px
+  Mínimo:  ${minPx}px (${min}rem)
+  Máximo:  ${maxPx}px (${max}rem)
+
+Tamaño resultante: ${result.toFixed(1)}px
+${result === minPx ? '  ↑ Activo el mínimo' : result === maxPx ? '  ↑ Activo el máximo' : '  ↑ Usando el valor ideal (vw)'}`;
+}
+
+['clamp-min','clamp-vw','clamp-max','clamp-vp'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateClamp2);
+});
+updateClamp2();
+</script>
+
+</body>
+</html>

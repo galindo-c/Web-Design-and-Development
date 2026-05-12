@@ -1,0 +1,2814 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Avanzado — Serie Manuales Vol. 6</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =============================================
+   RESET & VARIABLES
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red:         #E84848;
+  --red-dark:    #B83030;
+  --red-bright:  #FF5C5C;
+  --red-glow:    rgba(232,72,72,.2);
+  --orange:      #F07030;
+  --orange-light:#FF9060;
+  --cyan:        #00D4C8;
+  --cyan-dim:    #00A89E;
+  --cyan-pale:   rgba(0,212,200,.08);
+  --yellow:      #F5C842;
+  --green-t:     #3DBA78;
+  --purple:      #9B6DFF;
+
+  --carbon:      #0A0A0B;
+  --carbon-1:    #101012;
+  --carbon-2:    #161618;
+  --carbon-3:    #1E1E20;
+  --carbon-4:    #262628;
+  --carbon-5:    #2E2E32;
+  --carbon-6:    #3A3A3E;
+  --smoke:       #4E4E54;
+  --fog:         #7A7A82;
+  --mist:        #A8A8B0;
+  --light:       #E0E0E8;
+  --white:       #F4F4F8;
+
+  --text-primary:   var(--white);
+  --text-secondary: var(--light);
+  --text-muted:     var(--mist);
+  --bg:             var(--carbon);
+  --surface:        var(--carbon-2);
+  --surface2:       var(--carbon-3);
+  --surface3:       var(--carbon-4);
+  --border:         var(--carbon-5);
+  --border-soft:    var(--carbon-4);
+  --code-bg:        var(--carbon-1);
+  --sidebar-w:      272px;
+  --radius:         6px;
+  --radius-lg:      14px;
+  --glow-red:       0 0 20px rgba(232,72,72,.25);
+  --glow-cyan:      0 0 16px rgba(0,212,200,.2);
+  --font-display:   'Space Mono', monospace;
+  --font-body:      'Barlow', system-ui, sans-serif;
+  --font-mono:      'JetBrains Mono', monospace;
+  --transition:     0.15s ease;
+}
+
+/* =============================================
+   BASE
+   ============================================= */
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.7;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Scan-line overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,.015) 0px,
+    rgba(0,0,0,.015) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+::selection { background: var(--red-glow); color: var(--red-bright); }
+
+/* =============================================
+   SIDEBAR
+   ============================================= */
+.sidebar {
+  width: var(--sidebar-w);
+  min-height: 100vh;
+  background: var(--carbon-1);
+  position: fixed;
+  top: 0; left: 0;
+  overflow-y: auto;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  transition: transform var(--transition);
+}
+
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red), var(--orange), transparent);
+}
+
+.sidebar-brand {
+  padding: 26px 20px 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.sidebar-series {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--fog);
+  margin-bottom: 8px;
+}
+
+.sidebar-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.3;
+  letter-spacing: -.02em;
+}
+
+.sidebar-vol {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 2px 10px;
+  border-radius: 3px;
+  box-shadow: var(--glow-red);
+}
+
+.sidebar-nav { padding: 10px 0 24px; flex: 1; }
+
+.nav-group-label {
+  padding: 12px 18px 4px;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--carbon-6);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 300;
+  color: var(--fog);
+  text-decoration: none;
+  transition: all var(--transition);
+  border-left: 2px solid transparent;
+}
+
+.nav-link:hover { color: var(--mist); background: rgba(255,255,255,.02); }
+
+.nav-link.active {
+  color: var(--red-bright);
+  background: rgba(232,72,72,.06);
+  border-left-color: var(--red);
+  font-weight: 400;
+}
+
+.nav-num {
+  width: 18px; height: 18px;
+  border-radius: 3px;
+  background: var(--carbon-3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 600;
+  flex-shrink: 0;
+  color: var(--smoke);
+  border: 1px solid var(--carbon-5);
+}
+
+.nav-link.active .nav-num {
+  background: var(--red);
+  color: #fff;
+  border-color: var(--red);
+  box-shadow: var(--glow-red);
+}
+
+/* =============================================
+   MAIN
+   ============================================= */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  max-width: 880px;
+  padding: 48px 56px 100px;
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================
+   HERO
+   ============================================= */
+.hero {
+  position: relative;
+  margin-bottom: 56px;
+  padding: 52px 52px 48px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--carbon-2);
+  border: 1px solid var(--border);
+}
+
+/* Circuit board pattern */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(232,72,72,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,72,72,.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 80% 80% at 80% 50%, black 0%, transparent 70%);
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 50% 80% at 10% 50%, rgba(232,72,72,.12) 0%, transparent 60%);
+}
+
+.hero-content { position: relative; z-index: 1; }
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(232,72,72,.15);
+  color: var(--red-bright);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(232,72,72,.3);
+}
+
+.hero-vol {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--smoke);
+  letter-spacing: .08em;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.0;
+  letter-spacing: -.04em;
+  margin-bottom: 6px;
+}
+
+.hero h1 span {
+  color: var(--red);
+  display: block;
+}
+
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--fog);
+  max-width: 500px;
+  line-height: 1.65;
+  margin-bottom: 28px;
+  margin-top: 10px;
+}
+
+.hero-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.hero-tag {
+  background: var(--carbon-3);
+  color: var(--smoke);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: .04em;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+/* Terminal blinker */
+.hero-terminal {
+  position: absolute;
+  right: 40px;
+  top: 40px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,.06);
+  line-height: 1.6;
+  letter-spacing: .02em;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =============================================
+   SECTIONS
+   ============================================= */
+.section {
+  margin-bottom: 60px;
+  scroll-margin-top: 32px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0;
+  width: 32px; height: 1px;
+  background: var(--red);
+}
+
+.section-num {
+  width: 34px; height: 34px;
+  border-radius: var(--radius);
+  background: var(--red);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: var(--glow-red);
+}
+
+.section h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -.03em;
+}
+
+.section h3 {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red);
+  margin: 26px 0 12px;
+  letter-spacing: .02em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section h3::before {
+  content: '>';
+  color: var(--carbon-6);
+  font-size: 12px;
+}
+
+p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.78;
+  margin-bottom: .8rem;
+  font-weight: 300;
+}
+
+p strong { font-weight: 600; color: var(--text-secondary); }
+
+/* =============================================
+   CODE BLOCKS
+   ============================================= */
+.code-wrap { position: relative; margin: 16px 0 20px; }
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--carbon-3);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: var(--radius) var(--radius) 0 0;
+  padding: 6px 14px;
+}
+
+.code-dots { display: flex; gap: 5px; }
+.code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.code-dots span:nth-child(1) { background: #FF5F57; }
+.code-dots span:nth-child(2) { background: #FEBC2E; }
+.code-dots span:nth-child(3) { background: #28C840; }
+
+.code-lang {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--smoke);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  overflow-x: auto;
+}
+
+.code-wrap pre { border-radius: 0 0 var(--radius) var(--radius); }
+
+pre code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: #D4D4D8;
+  line-height: 1.68;
+  white-space: pre;
+}
+
+/* One Dark-ish */
+.kw  { color: #C678DD; }   /* keywords */
+.fn  { color: #61AFEF; }   /* functions */
+.st  { color: #98C379; }   /* strings */
+.nm  { color: #D19A66; }   /* numbers */
+.cm  { color: #5C6370; font-style: italic; }
+.op  { color: #56B6C2; }   /* operators */
+.bi  { color: #61AFEF; }   /* built-ins */
+.vn  { color: #E06C75; }   /* var names (special) */
+.pr  { color: #E5C07B; }   /* properties */
+.cl  { color: #E5C07B; }   /* class names */
+.ar  { color: #C678DD; }   /* arrows */
+.bo  { color: #D19A66; }   /* boolean */
+.nu  { color: #7F848E; }   /* null/undefined */
+.tp  { color: #98C379; }   /* template */
+.dc  { color: #C678DD; }   /* decorator */
+
+code.inline {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--carbon-3);
+  color: var(--red-bright);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+
+/* =============================================
+   TABLES
+   ============================================= */
+.table-wrap {
+  overflow-x: auto;
+  margin: 14px 0 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+th {
+  background: var(--carbon-3);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--red);
+  padding: 9px 13px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 9px 13px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  vertical-align: top;
+  line-height: 1.55;
+  font-weight: 300;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.02); }
+td code { font-family: var(--font-mono); font-size: 11.5px; background: var(--carbon-3); color: var(--red-bright); padding: 1px 5px; border-radius: 3px; border: 1px solid var(--border); }
+td strong { font-weight: 600; color: var(--text-secondary); }
+
+/* =============================================
+   CALLOUTS
+   ============================================= */
+.note, .tip, .warning, .danger {
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 12px 15px;
+  margin: 14px 0;
+  border-left: 2px solid;
+}
+
+.note { background: var(--cyan-pale); border-color: var(--cyan); }
+.note-label { font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--cyan); margin-bottom: 4px; }
+.note p { font-size: 13px; color: #80E8E4; margin: 0; }
+
+.tip { background: rgba(245,200,66,.06); border-color: var(--yellow); }
+.tip-label { font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--yellow); margin-bottom: 4px; }
+.tip p { font-size: 13px; color: #D4AE60; margin: 0; }
+
+.warning { background: rgba(240,112,48,.08); border-color: var(--orange); }
+.warning-label { font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--orange); margin-bottom: 4px; }
+.warning p { font-size: 13px; color: #C08050; margin: 0; }
+
+.danger { background: rgba(232,72,72,.08); border-color: var(--red); }
+.danger-label { font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--red); margin-bottom: 4px; }
+.danger p { font-size: 13px; color: #C06060; margin: 0; }
+
+/* =============================================
+   CARDS & GRID
+   ============================================= */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 12px 0; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.card-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--red);
+  margin-bottom: 8px;
+}
+
+.card pre { margin: 0; padding: 10px 12px; }
+
+/* =============================================
+   TABS
+   ============================================= */
+.tab-bar {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  border-radius: var(--radius) var(--radius) 0 0;
+  border: 1px solid transparent;
+  border-bottom: none;
+  cursor: pointer;
+  color: var(--fog);
+  background: transparent;
+  transition: all var(--transition);
+  margin-bottom: -1px;
+  letter-spacing: .02em;
+}
+
+.tab-btn:hover { color: var(--mist); background: var(--surface2); }
+
+.tab-btn.active {
+  color: var(--red-bright);
+  background: var(--surface);
+  border-color: var(--border);
+  border-bottom-color: var(--surface);
+}
+
+.tab-panel { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 var(--radius) var(--radius); overflow: hidden; }
+.tab-panel.active { display: block; }
+.tab-panel pre { border: none; border-radius: 0; margin: 0; }
+.tab-panel .code-header { border-radius: 0; }
+
+/* =============================================
+   COMPARE
+   ============================================= */
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+
+.cmp { border-radius: var(--radius); overflow: hidden; border: 1px solid; }
+.cmp.good { border-color: rgba(61,186,120,.3); }
+.cmp.bad  { border-color: rgba(232,72,72,.3); }
+
+.cmp-label {
+  padding: 6px 13px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+
+.cmp.good .cmp-label { background: rgba(61,186,120,.12); color: var(--green-t); }
+.cmp.bad  .cmp-label { background: rgba(232,72,72,.1); color: var(--red-bright); }
+.cmp pre { margin: 0; border: none; border-radius: 0; border-top: 1px solid var(--border); }
+
+/* =============================================
+   CHECKLIST
+   ============================================= */
+.checklist { list-style: none; margin: 12px 0; }
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 13.5px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-soft);
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+.checklist li:last-child { border-bottom: none; }
+
+.ck-icon {
+  width: 17px; height: 17px;
+  border-radius: 3px;
+  background: var(--red);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  box-shadow: var(--glow-red);
+}
+
+.ck-icon svg { width: 9px; height: 9px; }
+
+/* =============================================
+   INTERACTIVE DEMOS
+   ============================================= */
+.demo-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin: 14px 0;
+  position: relative;
+}
+
+.demo-box::before {
+  content: 'DEMO';
+  position: absolute;
+  top: 12px; right: 14px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: .14em;
+  color: var(--smoke);
+}
+
+.demo-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--red);
+  margin-bottom: 12px;
+}
+
+.demo-output {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--green-t);
+  min-height: 44px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-bottom: 10px;
+}
+
+.demo-input {
+  background: var(--carbon-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--white);
+  width: 100%;
+  margin-bottom: 8px;
+  outline: none;
+  transition: border-color .15s;
+}
+
+.demo-input:focus { border-color: var(--red); }
+
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 11.5px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: opacity .15s, transform .15s;
+  letter-spacing: .04em;
+  box-shadow: var(--glow-red);
+}
+
+.demo-btn:hover { opacity: .85; transform: translateY(-1px); }
+
+.demo-btn.secondary {
+  background: var(--carbon-4);
+  color: var(--mist);
+  box-shadow: none;
+}
+
+/* =============================================
+   CONCEPT GRID
+   ============================================= */
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 8px; margin: 12px 0; }
+
+.concept-chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  transition: border-color var(--transition);
+}
+
+.concept-chip:hover { border-color: var(--red); }
+.concept-name { font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; color: var(--red-bright); margin-bottom: 3px; }
+.concept-desc { font-size: 11.5px; color: var(--fog); line-height: 1.4; font-weight: 300; }
+
+/* =============================================
+   PATTERN DIAGRAM
+   ============================================= */
+.pattern-diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--fog);
+  line-height: 1.8;
+}
+
+.pd-box {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pd-box.red   { border-color: rgba(232,72,72,.5); background: rgba(232,72,72,.05); color: var(--red-bright); }
+.pd-box.cyan  { border-color: rgba(0,212,200,.4); background: rgba(0,212,200,.05); color: var(--cyan); }
+.pd-box.gold  { border-color: rgba(245,200,66,.4); background: rgba(245,200,66,.05); color: var(--yellow); }
+.pd-box.green { border-color: rgba(61,186,120,.4); background: rgba(61,186,120,.05); color: var(--green-t); }
+.pd-box.gray  { border-color: var(--border); background: var(--surface2); color: var(--mist); }
+.pd-arrow { color: var(--smoke); font-size: 14px; }
+
+/* =============================================
+   MEMORY MODEL DIAGRAM
+   ============================================= */
+.mem-diagram {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.mem-zone {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+
+.mem-zone-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  margin-bottom: 10px;
+}
+
+.mem-zone.stack .mem-zone-label { color: var(--cyan); }
+.mem-zone.heap  .mem-zone-label { color: var(--orange); }
+
+.mem-item {
+  background: var(--surface2);
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
+  padding: 5px 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  margin: 4px 0;
+}
+
+.mem-item.stack-item { color: var(--cyan-dim); }
+.mem-item.heap-item  { color: var(--orange); }
+.mem-item.ref        { color: var(--yellow); font-size: 10px; }
+
+/* =============================================
+   DIVIDER
+   ============================================= */
+.divider {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 56px 0;
+  position: relative;
+}
+
+.divider::after {
+  content: '// ';
+  position: absolute;
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--carbon-6);
+}
+
+/* =============================================
+   SERIES FOOTER
+   ============================================= */
+.series-footer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px;
+  margin-top: 56px;
+}
+
+.series-footer-label {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  color: var(--smoke);
+  margin-bottom: 12px;
+}
+
+.series-vols { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.series-vols a {
+  text-decoration: none;   /* Quita el subrayado */
+  color: inherit;          /* Mantiene el color del texto del span */
+}
+
+
+.vol-chip {
+  padding: 5px 12px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  border: 1px solid var(--border);
+  color: var(--smoke);
+  background: var(--surface2);
+}
+
+.vol-chip.done    { color: var(--fog); }
+.vol-chip.current { background: rgba(232,72,72,.1); border-color: rgba(232,72,72,.3); color: var(--red-bright); }
+
+/* =============================================
+   PROGRESS + CONTROLS
+   ============================================= */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--red), var(--orange));
+  z-index: 999;
+  width: 0%;
+  transition: width .1s;
+  box-shadow: var(--glow-red);
+}
+
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 46px; height: 46px;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 300;
+  box-shadow: var(--glow-red);
+  align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+}
+
+.back-top {
+  position: fixed;
+  bottom: 24px;
+  left: calc(var(--sidebar-w) + 20px);
+  width: 36px; height: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--fog);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+  text-decoration: none;
+  z-index: 100;
+}
+
+.back-top.visible { opacity: 1; pointer-events: all; }
+.back-top:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 32px 22px 80px; }
+  .sidebar-toggle { display: flex; }
+  .hero { padding: 30px 26px; }
+  .hero h1 { font-size: 34px; }
+  .compare, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .hero-terminal { display: none; }
+  .mem-diagram { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .main { padding: 22px 14px 80px; }
+  .hero h1 { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-series">Serie · Programación &amp; Diseño Web</div>
+    <div class="sidebar-title">JavaScript<br>Avanzado</div>
+    <span class="sidebar-vol">VOL_06</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-group-label">Fundamentos profundos</div>
+    <a href="#s01" class="nav-link active"><span class="nav-num">01</span>El Motor JS</a>
+    <a href="#s02" class="nav-link"><span class="nav-num">02</span>Prototipos y herencia</a>
+    <a href="#s03" class="nav-link"><span class="nav-num">03</span>This y contexto</a>
+    <a href="#s04" class="nav-link"><span class="nav-num">04</span>Closures avanzados</a>
+    <div class="nav-group-label">Programación funcional</div>
+    <a href="#s05" class="nav-link"><span class="nav-num">05</span>Funciones de orden superior</a>
+    <a href="#s06" class="nav-link"><span class="nav-num">06</span>Currying y composición</a>
+    <a href="#s07" class="nav-link"><span class="nav-num">07</span>Inmutabilidad</a>
+    <div class="nav-group-label">Iteradores y asincronía</div>
+    <a href="#s08" class="nav-link"><span class="nav-num">08</span>Iteradores y generadores</a>
+    <a href="#s09" class="nav-link"><span class="nav-num">09</span>Async/Await avanzado</a>
+    <a href="#s10" class="nav-link"><span class="nav-num">10</span>Observables y Streams</a>
+    <div class="nav-group-label">Estructuras avanzadas</div>
+    <a href="#s11" class="nav-link"><span class="nav-num">11</span>Map, Set, WeakMap, WeakSet</a>
+    <a href="#s12" class="nav-link"><span class="nav-num">12</span>Proxy y Reflect</a>
+    <a href="#s13" class="nav-link"><span class="nav-num">13</span>Symbols y metaprogramación</a>
+    <div class="nav-group-label">Patrones de diseño</div>
+    <a href="#s14" class="nav-link"><span class="nav-num">14</span>Patrones creacionales</a>
+    <a href="#s15" class="nav-link"><span class="nav-num">15</span>Patrones estructurales</a>
+    <a href="#s16" class="nav-link"><span class="nav-num">16</span>Patrones de comportamiento</a>
+    <div class="nav-group-label">Performance y tooling</div>
+    <a href="#s17" class="nav-link"><span class="nav-num">17</span>Performance JS</a>
+    <a href="#s18" class="nav-link"><span class="nav-num">18</span>Workers y concurrencia</a>
+    <a href="#s19" class="nav-link"><span class="nav-num">19</span>Módulos avanzados</a>
+    <a href="#s20" class="nav-link"><span class="nav-num">20</span>Buenas prácticas</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-meta">
+        <span class="hero-badge">// Serie: Programación &amp; Diseño Web</span>
+        <span class="hero-vol">VOL. 6</span>
+      </div>
+      <h1>JavaScript<span>Avanzado_</span></h1>
+      <p class="hero-sub">Prototipos, closures, Proxy, generadores, patrones de diseño, programación funcional, performance y el motor V8 explicados a fondo.</p>
+      <div class="hero-tags">
+        <span class="hero-tag">Intermedio+</span>
+        <span class="hero-tag">20 secciones</span>
+        <span class="hero-tag">Demos interactivas</span>
+        <span class="hero-tag">Proxy / Reflect</span>
+        <span class="hero-tag">Patrones de diseño</span>
+        <span class="hero-tag">Workers</span>
+      </div>
+    </div>
+    <div class="hero-terminal">
+// V8 Engine<br>
+const heap = new Map();<br>
+const stack = [];<br>
+<br>
+function ejecutar(fn, ctx) {<br>
+&nbsp;&nbsp;stack.push(fn);<br>
+&nbsp;&nbsp;return fn.call(ctx);<br>
+}</div>
+  </div>
+
+  <!-- S01 — EL MOTOR JS -->
+  <section class="section" id="s01">
+    <div class="section-header"><div class="section-num">01</div><h2>El Motor JavaScript: V8 por dentro</h2></div>
+    <p>Entender cómo funciona el motor JavaScript (V8 en Chrome/Node, SpiderMonkey en Firefox) es fundamental para escribir código eficiente. El motor ejecuta JS mediante tres conceptos clave: el <strong>Call Stack</strong>, el <strong>Heap</strong> y el <strong>Event Loop</strong>.</p>
+
+    <h3>Call Stack, Heap y Event Loop</h3>
+
+    <div class="mem-diagram">
+      <div class="mem-zone stack">
+        <div class="mem-zone-label">Call Stack (LIFO)</div>
+        <div class="mem-item stack-item">3. bar() ← ejecutándose</div>
+        <div class="mem-item stack-item">2. foo() ← llamó a bar</div>
+        <div class="mem-item stack-item">1. main() ← inicio</div>
+      </div>
+      <div class="mem-zone heap">
+        <div class="mem-zone-label">Heap (objetos)</div>
+        <div class="mem-item heap-item">{ nombre: "Ana", id: 42 }</div>
+        <div class="mem-item heap-item">[1, 2, 3, 4, 5]</div>
+        <div class="mem-item ref">← referencia desde stack</div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Event Loop: la clave de la asincronía ———</span>
+<span class="cm">// Orden de ejecución: Synchronous → Microtasks → Macrotasks</span>
+
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"1. Síncrono"</span>);                    <span class="cm">// 1°</span>
+
+<span class="bi">setTimeout</span>(() <span class="ar">=></span> <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"4. setTimeout"</span>), <span class="nm">0</span>); <span class="cm">// Macrotask</span>
+
+<span class="bi">Promise</span>.<span class="fn">resolve</span>().<span class="fn">then</span>(() <span class="ar">=></span> {
+  <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"3. Promise .then"</span>);              <span class="cm">// Microtask</span>
+});
+
+<span class="fn">queueMicrotask</span>(() <span class="ar">=></span> <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"2.5 microtask"</span>));  <span class="cm">// Microtask</span>
+
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"2. Síncrono también"</span>);              <span class="cm">// 2°</span>
+
+<span class="cm">// Resultado: 1 → 2 → 2.5 → 3 → 4
+
+// Colas de ejecución (orden de prioridad):
+// 1. Call Stack       — código síncrono
+// 2. Microtask Queue  — Promise.then, queueMicrotask, MutationObserver
+// 3. Macrotask Queue  — setTimeout, setInterval, I/O, UI events</span>
+
+<span class="cm">// ——— Cómo V8 optimiza el código ———</span>
+<span class="cm">// Interpreted → Optimized JIT → Deoptimized</span>
+
+<span class="cm">// BIEN: función monomórfica (siempre mismo tipo)</span>
+<span class="kw">function</span> <span class="fn">sumar</span>(<span class="vn">a</span>, <span class="vn">b</span>) { <span class="kw">return</span> <span class="vn">a</span> + <span class="vn">b</span>; }
+<span class="fn">sumar</span>(<span class="nm">1</span>, <span class="nm">2</span>);     <span class="cm">// V8 asume siempre números</span>
+<span class="fn">sumar</span>(<span class="nm">3</span>, <span class="nm">4</span>);     <span class="cm">// optimiza para números</span>
+
+<span class="cm">// MAL: función polimórfica (tipos distintos = deoptimización)</span>
+<span class="fn">sumar</span>(<span class="st">"a"</span>, <span class="st">"b"</span>); <span class="cm">// V8 debe deoptimizar y recompilar</span></code></pre>
+    </div>
+
+    <h3>Tipos primitivos vs referencias</h3>
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// Primitivos: se copian por VALOR (stack)</span>
+<span class="kw">let</span> <span class="vn">a</span> = <span class="nm">5</span>;
+<span class="kw">let</span> <span class="vn">b</span> = <span class="vn">a</span>;     <span class="cm">// copia del valor</span>
+<span class="vn">b</span> = <span class="nm">10</span>;
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="vn">a</span>); <span class="cm">// 5 — no cambia</span>
+
+<span class="cm">// Objetos/Arrays: se copian por REFERENCIA (heap)</span>
+<span class="kw">const</span> <span class="vn">obj1</span> = { <span class="pr">x</span>: <span class="nm">1</span> };
+<span class="kw">const</span> <span class="vn">obj2</span> = <span class="vn">obj1</span>;   <span class="cm">// copia de la referencia</span>
+<span class="vn">obj2</span>.<span class="pr">x</span> = <span class="nm">99</span>;
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="vn">obj1</span>.<span class="pr">x</span>); <span class="cm">// 99 — ambos apuntan al mismo objeto</span>
+
+<span class="cm">// Clonar correctamente</span>
+<span class="kw">const</span> <span class="vn">shallow</span> = { ...<span class="vn">obj1</span> };            <span class="cm">// shallow copy</span>
+<span class="kw">const</span> <span class="vn">deep</span>    = <span class="bi">structuredClone</span>(<span class="vn">obj1</span>);   <span class="cm">// deep clone (nativo 2022)</span>
+<span class="kw">const</span> <span class="vn">deep2</span>   = <span class="bi">JSON</span>.<span class="fn">parse</span>(<span class="bi">JSON</span>.<span class="fn">stringify</span>(<span class="vn">obj1</span>)); <span class="cm">// fallback</span>
+
+<span class="cm">// Comparación de objetos</span>
+{ <span class="pr">a</span>: <span class="nm">1</span> } === { <span class="pr">a</span>: <span class="nm">1</span> }  <span class="cm">// false — distintas referencias</span>
+<span class="bi">JSON</span>.<span class="fn">stringify</span>({<span class="pr">a</span>:<span class="nm">1</span>}) === <span class="bi">JSON</span>.<span class="fn">stringify</span>({<span class="pr">a</span>:<span class="nm">1</span>})  <span class="cm">// true</span></code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo — Event Loop: orden de ejecución</div>
+      <div class="demo-output" id="out-eventloop">// Presiona "Ejecutar" para ver el orden del Event Loop</div>
+      <button class="demo-btn" onclick="runEventLoop()">▶ Ejecutar</button>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S02 — PROTOTIPOS -->
+  <section class="section" id="s02">
+    <div class="section-header"><div class="section-num">02</div><h2>Prototipos y cadena de herencia</h2></div>
+    <p>JavaScript es un lenguaje basado en <strong>prototipos</strong>: los objetos heredan directamente de otros objetos a través de una cadena de prototipos (<code class="inline">[[Prototype]]</code>). Las clases de ES6 son azúcar sintáctica sobre este sistema.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— La cadena de prototipos ———</span>
+<span class="kw">const</span> <span class="vn">animal</span> = {
+  <span class="fn">respirar</span>() { <span class="kw">return</span> <span class="st">"inhala... exhala..."</span>; }
+};
+
+<span class="kw">const</span> <span class="vn">perro</span> = <span class="bi">Object</span>.<span class="fn">create</span>(<span class="vn">animal</span>); <span class="cm">// perro → animal → Object.prototype → null</span>
+<span class="vn">perro</span>.<span class="pr">nombre</span> = <span class="st">"Rex"</span>;
+<span class="vn">perro</span>.<span class="fn">ladrar</span> = <span class="kw">function</span>() { <span class="kw">return</span> <span class="st">"¡Guau!"</span>; };
+
+<span class="vn">perro</span>.<span class="fn">respirar</span>(); <span class="cm">// heredado de animal</span>
+<span class="vn">perro</span>.<span class="fn">toString</span>(); <span class="cm">// heredado de Object.prototype</span>
+
+<span class="cm">// Inspeccionar la cadena</span>
+<span class="bi">Object</span>.<span class="fn">getPrototypeOf</span>(<span class="vn">perro</span>) === <span class="vn">animal</span>; <span class="cm">// true</span>
+<span class="vn">perro</span>.<span class="fn">hasOwnProperty</span>(<span class="st">"nombre"</span>);           <span class="cm">// true — propio</span>
+<span class="vn">perro</span>.<span class="fn">hasOwnProperty</span>(<span class="st">"respirar"</span>);         <span class="cm">// false — heredado</span>
+<span class="st">"respirar"</span> <span class="kw">in</span> <span class="vn">perro</span>;                       <span class="cm">// true — busca en cadena</span>
+
+<span class="cm">// ——— Herencia con clases (es azúcar de prototipos) ———</span>
+<span class="kw">class</span> <span class="cl">Animal</span> {
+  <span class="fn">constructor</span>(<span class="vn">nombre</span>) { <span class="kw">this</span>.<span class="pr">nombre</span> = <span class="vn">nombre</span>; }
+  <span class="fn">respirar</span>() { <span class="kw">return</span> <span class="tp">`${<span class="kw">this</span>.nombre} respira`</span>; }
+}
+
+<span class="kw">class</span> <span class="cl">Perro</span> <span class="kw">extends</span> <span class="cl">Animal</span> {
+  <span class="fn">ladrar</span>() { <span class="kw">return</span> <span class="tp">`${<span class="kw">this</span>.nombre} dice ¡Guau!`</span>; }
+}
+
+<span class="cm">// Bajo el capó es exactamente esto:</span>
+<span class="bi">Object</span>.<span class="fn">getPrototypeOf</span>(<span class="cl">Perro</span>) === <span class="cl">Animal</span>;            <span class="cm">// true (clase)</span>
+<span class="bi">Object</span>.<span class="fn">getPrototypeOf</span>(<span class="cl">Perro</span>.<span class="pr">prototype</span>) === <span class="cl">Animal</span>.<span class="pr">prototype</span>; <span class="cm">// true (instancias)</span>
+
+<span class="cm">// ——— Mixins: herencia múltiple ———</span>
+<span class="kw">const</span> <span class="fn">Serializable</span> = (<span class="vn">Base</span>) <span class="ar">=></span> <span class="kw">class</span> <span class="kw">extends</span> <span class="vn">Base</span> {
+  <span class="fn">serialize</span>()   { <span class="kw">return</span> <span class="bi">JSON</span>.<span class="fn">stringify</span>(<span class="kw">this</span>); }
+  <span class="kw">static</span> <span class="fn">deserialize</span>(<span class="vn">json</span>) { <span class="kw">return</span> <span class="bi">Object</span>.<span class="fn">assign</span>(<span class="kw">new</span> <span class="kw">this</span>(), <span class="bi">JSON</span>.<span class="fn">parse</span>(<span class="vn">json</span>)); }
+};
+
+<span class="kw">const</span> <span class="fn">Validatable</span> = (<span class="vn">Base</span>) <span class="ar">=></span> <span class="kw">class</span> <span class="kw">extends</span> <span class="vn">Base</span> {
+  <span class="fn">validate</span>() { <span class="kw">return</span> <span class="bi">Object</span>.<span class="fn">values</span>(<span class="kw">this</span>).<span class="fn">every</span>(<span class="vn">v</span> <span class="ar">=></span> <span class="vn">v</span> !== <span class="nu">null</span>); }
+};
+
+<span class="kw">class</span> <span class="cl">Usuario</span> <span class="kw">extends</span> <span class="fn">Serializable</span>(<span class="fn">Validatable</span>(<span class="cl">Animal</span>)) {
+  <span class="cm">/* hereda de Serializable → Validatable → Animal */</span>
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S03 — THIS Y CONTEXTO -->
+  <section class="section" id="s03">
+    <div class="section-header"><div class="section-num">03</div><h2>This y contexto de ejecución</h2></div>
+    <p><code class="inline">this</code> es el concepto más confuso de JavaScript. Su valor depende de <em>cómo</em> se llama la función, no de dónde se define.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Las 5 reglas de this ———</span>
+
+<span class="cm">// 1. Función global — this = global (window / undefined en strict)</span>
+<span class="kw">function</span> <span class="fn">foo</span>() { <span class="bi">console</span>.<span class="fn">log</span>(<span class="kw">this</span>); }
+<span class="fn">foo</span>();  <span class="cm">// window (browser) / undefined (strict mode)</span>
+
+<span class="cm">// 2. Método de objeto — this = el objeto</span>
+<span class="kw">const</span> <span class="vn">obj</span> = {
+  <span class="pr">nombre</span>: <span class="st">"Ana"</span>,
+  <span class="fn">saludar</span>() { <span class="kw">return</span> <span class="kw">this</span>.<span class="pr">nombre</span>; }
+};
+<span class="vn">obj</span>.<span class="fn">saludar</span>(); <span class="cm">// "Ana" ✅</span>
+
+<span class="cm">// 3. Constructor — this = nueva instancia</span>
+<span class="kw">function</span> <span class="cl">Persona</span>(<span class="vn">nombre</span>) { <span class="kw">this</span>.<span class="pr">nombre</span> = <span class="vn">nombre</span>; }
+<span class="kw">const</span> <span class="vn">ana</span> = <span class="kw">new</span> <span class="cl">Persona</span>(<span class="st">"Ana"</span>);
+
+<span class="cm">// 4. call / apply / bind — this = lo que especifiques</span>
+<span class="kw">function</span> <span class="fn">saludar</span>() { <span class="kw">return</span> <span class="tp">`Hola ${<span class="kw">this</span>.nombre}`</span>; }
+<span class="vn">saludar</span>.<span class="fn">call</span>({ <span class="pr">nombre</span>: <span class="st">"Ana"</span> });          <span class="cm">// "Hola Ana"</span>
+<span class="vn">saludar</span>.<span class="fn">apply</span>({ <span class="pr">nombre</span>: <span class="st">"Luis"</span> });        <span class="cm">// "Hola Luis"</span>
+<span class="kw">const</span> <span class="vn">saluda</span> = <span class="vn">saludar</span>.<span class="fn">bind</span>({ <span class="pr">nombre</span>: <span class="st">"Eva"</span> }); <span class="cm">// fija this</span>
+
+<span class="cm">// 5. Arrow function — this = del scope léxico (padre)</span>
+<span class="kw">const</span> <span class="vn">timer</span> = {
+  <span class="pr">segundos</span>: <span class="nm">0</span>,
+  <span class="fn">start</span>() {
+    <span class="bi">setInterval</span>(() <span class="ar">=></span> {               <span class="cm">// arrow: this = timer</span>
+      <span class="kw">this</span>.<span class="pr">segundos</span>++;
+      <span class="bi">console</span>.<span class="fn">log</span>(<span class="kw">this</span>.<span class="pr">segundos</span>);
+    }, <span class="nm">1000</span>);
+  }
+};
+
+<span class="cm">// ——— El problema con los callbacks ———</span>
+<span class="kw">class</span> <span class="cl">Contador</span> {
+  <span class="fn">constructor</span>() { <span class="kw">this</span>.<span class="pr">n</span> = <span class="nm">0</span>; }
+
+  <span class="cm">// ❌ this se pierde</span>
+  <span class="fn">iniciarMal</span>() { <span class="bi">setInterval</span>(<span class="kw">function</span>() { <span class="kw">this</span>.<span class="pr">n</span>++; }, <span class="nm">1000</span>); }
+
+  <span class="cm">// ✅ arrow mantiene this</span>
+  <span class="fn">iniciarBien</span>() { <span class="bi">setInterval</span>(() <span class="ar">=></span> { <span class="kw">this</span>.<span class="pr">n</span>++; }, <span class="nm">1000</span>); }
+
+  <span class="cm">// ✅ método de clase (auto-bind con propiedad)</span>
+  <span class="vn">tick</span> = () <span class="ar">=></span> { <span class="kw">this</span>.<span class="pr">n</span>++; };
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S04 — CLOSURES AVANZADOS -->
+  <section class="section" id="s04">
+    <div class="section-header"><div class="section-num">04</div><h2>Closures avanzados</h2></div>
+    <p>Un closure es una función que recuerda el entorno léxico en que fue creada. Van mucho más allá del contador básico: permiten encapsulación, módulos privados y memoización.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Módulo con variables privadas ———</span>
+<span class="kw">const</span> <span class="vn">BancoCuenta</span> = (<span class="kw">function</span>() {
+  <span class="kw">let</span> <span class="vn">saldo</span> = <span class="nm">0</span>;                     <span class="cm">// completamente privado</span>
+  <span class="kw">const</span> <span class="vn">historial</span> = [];
+
+  <span class="kw">return</span> {
+    <span class="fn">depositar</span>(<span class="vn">n</span>) {
+      <span class="kw">if</span> (<span class="vn">n</span> <= <span class="nm">0</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="cl">Error</span>(<span class="st">"Monto inválido"</span>);
+      <span class="vn">saldo</span> += <span class="vn">n</span>;
+      <span class="vn">historial</span>.<span class="fn">push</span>({ <span class="pr">tipo</span>: <span class="st">"depósito"</span>, <span class="pr">monto</span>: <span class="vn">n</span>, <span class="pr">saldo</span> });
+      <span class="kw">return</span> <span class="kw">this</span>;                      <span class="cm">// chaining</span>
+    },
+    <span class="fn">retirar</span>(<span class="vn">n</span>) {
+      <span class="kw">if</span> (<span class="vn">n</span> > <span class="vn">saldo</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="cl">Error</span>(<span class="st">"Fondos insuficientes"</span>);
+      <span class="vn">saldo</span> -= <span class="vn">n</span>;
+      <span class="vn">historial</span>.<span class="fn">push</span>({ <span class="pr">tipo</span>: <span class="st">"retiro"</span>, <span class="pr">monto</span>: <span class="vn">n</span>, <span class="pr">saldo</span> });
+      <span class="kw">return</span> <span class="kw">this</span>;
+    },
+    <span class="fn">verSaldo</span>()    { <span class="kw">return</span> <span class="vn">saldo</span>; },
+    <span class="fn">verHistorial</span>(){ <span class="kw">return</span> [...<span class="vn">historial</span>]; } <span class="cm">// copia inmutable</span>
+  };
+})();
+
+<span class="vn">BancoCuenta</span>.<span class="fn">depositar</span>(<span class="nm">500</span>).<span class="fn">depositar</span>(<span class="nm">200</span>).<span class="fn">retirar</span>(<span class="nm">100</span>);
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="vn">BancoCuenta</span>.<span class="fn">verSaldo</span>()); <span class="cm">// 600</span>
+
+<span class="cm">// ——— Memoización con closure ———</span>
+<span class="kw">function</span> <span class="fn">memoize</span>(<span class="vn">fn</span>) {
+  <span class="kw">const</span> <span class="vn">cache</span> = <span class="kw">new</span> <span class="cl">Map</span>();
+  <span class="kw">return</span> <span class="kw">function</span>(...<span class="vn">args</span>) {
+    <span class="kw">const</span> <span class="vn">key</span> = <span class="bi">JSON</span>.<span class="fn">stringify</span>(<span class="vn">args</span>);
+    <span class="kw">if</span> (<span class="vn">cache</span>.<span class="fn">has</span>(<span class="vn">key</span>)) {
+      <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"Cache hit!"</span>);
+      <span class="kw">return</span> <span class="vn">cache</span>.<span class="fn">get</span>(<span class="vn">key</span>);
+    }
+    <span class="kw">const</span> <span class="vn">resultado</span> = <span class="vn">fn</span>.<span class="fn">apply</span>(<span class="kw">this</span>, <span class="vn">args</span>);
+    <span class="vn">cache</span>.<span class="fn">set</span>(<span class="vn">key</span>, <span class="vn">resultado</span>);
+    <span class="kw">return</span> <span class="vn">resultado</span>;
+  };
+}
+
+<span class="kw">const</span> <span class="vn">fibonacci</span> = <span class="fn">memoize</span>(<span class="kw">function</span> <span class="fn">fib</span>(<span class="vn">n</span>) {
+  <span class="kw">if</span> (<span class="vn">n</span> <= <span class="nm">1</span>) <span class="kw">return</span> <span class="vn">n</span>;
+  <span class="kw">return</span> <span class="fn">fib</span>(<span class="vn">n</span> - <span class="nm">1</span>) + <span class="fn">fib</span>(<span class="vn">n</span> - <span class="nm">2</span>);
+});
+
+<span class="cm">// ——— Closure para event listeners sin leak ———</span>
+<span class="kw">function</span> <span class="fn">crearHandler</span>(<span class="vn">boton</span>, <span class="vn">callback</span>) {
+  <span class="kw">const</span> <span class="vn">handler</span> = (<span class="vn">e</span>) <span class="ar">=></span> <span class="fn">callback</span>(<span class="vn">e</span>);
+  <span class="vn">boton</span>.<span class="fn">addEventListener</span>(<span class="st">"click"</span>, <span class="vn">handler</span>);
+  <span class="kw">return</span> () <span class="ar">=></span> <span class="vn">boton</span>.<span class="fn">removeEventListener</span>(<span class="st">"click"</span>, <span class="vn">handler</span>);
+  <span class="cm">// Retorna función de cleanup — no hay memory leak</span>
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S05 — FUNCIONES DE ORDEN SUPERIOR -->
+  <section class="section" id="s05">
+    <div class="section-header"><div class="section-num">05</div><h2>Funciones de orden superior</h2></div>
+    <p>Una <strong>función de orden superior</strong> (HOF) es una función que acepta otras funciones como argumentos y/o retorna una función. Son el corazón de la programación funcional en JS.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Implementar map, filter, reduce desde cero ———</span>
+<span class="kw">const</span> <span class="fn">myMap</span> = (<span class="vn">arr</span>, <span class="vn">fn</span>) <span class="ar">=></span> {
+  <span class="kw">const</span> <span class="vn">resultado</span> = [];
+  <span class="kw">for</span> (<span class="kw">const</span> <span class="vn">item</span> <span class="kw">of</span> <span class="vn">arr</span>) <span class="vn">resultado</span>.<span class="fn">push</span>(<span class="fn">fn</span>(<span class="vn">item</span>));
+  <span class="kw">return</span> <span class="vn">resultado</span>;
+};
+
+<span class="kw">const</span> <span class="fn">myFilter</span> = (<span class="vn">arr</span>, <span class="vn">pred</span>) <span class="ar">=></span>
+  <span class="vn">arr</span>.<span class="fn">reduce</span>((<span class="vn">acc</span>, <span class="vn">x</span>) <span class="ar">=></span> <span class="fn">pred</span>(<span class="vn">x</span>) ? [...<span class="vn">acc</span>, <span class="vn">x</span>] : <span class="vn">acc</span>, []);
+
+<span class="kw">const</span> <span class="fn">myReduce</span> = (<span class="vn">arr</span>, <span class="vn">fn</span>, <span class="vn">init</span>) <span class="ar">=></span> {
+  <span class="kw">let</span> <span class="vn">acc</span> = <span class="vn">init</span>;
+  <span class="kw">for</span> (<span class="kw">const</span> <span class="vn">x</span> <span class="kw">of</span> <span class="vn">arr</span>) <span class="vn">acc</span> = <span class="fn">fn</span>(<span class="vn">acc</span>, <span class="vn">x</span>);
+  <span class="kw">return</span> <span class="vn">acc</span>;
+};
+
+<span class="cm">// ——— Pipe y compose ———</span>
+<span class="kw">const</span> <span class="fn">pipe</span> = (...<span class="vn">fns</span>) <span class="ar">=></span> (<span class="vn">x</span>) <span class="ar">=></span> <span class="vn">fns</span>.<span class="fn">reduce</span>((<span class="vn">v</span>, <span class="vn">f</span>) <span class="ar">=></span> <span class="fn">f</span>(<span class="vn">v</span>), <span class="vn">x</span>);
+<span class="kw">const</span> <span class="fn">compose</span> = (...<span class="vn">fns</span>) <span class="ar">=></span> (<span class="vn">x</span>) <span class="ar">=></span> <span class="vn">fns</span>.<span class="fn">reduceRight</span>((<span class="vn">v</span>, <span class="vn">f</span>) <span class="ar">=></span> <span class="fn">f</span>(<span class="vn">v</span>), <span class="vn">x</span>);
+
+<span class="kw">const</span> <span class="vn">doble</span>      = (<span class="vn">n</span>) <span class="ar">=></span> <span class="vn">n</span> * <span class="nm">2</span>;
+<span class="kw">const</span> <span class="vn">sumarDiez</span>  = (<span class="vn">n</span>) <span class="ar">=></span> <span class="vn">n</span> + <span class="nm">10</span>;
+<span class="kw">const</span> <span class="vn">alCuadrado</span> = (<span class="vn">n</span>) <span class="ar">=></span> <span class="vn">n</span> ** <span class="nm">2</span>;
+
+<span class="kw">const</span> <span class="vn">transformar</span> = <span class="fn">pipe</span>(<span class="vn">doble</span>, <span class="vn">sumarDiez</span>, <span class="vn">alCuadrado</span>);
+<span class="vn">transformar</span>(<span class="nm">5</span>);  <span class="cm">// ((5 * 2) + 10)² = 400</span>
+
+<span class="cm">// ——— Transducer ———</span>
+<span class="kw">const</span> <span class="vn">mapTx</span>    = <span class="vn">fn</span> <span class="ar">=></span> <span class="vn">reducer</span> <span class="ar">=></span> (<span class="vn">acc</span>, <span class="vn">x</span>) <span class="ar">=></span> <span class="fn">reducer</span>(<span class="vn">acc</span>, <span class="fn">fn</span>(<span class="vn">x</span>));
+<span class="kw">const</span> <span class="vn">filterTx</span> = <span class="vn">pred</span> <span class="ar">=></span> <span class="vn">reducer</span> <span class="ar">=></span> (<span class="vn">acc</span>, <span class="vn">x</span>) <span class="ar">=></span> <span class="fn">pred</span>(<span class="vn">x</span>) ? <span class="fn">reducer</span>(<span class="vn">acc</span>, <span class="vn">x</span>) : <span class="vn">acc</span>;
+
+<span class="kw">const</span> <span class="fn">concat</span> = (<span class="vn">acc</span>, <span class="vn">x</span>) <span class="ar">=></span> [...<span class="vn">acc</span>, <span class="vn">x</span>];
+
+<span class="kw">const</span> <span class="vn">transduccion</span> = <span class="fn">compose</span>(
+  <span class="fn">filterTx</span>(<span class="vn">n</span> <span class="ar">=></span> <span class="vn">n</span> % <span class="nm">2</span> === <span class="nm">0</span>), <span class="cm">// filtrar pares</span>
+  <span class="fn">mapTx</span>(<span class="vn">n</span> <span class="ar">=></span> <span class="vn">n</span> * <span class="nm">2</span>)            <span class="cm">// duplicar</span>
+)(<span class="vn">concat</span>);
+
+[<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>].<span class="fn">reduce</span>(<span class="vn">transduccion</span>, []); <span class="cm">// [4, 8] — una sola pasada</span></code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S06 — CURRYING Y COMPOSICIÓN -->
+  <section class="section" id="s06">
+    <div class="section-header"><div class="section-num">06</div><h2>Currying y composición de funciones</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Currying ———</span>
+<span class="cm">// Transforma f(a, b, c) en f(a)(b)(c)</span>
+<span class="kw">function</span> <span class="fn">curry</span>(<span class="vn">fn</span>) {
+  <span class="kw">return</span> <span class="kw">function</span> <span class="fn">curried</span>(...<span class="vn">args</span>) {
+    <span class="kw">if</span> (<span class="vn">args</span>.<span class="pr">length</span> >= <span class="vn">fn</span>.<span class="pr">length</span>) {
+      <span class="kw">return</span> <span class="vn">fn</span>.<span class="fn">apply</span>(<span class="kw">this</span>, <span class="vn">args</span>);
+    }
+    <span class="kw">return</span> <span class="kw">function</span>(...<span class="vn">moreArgs</span>) {
+      <span class="kw">return</span> <span class="fn">curried</span>.<span class="fn">apply</span>(<span class="kw">this</span>, <span class="vn">args</span>.<span class="fn">concat</span>(<span class="vn">moreArgs</span>));
+    };
+  };
+}
+
+<span class="kw">const</span> <span class="vn">add</span>    = <span class="fn">curry</span>((<span class="vn">a</span>, <span class="vn">b</span>, <span class="vn">c</span>) <span class="ar">=></span> <span class="vn">a</span> + <span class="vn">b</span> + <span class="vn">c</span>);
+<span class="vn">add</span>(<span class="nm">1</span>)(<span class="nm">2</span>)(<span class="nm">3</span>);   <span class="cm">// 6</span>
+<span class="vn">add</span>(<span class="nm">1</span>, <span class="nm">2</span>)(<span class="nm">3</span>);   <span class="cm">// 6</span>
+<span class="vn">add</span>(<span class="nm">1</span>)(<span class="nm">2</span>, <span class="nm">3</span>);   <span class="cm">// 6</span>
+<span class="vn">add</span>(<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>);   <span class="cm">// 6</span>
+
+<span class="cm">// Aplicación parcial con curry</span>
+<span class="kw">const</span> <span class="vn">multiplicar</span> = <span class="fn">curry</span>((<span class="vn">factor</span>, <span class="vn">n</span>) <span class="ar">=></span> <span class="vn">factor</span> * <span class="vn">n</span>);
+<span class="kw">const</span> <span class="vn">doble</span>       = <span class="vn">multiplicar</span>(<span class="nm">2</span>);  <span class="cm">// función parcial</span>
+<span class="kw">const</span> <span class="vn">triple</span>      = <span class="vn">multiplicar</span>(<span class="nm">3</span>);
+[<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>].<span class="fn">map</span>(<span class="vn">doble</span>);  <span class="cm">// [2, 4, 6]</span>
+
+<span class="cm">// ——— Point-free style ———</span>
+<span class="kw">const</span> <span class="vn">usuarios</span> = [{ <span class="pr">nombre</span>: <span class="st">"Ana"</span>, <span class="pr">activo</span>: <span class="bo">true</span> }, { <span class="pr">nombre</span>: <span class="st">"Bob"</span>, <span class="pr">activo</span>: <span class="bo">false</span> }];
+
+<span class="cm">// Con data explícita</span>
+<span class="kw">const</span> <span class="vn">activosA</span> = <span class="vn">usuarios</span>.<span class="fn">filter</span>(<span class="vn">u</span> <span class="ar">=></span> <span class="vn">u</span>.<span class="pr">activo</span>).<span class="fn">map</span>(<span class="vn">u</span> <span class="ar">=></span> <span class="vn">u</span>.<span class="pr">nombre</span>);
+
+<span class="cm">// Point-free (sin dato explícito)</span>
+<span class="kw">const</span> <span class="fn">prop</span>  = <span class="vn">key</span> <span class="ar">=></span> <span class="vn">obj</span> <span class="ar">=></span> <span class="vn">obj</span>[<span class="vn">key</span>];
+<span class="kw">const</span> <span class="fn">where</span> = <span class="vn">pred</span> <span class="ar">=></span> <span class="vn">arr</span> <span class="ar">=></span> <span class="vn">arr</span>.<span class="fn">filter</span>(<span class="vn">pred</span>);
+<span class="kw">const</span> <span class="fn">pluck</span> = <span class="vn">key</span> <span class="ar">=></span> <span class="vn">arr</span> <span class="ar">=></span> <span class="vn">arr</span>.<span class="fn">map</span>(<span class="fn">prop</span>(<span class="vn">key</span>));
+
+<span class="kw">const</span> <span class="vn">activosB</span> = <span class="fn">pipe</span>(
+  <span class="fn">where</span>(<span class="fn">prop</span>(<span class="st">"activo"</span>)),
+  <span class="fn">pluck</span>(<span class="st">"nombre"</span>)
+)(<span class="vn">usuarios</span>);  <span class="cm">// ["Ana"]</span></code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S07 — INMUTABILIDAD -->
+  <section class="section" id="s07">
+    <div class="section-header"><div class="section-num">07</div><h2>Inmutabilidad y datos funcionales</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Patrones de actualización inmutable ———</span>
+
+<span class="cm">// Objetos: spread para copiar y modificar</span>
+<span class="kw">const</span> <span class="vn">user</span>        = { <span class="pr">id</span>: <span class="nm">1</span>, <span class="pr">nombre</span>: <span class="st">"Ana"</span>, <span class="pr">edad</span>: <span class="nm">28</span> };
+<span class="kw">const</span> <span class="vn">userUpdated</span> = { ...<span class="vn">user</span>, <span class="pr">edad</span>: <span class="nm">29</span> };  <span class="cm">// original intacto</span>
+
+<span class="cm">// Arrays: métodos que no mutan</span>
+<span class="kw">const</span> <span class="vn">lista</span> = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>];
+<span class="kw">const</span> <span class="vn">conElem</span>   = [...<span class="vn">lista</span>, <span class="nm">4</span>];            <span class="cm">// añadir al final</span>
+<span class="kw">const</span> <span class="vn">sinPrimero</span>= <span class="vn">lista</span>.<span class="fn">slice</span>(<span class="nm">1</span>);            <span class="cm">// quitar primero</span>
+<span class="kw">const</span> <span class="vn">actualizado</span>= <span class="vn">lista</span>.<span class="fn">map</span>((<span class="vn">x</span>, <span class="vn">i</span>) <span class="ar">=></span> <span class="vn">i</span> === <span class="nm">1</span> ? <span class="nm">99</span> : <span class="vn">x</span>); <span class="cm">// cambiar índice 1</span>
+<span class="kw">const</span> <span class="vn">filtrado</span>  = <span class="vn">lista</span>.<span class="fn">filter</span>(<span class="vn">x</span> <span class="ar">=></span> <span class="vn">x</span> !== <span class="nm">2</span>); <span class="cm">// quitar elemento</span>
+
+<span class="cm">// Objeto anidado inmutable</span>
+<span class="kw">const</span> <span class="vn">state</span> = { <span class="pr">user</span>: { <span class="pr">perfil</span>: { <span class="pr">nombre</span>: <span class="st">"Ana"</span> } } };
+<span class="kw">const</span> <span class="vn">newState</span> = {
+  ...<span class="vn">state</span>,
+  <span class="pr">user</span>: {
+    ...<span class="vn">state</span>.<span class="pr">user</span>,
+    <span class="pr">perfil</span>: { ...<span class="vn">state</span>.<span class="pr">user</span>.<span class="pr">perfil</span>, <span class="pr">nombre</span>: <span class="st">"Luis"</span> }
+  }
+};
+
+<span class="cm">// ——— Object.freeze (deep freeze) ———</span>
+<span class="kw">function</span> <span class="fn">deepFreeze</span>(<span class="vn">obj</span>) {
+  <span class="bi">Object</span>.<span class="fn">getOwnPropertyNames</span>(<span class="vn">obj</span>).<span class="fn">forEach</span>(<span class="vn">name</span> <span class="ar">=></span> {
+    <span class="kw">const</span> <span class="vn">val</span> = <span class="vn">obj</span>[<span class="vn">name</span>];
+    <span class="kw">if</span> (<span class="kw">typeof</span> <span class="vn">val</span> === <span class="st">"object"</span> && <span class="vn">val</span>) <span class="fn">deepFreeze</span>(<span class="vn">val</span>);
+  });
+  <span class="kw">return</span> <span class="bi">Object</span>.<span class="fn">freeze</span>(<span class="vn">obj</span>);
+}
+
+<span class="kw">const</span> <span class="vn">config</span> = <span class="fn">deepFreeze</span>({ <span class="pr">api</span>: { <span class="pr">url</span>: <span class="st">"https://api.ejemplo.com"</span> } });
+<span class="vn">config</span>.<span class="pr">api</span>.<span class="pr">url</span> = <span class="st">"otro"</span>; <span class="cm">// silently fails (TypeError en strict)</span>
+
+<span class="cm">// ——— Lens: acceso y modificación funcional de objetos ———</span>
+<span class="kw">const</span> <span class="fn">lens</span> = (<span class="vn">getter</span>, <span class="vn">setter</span>) <span class="ar">=></span> ({ <span class="vn">getter</span>, <span class="vn">setter</span> });
+<span class="kw">const</span> <span class="fn">view</span> = (<span class="vn">lens</span>, <span class="vn">obj</span>) <span class="ar">=></span> <span class="vn">lens</span>.<span class="fn">getter</span>(<span class="vn">obj</span>);
+<span class="kw">const</span> <span class="fn">over</span> = (<span class="vn">lens</span>, <span class="vn">fn</span>, <span class="vn">obj</span>) <span class="ar">=></span> <span class="vn">lens</span>.<span class="fn">setter</span>(<span class="fn">fn</span>(<span class="fn">view</span>(<span class="vn">lens</span>, <span class="vn">obj</span>)), <span class="vn">obj</span>);
+
+<span class="kw">const</span> <span class="vn">nombreLens</span> = <span class="fn">lens</span>(
+  <span class="vn">u</span> <span class="ar">=></span> <span class="vn">u</span>.<span class="pr">nombre</span>,
+  (<span class="vn">val</span>, <span class="vn">u</span>) <span class="ar">=></span> ({ ...<span class="vn">u</span>, <span class="pr">nombre</span>: <span class="vn">val</span> })
+);
+
+<span class="fn">over</span>(<span class="vn">nombreLens</span>, <span class="vn">s</span> <span class="ar">=></span> <span class="vn">s</span>.<span class="fn">toUpperCase</span>(), <span class="vn">user</span>);</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S08 — GENERADORES -->
+  <section class="section" id="s08">
+    <div class="section-header"><div class="section-num">08</div><h2>Iteradores y Generadores</h2></div>
+    <p>Los <strong>generadores</strong> son funciones que pueden pausar su ejecución y reanudarla. Implementan el protocolo de iteración de JS y permiten crear secuencias infinitas, flujos de datos perezosos y código asíncrono legible.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Protocolo de iteración ———</span>
+<span class="cm">// Un iterable implementa [Symbol.iterator]() → iterator</span>
+<span class="cm">// Un iterator tiene .next() → { value, done }</span>
+
+<span class="kw">const</span> <span class="vn">miIterable</span> = {
+  <span class="kw">from</span>: <span class="nm">1</span>, <span class="pr">to</span>: <span class="nm">5</span>,
+  [<span class="bi">Symbol</span>.<span class="pr">iterator</span>]() {
+    <span class="kw">let</span> <span class="vn">current</span> = <span class="kw">this</span>.<span class="pr">from</span>;
+    <span class="kw">const</span> <span class="vn">last</span>    = <span class="kw">this</span>.<span class="pr">to</span>;
+    <span class="kw">return</span> {
+      <span class="fn">next</span>() {
+        <span class="kw">return</span> <span class="vn">current</span> <= <span class="vn">last</span>
+          ? { <span class="pr">value</span>: <span class="vn">current</span>++, <span class="pr">done</span>: <span class="bo">false</span> }
+          : { <span class="pr">value</span>: <span class="nu">undefined</span>,   <span class="pr">done</span>: <span class="bo">true</span>  };
+      }
+    };
+  }
+};
+
+<span class="kw">for</span> (<span class="kw">const</span> <span class="vn">n</span> <span class="kw">of</span> <span class="vn">miIterable</span>) <span class="bi">console</span>.<span class="fn">log</span>(<span class="vn">n</span>); <span class="cm">// 1 2 3 4 5</span>
+[...<span class="vn">miIterable</span>];   <span class="cm">// [1, 2, 3, 4, 5]</span>
+
+<span class="cm">// ——— Generadores: función* ———</span>
+<span class="kw">function</span>* <span class="fn">rango</span>(<span class="vn">inicio</span>, <span class="vn">fin</span>, <span class="vn">paso</span> = <span class="nm">1</span>) {
+  <span class="kw">for</span> (<span class="kw">let</span> <span class="vn">i</span> = <span class="vn">inicio</span>; <span class="vn">i</span> <= <span class="vn">fin</span>; <span class="vn">i</span> += <span class="vn">paso</span>) {
+    <span class="kw">yield</span> <span class="vn">i</span>;  <span class="cm">// pausa y entrega el valor</span>
+  }
+}
+
+[...<span class="fn">rango</span>(<span class="nm">1</span>, <span class="nm">10</span>, <span class="nm">2</span>)]; <span class="cm">// [1, 3, 5, 7, 9]</span>
+
+<span class="cm">// ——— Secuencias infinitas ———</span>
+<span class="kw">function</span>* <span class="fn">fibonacci</span>() {
+  <span class="kw">let</span> [<span class="vn">a</span>, <span class="vn">b</span>] = [<span class="nm">0</span>, <span class="nm">1</span>];
+  <span class="kw">while</span> (<span class="bo">true</span>) {
+    <span class="kw">yield</span> <span class="vn">a</span>;
+    [<span class="vn">a</span>, <span class="vn">b</span>] = [<span class="vn">b</span>, <span class="vn">a</span> + <span class="vn">b</span>];
+  }
+}
+
+<span class="kw">function</span> <span class="fn">take</span>(<span class="vn">n</span>, <span class="vn">iter</span>) {
+  <span class="kw">const</span> <span class="vn">result</span> = [];
+  <span class="kw">for</span> (<span class="kw">const</span> <span class="vn">x</span> <span class="kw">of</span> <span class="vn">iter</span>) {
+    <span class="vn">result</span>.<span class="fn">push</span>(<span class="vn">x</span>);
+    <span class="kw">if</span> (<span class="vn">result</span>.<span class="pr">length</span> >= <span class="vn">n</span>) <span class="kw">break</span>;
+  }
+  <span class="kw">return</span> <span class="vn">result</span>;
+}
+
+<span class="fn">take</span>(<span class="nm">10</span>, <span class="fn">fibonacci</span>()); <span class="cm">// [0,1,1,2,3,5,8,13,21,34]</span>
+
+<span class="cm">// ——— Generadores bidireccionales (send values) ———</span>
+<span class="kw">function</span>* <span class="fn">acumulador</span>() {
+  <span class="kw">let</span> <span class="vn">total</span> = <span class="nm">0</span>;
+  <span class="kw">while</span> (<span class="bo">true</span>) {
+    <span class="kw">const</span> <span class="vn">valor</span> = <span class="kw">yield</span> <span class="vn">total</span>;  <span class="cm">// recibe valor con .next(valor)</span>
+    <span class="kw">if</span> (<span class="vn">valor</span> === <span class="nu">null</span>) <span class="kw">return</span> <span class="vn">total</span>;
+    <span class="vn">total</span> += <span class="vn">valor</span>;
+  }
+}
+
+<span class="kw">const</span> <span class="vn">acc</span> = <span class="fn">acumulador</span>();
+<span class="vn">acc</span>.<span class="fn">next</span>();      <span class="cm">// { value: 0, done: false } — iniciar</span>
+<span class="vn">acc</span>.<span class="fn">next</span>(<span class="nm">10</span>);    <span class="cm">// { value: 10, done: false }</span>
+<span class="vn">acc</span>.<span class="fn">next</span>(<span class="nm">5</span>);     <span class="cm">// { value: 15, done: false }</span>
+<span class="vn">acc</span>.<span class="fn">next</span>(<span class="nu">null</span>);  <span class="cm">// { value: 15, done: true }</span>
+
+<span class="cm">// ——— Generadores async (async iterators) ———</span>
+<span class="kw">async</span> <span class="kw">function</span>* <span class="fn">fetchPaginas</span>(<span class="vn">url</span>) {
+  <span class="kw">let</span> <span class="vn">pagina</span> = <span class="nm">1</span>;
+  <span class="kw">while</span> (<span class="bo">true</span>) {
+    <span class="kw">const</span> <span class="vn">res</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="tp">`${url}?page=${pagina}`</span>);
+    <span class="kw">const</span> <span class="vn">data</span> = <span class="kw">await</span> <span class="vn">res</span>.<span class="fn">json</span>();
+    <span class="kw">if</span> (!<span class="vn">data</span>.<span class="pr">length</span>) <span class="kw">return</span>;
+    <span class="kw">yield</span> <span class="vn">data</span>;
+    <span class="vn">pagina</span>++;
+  }
+}
+
+<span class="kw">for await</span> (<span class="kw">const</span> <span class="vn">pagina</span> <span class="kw">of</span> <span class="fn">fetchPaginas</span>(<span class="st">"/api/items"</span>)) {
+  <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"Página recibida:"</span>, <span class="vn">pagina</span>.<span class="pr">length</span>, <span class="st">"items"</span>);
+}</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo — Generador de Fibonacci</div>
+      <input class="demo-input" id="fib-n" type="number" min="1" max="40" value="10" placeholder="Cuántos números">
+      <div class="demo-output" id="out-fib">// Presiona "Generar"</div>
+      <button class="demo-btn" onclick="runFibGenerator()">▶ Generar</button>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S09 — ASYNC AVANZADO -->
+  <section class="section" id="s09">
+    <div class="section-header"><div class="section-num">09</div><h2>Async/Await avanzado</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Patrones de ejecución paralela ———</span>
+
+<span class="cm">// ❌ Secuencial (lento) — 3s total</span>
+<span class="kw">const</span> <span class="vn">a</span> = <span class="kw">await</span> <span class="fn">fetch1</span>(); <span class="cm">// 1s</span>
+<span class="kw">const</span> <span class="vn">b</span> = <span class="kw">await</span> <span class="fn">fetch2</span>(); <span class="cm">// 1s</span>
+<span class="kw">const</span> <span class="vn">c</span> = <span class="kw">await</span> <span class="fn">fetch3</span>(); <span class="cm">// 1s</span>
+
+<span class="cm">// ✅ Paralelo (rápido) — 1s total</span>
+<span class="kw">const</span> [<span class="vn">a</span>, <span class="vn">b</span>, <span class="vn">c</span>] = <span class="kw">await</span> <span class="bi">Promise</span>.<span class="fn">all</span>([<span class="fn">fetch1</span>(), <span class="fn">fetch2</span>(), <span class="fn">fetch3</span>()]);
+
+<span class="cm">// ——— Promise.allSettled — no falla aunque una rechace ———</span>
+<span class="kw">const</span> <span class="vn">results</span> = <span class="kw">await</span> <span class="bi">Promise</span>.<span class="fn">allSettled</span>([
+  <span class="fn">fetchCritico</span>(),
+  <span class="fn">fetchOpcional</span>(),   <span class="cm">// puede fallar</span>
+  <span class="fn">fetchExtra</span>()
+]);
+
+<span class="vn">results</span>.<span class="fn">forEach</span>((<span class="vn">r</span>) <span class="ar">=></span> {
+  <span class="kw">if</span> (<span class="vn">r</span>.<span class="pr">status</span> === <span class="st">"fulfilled"</span>) <span class="bi">console</span>.<span class="fn">log</span>(<span class="vn">r</span>.<span class="pr">value</span>);
+  <span class="kw">if</span> (<span class="vn">r</span>.<span class="pr">status</span> === <span class="st">"rejected"</span>)  <span class="bi">console</span>.<span class="fn">error</span>(<span class="vn">r</span>.<span class="pr">reason</span>);
+});
+
+<span class="cm">// ——— Cancelación con AbortController ———</span>
+<span class="kw">async</span> <span class="kw">function</span> <span class="fn">fetchConTimeout</span>(<span class="vn">url</span>, <span class="vn">ms</span> = <span class="nm">5000</span>) {
+  <span class="kw">const</span> <span class="vn">ctrl</span>    = <span class="kw">new</span> <span class="cl">AbortController</span>();
+  <span class="kw">const</span> <span class="vn">timeout</span> = <span class="bi">setTimeout</span>(() <span class="ar">=></span> <span class="vn">ctrl</span>.<span class="fn">abort</span>(), <span class="vn">ms</span>);
+
+  <span class="kw">try</span> {
+    <span class="kw">const</span> <span class="vn">resp</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="vn">url</span>, { <span class="pr">signal</span>: <span class="vn">ctrl</span>.<span class="pr">signal</span> });
+    <span class="bi">clearTimeout</span>(<span class="vn">timeout</span>);
+    <span class="kw">return</span> <span class="vn">resp</span>.<span class="fn">json</span>();
+  } <span class="kw">catch</span> (<span class="vn">e</span>) {
+    <span class="kw">if</span> (<span class="vn">e</span>.<span class="pr">name</span> === <span class="st">"AbortError"</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="cl">Error</span>(<span class="st">"Timeout"</span>);
+    <span class="kw">throw</span> <span class="vn">e</span>;
+  }
+}
+
+<span class="cm">// ——— Retry con backoff exponencial ———</span>
+<span class="kw">async</span> <span class="kw">function</span> <span class="fn">retry</span>(<span class="vn">fn</span>, { <span class="vn">intentos</span> = <span class="nm">3</span>, <span class="vn">baseDelay</span> = <span class="nm">300</span> } = {}) {
+  <span class="kw">for</span> (<span class="kw">let</span> <span class="vn">i</span> = <span class="nm">0</span>; <span class="vn">i</span> < <span class="vn">intentos</span>; <span class="vn">i</span>++) {
+    <span class="kw">try</span> {
+      <span class="kw">return</span> <span class="kw">await</span> <span class="fn">fn</span>();
+    } <span class="kw">catch</span> (<span class="vn">e</span>) {
+      <span class="kw">if</span> (<span class="vn">i</span> === <span class="vn">intentos</span> - <span class="nm">1</span>) <span class="kw">throw</span> <span class="vn">e</span>;
+      <span class="kw">const</span> <span class="vn">delay</span> = <span class="vn">baseDelay</span> * <span class="nm">2</span> ** <span class="vn">i</span>;   <span class="cm">// 300ms, 600ms, 1200ms...</span>
+      <span class="kw">await</span> <span class="kw">new</span> <span class="cl">Promise</span>(<span class="vn">r</span> <span class="ar">=></span> <span class="bi">setTimeout</span>(<span class="vn">r</span>, <span class="vn">delay</span>));
+      <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`Reintento ${i + 1} en ${delay}ms...`</span>);
+    }
+  }
+}
+
+<span class="cm">// ——— Queue de promesas (concurrencia limitada) ———</span>
+<span class="kw">async</span> <span class="kw">function</span> <span class="fn">pLimit</span>(<span class="vn">fns</span>, <span class="vn">concurrency</span> = <span class="nm">3</span>) {
+  <span class="kw">const</span> <span class="vn">results</span> = [];
+  <span class="kw">const</span> <span class="vn">queue</span>   = [...<span class="vn">fns</span>];
+  <span class="kw">let</span>   <span class="vn">active</span>  = <span class="nm">0</span>, <span class="vn">i</span> = <span class="nm">0</span>;
+
+  <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Promise</span>(<span class="vn">resolve</span> <span class="ar">=></span> {
+    <span class="kw">function</span> <span class="fn">run</span>() {
+      <span class="kw">if</span> (<span class="vn">i</span> >= <span class="vn">queue</span>.<span class="pr">length</span> && !<span class="vn">active</span>) { <span class="fn">resolve</span>(<span class="vn">results</span>); <span class="kw">return</span>; }
+      <span class="kw">while</span> (<span class="vn">active</span> < <span class="vn">concurrency</span> && <span class="vn">i</span> < <span class="vn">queue</span>.<span class="pr">length</span>) {
+        <span class="kw">const</span> <span class="vn">idx</span> = <span class="vn">i</span>++;
+        <span class="vn">active</span>++;
+        <span class="vn">queue</span>[<span class="vn">idx</span>]().<span class="fn">then</span>(<span class="vn">r</span> <span class="ar">=></span> { <span class="vn">results</span>[<span class="vn">idx</span>] = <span class="vn">r</span>; <span class="vn">active</span>--; <span class="fn">run</span>(); });
+      }
+    }
+    <span class="fn">run</span>();
+  });
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S10 — OBSERVABLES -->
+  <section class="section" id="s10">
+    <div class="section-header"><div class="section-num">10</div><h2>Observables y Streams (patrón reactivo)</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Observable mínimo (sin librería) ———</span>
+<span class="kw">class</span> <span class="cl">Observable</span> {
+  <span class="fn">constructor</span>(<span class="vn">subscribeFn</span>) {
+    <span class="kw">this</span>.<span class="pr">_subscribe</span> = <span class="vn">subscribeFn</span>;
+  }
+
+  <span class="fn">subscribe</span>(<span class="vn">observer</span>) {
+    <span class="kw">return</span> <span class="kw">this</span>.<span class="pr">_subscribe</span>({
+      <span class="fn">next</span>:     <span class="vn">observer</span>.<span class="pr">next</span>     ?? (() <span class="ar">=></span> {}),
+      <span class="fn">error</span>:    <span class="vn">observer</span>.<span class="pr">error</span>    ?? ((<span class="vn">e</span>) <span class="ar">=></span> { <span class="kw">throw</span> <span class="vn">e</span>; }),
+      <span class="fn">complete</span>: <span class="vn">observer</span>.<span class="pr">complete</span> ?? (() <span class="ar">=></span> {}),
+    });
+  }
+
+  <span class="fn">map</span>(<span class="vn">fn</span>) {
+    <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Observable</span>(<span class="vn">obs</span> <span class="ar">=></span>
+      <span class="kw">this</span>.<span class="fn">subscribe</span>({ ...<span class="vn">obs</span>, <span class="fn">next</span>: <span class="vn">v</span> <span class="ar">=></span> <span class="vn">obs</span>.<span class="fn">next</span>(<span class="fn">fn</span>(<span class="vn">v</span>)) })
+    );
+  }
+
+  <span class="fn">filter</span>(<span class="vn">pred</span>) {
+    <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Observable</span>(<span class="vn">obs</span> <span class="ar">=></span>
+      <span class="kw">this</span>.<span class="fn">subscribe</span>({ ...<span class="vn">obs</span>, <span class="fn">next</span>: <span class="vn">v</span> <span class="ar">=></span> <span class="fn">pred</span>(<span class="vn">v</span>) && <span class="vn">obs</span>.<span class="fn">next</span>(<span class="vn">v</span>) })
+    );
+  }
+
+  <span class="kw">static</span> <span class="fn">fromEvent</span>(<span class="vn">element</span>, <span class="vn">event</span>) {
+    <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Observable</span>(<span class="vn">obs</span> <span class="ar">=></span> {
+      <span class="kw">const</span> <span class="vn">handler</span> = <span class="vn">e</span> <span class="ar">=></span> <span class="vn">obs</span>.<span class="fn">next</span>(<span class="vn">e</span>);
+      <span class="vn">element</span>.<span class="fn">addEventListener</span>(<span class="vn">event</span>, <span class="vn">handler</span>);
+      <span class="kw">return</span> () <span class="ar">=></span> <span class="vn">element</span>.<span class="fn">removeEventListener</span>(<span class="vn">event</span>, <span class="vn">handler</span>);
+    });
+  }
+}
+
+<span class="cm">// Uso</span>
+<span class="kw">const</span> <span class="vn">clicks</span> = <span class="cl">Observable</span>.<span class="fn">fromEvent</span>(<span class="vn">btn</span>, <span class="st">"click"</span>);
+
+<span class="vn">clicks</span>
+  .<span class="fn">filter</span>(<span class="vn">e</span> <span class="ar">=></span> !<span class="vn">e</span>.<span class="pr">ctrlKey</span>)
+  .<span class="fn">map</span>(<span class="vn">e</span> <span class="ar">=></span> ({ <span class="pr">x</span>: <span class="vn">e</span>.<span class="pr">clientX</span>, <span class="pr">y</span>: <span class="vn">e</span>.<span class="pr">clientY</span> }))
+  .<span class="fn">subscribe</span>({
+    <span class="fn">next</span>: <span class="vn">pos</span> <span class="ar">=></span> <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"Click en:"</span>, <span class="vn">pos</span>)
+  });
+
+<span class="cm">// ——— Streams nativos (Node.js / Web Streams API) ———</span>
+<span class="kw">const</span> <span class="vn">stream</span> = <span class="kw">new</span> <span class="cl">ReadableStream</span>({
+  <span class="kw">async</span> <span class="fn">start</span>(<span class="vn">controller</span>) {
+    <span class="kw">for</span> (<span class="kw">let</span> <span class="vn">i</span> = <span class="nm">0</span>; <span class="vn">i</span> < <span class="nm">5</span>; <span class="vn">i</span>++) {
+      <span class="kw">await</span> <span class="kw">new</span> <span class="cl">Promise</span>(<span class="vn">r</span> <span class="ar">=></span> <span class="bi">setTimeout</span>(<span class="vn">r</span>, <span class="nm">100</span>));
+      <span class="vn">controller</span>.<span class="fn">enqueue</span>(<span class="tp">`chunk-${i}`</span>);
+    }
+    <span class="vn">controller</span>.<span class="fn">close</span>();
+  }
+});
+
+<span class="kw">const</span> <span class="vn">reader</span> = <span class="vn">stream</span>.<span class="fn">getReader</span>();
+<span class="kw">while</span> (<span class="bo">true</span>) {
+  <span class="kw">const</span> { <span class="vn">done</span>, <span class="vn">value</span> } = <span class="kw">await</span> <span class="vn">reader</span>.<span class="fn">read</span>();
+  <span class="kw">if</span> (<span class="vn">done</span>) <span class="kw">break</span>;
+  <span class="bi">console</span>.<span class="fn">log</span>(<span class="vn">value</span>);
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S11 — MAP, SET, WEAKMAP -->
+  <section class="section" id="s11">
+    <div class="section-header"><div class="section-num">11</div><h2>Map, Set, WeakMap y WeakSet</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Map: claves de cualquier tipo ———</span>
+<span class="kw">const</span> <span class="vn">mapa</span> = <span class="kw">new</span> <span class="cl">Map</span>();
+
+<span class="kw">const</span> <span class="vn">objetoClave</span> = { <span class="pr">id</span>: <span class="nm">1</span> };
+<span class="vn">mapa</span>.<span class="fn">set</span>(<span class="vn">objetoClave</span>, <span class="st">"¡Clave es un objeto!"</span>);
+<span class="vn">mapa</span>.<span class="fn">set</span>(<span class="nm">42</span>,           <span class="st">"Clave numérica"</span>);
+<span class="vn">mapa</span>.<span class="fn">set</span>(() <span class="ar">=></span> {},     <span class="st">"Clave función"</span>);
+
+<span class="vn">mapa</span>.<span class="fn">get</span>(<span class="vn">objetoClave</span>);  <span class="cm">// "¡Clave es un objeto!"</span>
+<span class="vn">mapa</span>.<span class="pr">size</span>;              <span class="cm">// 3</span>
+<span class="vn">mapa</span>.<span class="fn">has</span>(<span class="nm">42</span>);           <span class="cm">// true</span>
+<span class="vn">mapa</span>.<span class="fn">delete</span>(<span class="nm">42</span>);
+<span class="kw">for</span> (<span class="kw">const</span> [<span class="vn">k</span>, <span class="vn">v</span>] <span class="kw">of</span> <span class="vn">mapa</span>) <span class="bi">console</span>.<span class="fn">log</span>(<span class="vn">k</span>, <span class="vn">v</span>); <span class="cm">// mantiene orden</span>
+
+<span class="cm">// Map vs Objeto plano</span>
+<span class="cm">// Map: cualquier tipo de clave, iterable, .size, mejor performance en mutaciones</span>
+<span class="cm">// Objeto: JSON serializable, destructuring, prototype chain</span>
+
+<span class="cm">// ——— Set: valores únicos ———</span>
+<span class="kw">const</span> <span class="vn">set</span> = <span class="kw">new</span> <span class="cl">Set</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">3</span>, <span class="nm">3</span>]);
+<span class="bi">console</span>.<span class="fn">log</span>([...<span class="vn">set</span>]); <span class="cm">// [1, 2, 3]</span>
+
+<span class="cm">// Deduplicar array</span>
+<span class="kw">const</span> <span class="fn">unique</span> = <span class="vn">arr</span> <span class="ar">=></span> [...<span class="kw">new</span> <span class="cl">Set</span>(<span class="vn">arr</span>)];
+
+<span class="cm">// Operaciones de conjuntos</span>
+<span class="kw">const</span> <span class="vn">A</span> = <span class="kw">new</span> <span class="cl">Set</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>]);
+<span class="kw">const</span> <span class="vn">B</span> = <span class="kw">new</span> <span class="cl">Set</span>([<span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>]);
+
+<span class="kw">const</span> <span class="vn">union</span>        = <span class="kw">new</span> <span class="cl">Set</span>([...<span class="vn">A</span>, ...<span class="vn">B</span>]);            <span class="cm">// {1,2,3,4,5,6}</span>
+<span class="kw">const</span> <span class="vn">interseccion</span> = <span class="kw">new</span> <span class="cl">Set</span>([...<span class="vn">A</span>].<span class="fn">filter</span>(<span class="vn">x</span> <span class="ar">=></span> <span class="vn">B</span>.<span class="fn">has</span>(<span class="vn">x</span>))); <span class="cm">// {3,4}</span>
+<span class="kw">const</span> <span class="vn">diferencia</span>   = <span class="kw">new</span> <span class="cl">Set</span>([...<span class="vn">A</span>].<span class="fn">filter</span>(<span class="vn">x</span> <span class="ar">=></span> !<span class="vn">B</span>.<span class="fn">has</span>(<span class="vn">x</span>)));  <span class="cm">// {1,2}</span>
+
+<span class="cm">// ——— WeakMap: sin retención de memoria ———</span>
+<span class="kw">const</span> <span class="vn">datos</span> = <span class="kw">new</span> <span class="cl">WeakMap</span>();
+
+<span class="kw">function</span> <span class="fn">procesarNodo</span>(<span class="vn">nodo</span>) {
+  <span class="kw">if</span> (!<span class="vn">datos</span>.<span class="fn">has</span>(<span class="vn">nodo</span>)) {
+    <span class="vn">datos</span>.<span class="fn">set</span>(<span class="vn">nodo</span>, { <span class="pr">procesado</span>: <span class="bo">false</span>, <span class="pr">meta</span>: {} });
+  }
+  <span class="kw">return</span> <span class="vn">datos</span>.<span class="fn">get</span>(<span class="vn">nodo</span>);
+}
+<span class="cm">// Si nodo se elimina del DOM, el GC limpia los datos del WeakMap
+// Úsalo para: cache de datos privados por objeto, DOM metadata</span>
+
+<span class="cm">// ——— WeakRef y FinalizationRegistry ———</span>
+<span class="kw">const</span> <span class="vn">cache</span> = <span class="kw">new</span> <span class="cl">Map</span>();
+<span class="kw">const</span> <span class="vn">registry</span> = <span class="kw">new</span> <span class="cl">FinalizationRegistry</span>((<span class="vn">key</span>) <span class="ar">=></span> {
+  <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`Objeto ${key} fue recolectado por el GC`</span>);
+  <span class="vn">cache</span>.<span class="fn">delete</span>(<span class="vn">key</span>);
+});
+
+<span class="kw">function</span> <span class="fn">cachedCreate</span>(<span class="vn">key</span>) {
+  <span class="kw">const</span> <span class="vn">ref</span> = <span class="vn">cache</span>.<span class="fn">get</span>(<span class="vn">key</span>);
+  <span class="kw">if</span> (<span class="vn">ref</span> && <span class="vn">ref</span>.<span class="fn">deref</span>()) <span class="kw">return</span> <span class="vn">ref</span>.<span class="fn">deref</span>();
+  <span class="kw">const</span> <span class="vn">obj</span> = { <span class="pr">data</span>: <span class="st">"datos costosos"</span> };
+  <span class="vn">cache</span>.<span class="fn">set</span>(<span class="vn">key</span>, <span class="kw">new</span> <span class="cl">WeakRef</span>(<span class="vn">obj</span>));
+  <span class="vn">registry</span>.<span class="fn">register</span>(<span class="vn">obj</span>, <span class="vn">key</span>);
+  <span class="kw">return</span> <span class="vn">obj</span>;
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S12 — PROXY Y REFLECT -->
+  <section class="section" id="s12">
+    <div class="section-header"><div class="section-num">12</div><h2>Proxy y Reflect</h2></div>
+    <p><strong>Proxy</strong> permite interceptar y redefinir operaciones fundamentales en objetos: lectura, escritura, llamadas a funciones, <code class="inline">in</code>, <code class="inline">delete</code>, y más. <strong>Reflect</strong> expone esas mismas operaciones como funciones.</p>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Proxy básico ———</span>
+<span class="kw">const</span> <span class="vn">objetivo</span> = { <span class="pr">nombre</span>: <span class="st">"Ana"</span>, <span class="pr">edad</span>: <span class="nm">28</span> };
+
+<span class="kw">const</span> <span class="vn">handler</span> = {
+  <span class="fn">get</span>(<span class="vn">target</span>, <span class="vn">prop</span>, <span class="vn">receiver</span>) {
+    <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`Leyendo: ${prop}`</span>);
+    <span class="kw">return</span> <span class="bi">Reflect</span>.<span class="fn">get</span>(<span class="vn">target</span>, <span class="vn">prop</span>, <span class="vn">receiver</span>);
+  },
+  <span class="fn">set</span>(<span class="vn">target</span>, <span class="vn">prop</span>, <span class="vn">value</span>) {
+    <span class="kw">if</span> (<span class="vn">prop</span> === <span class="st">"edad"</span> && <span class="kw">typeof</span> <span class="vn">value</span> !== <span class="st">"number"</span>) {
+      <span class="kw">throw</span> <span class="kw">new</span> <span class="cl">TypeError</span>(<span class="st">"edad debe ser número"</span>);
+    }
+    <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`Escribiendo: ${prop} = ${value}`</span>);
+    <span class="kw">return</span> <span class="bi">Reflect</span>.<span class="fn">set</span>(<span class="vn">target</span>, <span class="vn">prop</span>, <span class="vn">value</span>);
+  },
+  <span class="fn">has</span>(<span class="vn">target</span>, <span class="vn">prop</span>) {
+    <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`Verificando: ${prop} in obj`</span>);
+    <span class="kw">return</span> <span class="bi">Reflect</span>.<span class="fn">has</span>(<span class="vn">target</span>, <span class="vn">prop</span>);
+  },
+  <span class="fn">deleteProperty</span>(<span class="vn">target</span>, <span class="vn">prop</span>) {
+    <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`Eliminando: ${prop}`</span>);
+    <span class="kw">return</span> <span class="bi">Reflect</span>.<span class="fn">deleteProperty</span>(<span class="vn">target</span>, <span class="vn">prop</span>);
+  }
+};
+
+<span class="kw">const</span> <span class="vn">proxy</span> = <span class="kw">new</span> <span class="cl">Proxy</span>(<span class="vn">objetivo</span>, <span class="vn">handler</span>);
+<span class="vn">proxy</span>.<span class="pr">nombre</span>;       <span class="cm">// "Leyendo: nombre"</span>
+<span class="vn">proxy</span>.<span class="pr">edad</span> = <span class="nm">29</span>;    <span class="cm">// "Escribiendo: edad = 29"</span>
+<span class="vn">proxy</span>.<span class="pr">edad</span> = <span class="st">"30"</span>; <span class="cm">// TypeError</span>
+
+<span class="cm">// ——— Casos de uso reales ———</span>
+
+<span class="cm">// 1. Validación de esquema</span>
+<span class="kw">function</span> <span class="fn">validar</span>(<span class="vn">obj</span>, <span class="vn">schema</span>) {
+  <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Proxy</span>(<span class="vn">obj</span>, {
+    <span class="fn">set</span>(<span class="vn">target</span>, <span class="vn">prop</span>, <span class="vn">val</span>) {
+      <span class="kw">const</span> <span class="vn">tipo</span> = <span class="vn">schema</span>[<span class="vn">prop</span>];
+      <span class="kw">if</span> (<span class="vn">tipo</span> && <span class="kw">typeof</span> <span class="vn">val</span> !== <span class="vn">tipo</span>)
+        <span class="kw">throw</span> <span class="cl">TypeError</span>(<span class="tp">`${prop} debe ser ${tipo}`</span>);
+      <span class="kw">return</span> <span class="bi">Reflect</span>.<span class="fn">set</span>(<span class="vn">target</span>, <span class="vn">prop</span>, <span class="vn">val</span>);
+    }
+  });
+}
+
+<span class="kw">const</span> <span class="vn">user</span> = <span class="fn">validar</span>({}, { <span class="pr">nombre</span>: <span class="st">"string"</span>, <span class="pr">edad</span>: <span class="st">"number"</span> });
+
+<span class="cm">// 2. Observable reactivo (Vue 3 / Solid.js lo hacen así)</span>
+<span class="kw">function</span> <span class="fn">reactive</span>(<span class="vn">obj</span>, <span class="vn">onChange</span>) {
+  <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Proxy</span>(<span class="vn">obj</span>, {
+    <span class="fn">set</span>(<span class="vn">t</span>, <span class="vn">p</span>, <span class="vn">v</span>) {
+      <span class="kw">const</span> <span class="vn">old</span> = <span class="vn">t</span>[<span class="vn">p</span>];
+      <span class="bi">Reflect</span>.<span class="fn">set</span>(<span class="vn">t</span>, <span class="vn">p</span>, <span class="vn">v</span>);
+      <span class="kw">if</span> (<span class="vn">v</span> !== <span class="vn">old</span>) <span class="fn">onChange</span>(<span class="vn">p</span>, <span class="vn">v</span>, <span class="vn">old</span>);
+      <span class="kw">return</span> <span class="bo">true</span>;
+    }
+  });
+}
+
+<span class="kw">const</span> <span class="vn">estado</span> = <span class="fn">reactive</span>({ <span class="pr">count</span>: <span class="nm">0</span> }, (<span class="vn">prop</span>, <span class="vn">val</span>, <span class="vn">old</span>) <span class="ar">=></span>
+  <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`${prop}: ${old} → ${val}`</span>)
+);</code></pre>
+    </div>
+
+    <div class="demo-box">
+      <div class="demo-label">Demo — Proxy reactivo</div>
+      <div class="demo-output" id="out-proxy">// Presiona "Ejecutar" para ver el Proxy en acción</div>
+      <button class="demo-btn" onclick="runProxyDemo()">▶ Ejecutar Proxy</button>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S13 — SYMBOLS -->
+  <section class="section" id="s13">
+    <div class="section-header"><div class="section-num">13</div><h2>Symbols y metaprogramación</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Symbols: identificadores únicos garantizados ———</span>
+<span class="kw">const</span> <span class="vn">sym1</span> = <span class="bi">Symbol</span>(<span class="st">"descripción"</span>);
+<span class="kw">const</span> <span class="vn">sym2</span> = <span class="bi">Symbol</span>(<span class="st">"descripción"</span>);
+<span class="vn">sym1</span> === <span class="vn">sym2</span>; <span class="cm">// false — siempre únicos</span>
+
+<span class="cm">// Propiedades "privadas" con Symbol</span>
+<span class="kw">const</span> <span class="vn">ID</span>      = <span class="bi">Symbol</span>(<span class="st">"id"</span>);
+<span class="kw">const</span> <span class="vn">PRIVADO</span> = <span class="bi">Symbol</span>(<span class="st">"privado"</span>);
+
+<span class="kw">class</span> <span class="cl">Usuario</span> {
+  <span class="fn">constructor</span>(<span class="vn">nombre</span>) {
+    <span class="kw">this</span>.<span class="pr">nombre</span>     = <span class="vn">nombre</span>;
+    <span class="kw">this</span>[<span class="vn">ID</span>]       = <span class="bi">Math</span>.<span class="fn">random</span>();  <span class="cm">// no aparece en for...in</span>
+    <span class="kw">this</span>[<span class="vn">PRIVADO</span>]  = <span class="st">"datos internos"</span>;
+  }
+}
+
+<span class="kw">const</span> <span class="vn">u</span> = <span class="kw">new</span> <span class="cl">Usuario</span>(<span class="st">"Ana"</span>);
+<span class="bi">Object</span>.<span class="fn">keys</span>(<span class="vn">u</span>);              <span class="cm">// ["nombre"] — Symbols excluidos</span>
+<span class="bi">Object</span>.<span class="fn">getOwnPropertySymbols</span>(<span class="vn">u</span>); <span class="cm">// [Symbol(id), Symbol(privado)]</span>
+<span class="bi">JSON</span>.<span class="fn">stringify</span>(<span class="vn">u</span>);           <span class="cm">// {"nombre":"Ana"} — Symbols ignorados</span>
+
+<span class="cm">// ——— Well-known Symbols ———</span>
+
+<span class="cm">// Symbol.iterator — hacer iterable tu objeto</span>
+<span class="kw">class</span> <span class="cl">Rango</span> {
+  <span class="fn">constructor</span>(<span class="vn">inicio</span>, <span class="vn">fin</span>) { <span class="kw">this</span>.<span class="pr">inicio</span> = <span class="vn">inicio</span>; <span class="kw">this</span>.<span class="pr">fin</span> = <span class="vn">fin</span>; }
+  *[<span class="bi">Symbol</span>.<span class="pr">iterator</span>]() {
+    <span class="kw">for</span> (<span class="kw">let</span> <span class="vn">i</span> = <span class="kw">this</span>.<span class="pr">inicio</span>; <span class="vn">i</span> <= <span class="kw">this</span>.<span class="pr">fin</span>; <span class="vn">i</span>++) <span class="kw">yield</span> <span class="vn">i</span>;
+  }
+}
+[...<span class="kw">new</span> <span class="cl">Rango</span>(<span class="nm">1</span>, <span class="nm">5</span>)];  <span class="cm">// [1, 2, 3, 4, 5]</span>
+
+<span class="cm">// Symbol.toPrimitive — conversión implícita</span>
+<span class="kw">class</span> <span class="cl">Dinero</span> {
+  <span class="fn">constructor</span>(<span class="vn">monto</span>, <span class="vn">divisa</span>) { <span class="kw">this</span>.<span class="pr">monto</span> = <span class="vn">monto</span>; <span class="kw">this</span>.<span class="pr">divisa</span> = <span class="vn">divisa</span>; }
+  [<span class="bi">Symbol</span>.<span class="pr">toPrimitive</span>](<span class="vn">hint</span>) {
+    <span class="kw">if</span> (<span class="vn">hint</span> === <span class="st">"number"</span>) <span class="kw">return</span> <span class="kw">this</span>.<span class="pr">monto</span>;
+    <span class="kw">if</span> (<span class="vn">hint</span> === <span class="st">"string"</span>) <span class="kw">return</span> <span class="tp">`${this.monto} ${this.divisa}`</span>;
+    <span class="kw">return</span> <span class="kw">this</span>.<span class="pr">monto</span>;
+  }
+}
+
+<span class="kw">const</span> <span class="vn">precio</span> = <span class="kw">new</span> <span class="cl">Dinero</span>(<span class="nm">100</span>, <span class="st">"MXN"</span>);
+<span class="vn">precio</span> + <span class="nm">50</span>;        <span class="cm">// 150</span>
+<span class="tp">`Precio: ${precio}`</span>; <span class="cm">// "Precio: 100 MXN"</span>
+
+<span class="cm">// Symbol.hasInstance — controlar instanceof</span>
+<span class="kw">class</span> <span class="cl">MiArray</span> {
+  <span class="kw">static</span> [<span class="bi">Symbol</span>.<span class="pr">hasInstance</span>](<span class="vn">instance</span>) {
+    <span class="kw">return</span> <span class="bi">Array</span>.<span class="fn">isArray</span>(<span class="vn">instance</span>);
+  }
+}
+[] <span class="kw">instanceof</span> <span class="cl">MiArray</span>; <span class="cm">// true</span>
+
+<span class="cm">// Symbol.for — símbolo global compartido</span>
+<span class="kw">const</span> <span class="vn">s1</span> = <span class="bi">Symbol</span>.<span class="fn">for</span>(<span class="st">"clave"</span>);
+<span class="kw">const</span> <span class="vn">s2</span> = <span class="bi">Symbol</span>.<span class="fn">for</span>(<span class="st">"clave"</span>);
+<span class="vn">s1</span> === <span class="vn">s2</span>; <span class="cm">// true — mismo símbolo global</span></code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S14 — PATRONES CREACIONALES -->
+  <section class="section" id="s14">
+    <div class="section-header"><div class="section-num">14</div><h2>Patrones de diseño creacionales</h2></div>
+
+    <div class="tab-bar" id="creational-tabs">
+      <button class="tab-btn active" onclick="showTab('singleton','creational-tabs')">Singleton</button>
+      <button class="tab-btn" onclick="showTab('factory','creational-tabs')">Factory</button>
+      <button class="tab-btn" onclick="showTab('builder','creational-tabs')">Builder</button>
+      <button class="tab-btn" onclick="showTab('prototype','creational-tabs')">Prototype</button>
+    </div>
+
+    <div id="tab-singleton" class="tab-panel active">
+      <pre><code><span class="cm">// Singleton: solo una instancia en toda la app</span>
+<span class="kw">class</span> <span class="cl">Database</span> {
+  <span class="kw">static</span> <span class="vn">#instance</span> = <span class="nu">null</span>;  <span class="cm">// privado</span>
+  <span class="vn">#conexion</span>;
+
+  <span class="fn">constructor</span>(<span class="vn">url</span>) {
+    <span class="kw">if</span> (<span class="cl">Database</span>.<span class="vn">#instance</span>) <span class="kw">return</span> <span class="cl">Database</span>.<span class="vn">#instance</span>;
+    <span class="kw">this</span>.<span class="vn">#conexion</span> = <span class="vn">url</span>;
+    <span class="cl">Database</span>.<span class="vn">#instance</span> = <span class="kw">this</span>;
+  }
+
+  <span class="kw">static</span> <span class="fn">getInstance</span>(<span class="vn">url</span>) {
+    <span class="kw">return</span> <span class="cl">Database</span>.<span class="vn">#instance</span> ?? <span class="kw">new</span> <span class="cl">Database</span>(<span class="vn">url</span>);
+  }
+
+  <span class="fn">query</span>(<span class="vn">sql</span>) { <span class="kw">return</span> <span class="tp">`Ejecutando: ${sql} en ${this.#conexion}`</span>; }
+}
+
+<span class="kw">const</span> <span class="vn">db1</span> = <span class="cl">Database</span>.<span class="fn">getInstance</span>(<span class="st">"postgres://..."</span>);
+<span class="kw">const</span> <span class="vn">db2</span> = <span class="cl">Database</span>.<span class="fn">getInstance</span>(<span class="st">"postgres://..."</span>);
+<span class="vn">db1</span> === <span class="vn">db2</span>; <span class="cm">// true — misma instancia</span>
+
+<span class="cm">// Uso: estado global, loggers, conexiones de BD</span></code></pre>
+    </div>
+
+    <div id="tab-factory" class="tab-panel">
+      <pre><code><span class="cm">// Factory Method: delegar la creación a subclases</span>
+<span class="kw">class</span> <span class="cl">Notificacion</span> {
+  <span class="fn">enviar</span>(<span class="vn">mensaje</span>) { <span class="kw">throw</span> <span class="kw">new</span> <span class="cl">Error</span>(<span class="st">"Implementar"</span>); }
+}
+
+<span class="kw">class</span> <span class="cl">Email</span> <span class="kw">extends</span> <span class="cl">Notificacion</span> {
+  <span class="fn">enviar</span>(<span class="vn">msg</span>) { <span class="kw">return</span> <span class="tp">`📧 Email: ${msg}`</span>; }
+}
+
+<span class="kw">class</span> <span class="cl">SMS</span> <span class="kw">extends</span> <span class="cl">Notificacion</span> {
+  <span class="fn">enviar</span>(<span class="vn">msg</span>) { <span class="kw">return</span> <span class="tp">`📱 SMS: ${msg}`</span>; }
+}
+
+<span class="kw">class</span> <span class="cl">Push</span> <span class="kw">extends</span> <span class="cl">Notificacion</span> {
+  <span class="fn">enviar</span>(<span class="vn">msg</span>) { <span class="kw">return</span> <span class="tp">`🔔 Push: ${msg}`</span>; }
+}
+
+<span class="cm">// Factory</span>
+<span class="kw">function</span> <span class="fn">crearNotificacion</span>(<span class="vn">tipo</span>) {
+  <span class="kw">const</span> <span class="vn">tipos</span> = { <span class="pr">email</span>: <span class="cl">Email</span>, <span class="pr">sms</span>: <span class="cl">SMS</span>, <span class="pr">push</span>: <span class="cl">Push</span> };
+  <span class="kw">const</span> <span class="cl">Clase</span> = <span class="vn">tipos</span>[<span class="vn">tipo</span>];
+  <span class="kw">if</span> (!<span class="cl">Clase</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="cl">Error</span>(<span class="tp">`Tipo desconocido: ${tipo}`</span>);
+  <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Clase</span>();
+}
+
+<span class="kw">const</span> <span class="vn">n</span> = <span class="fn">crearNotificacion</span>(<span class="st">"email"</span>);
+<span class="vn">n</span>.<span class="fn">enviar</span>(<span class="st">"¡Hola!"</span>); <span class="cm">// "📧 Email: ¡Hola!"</span></code></pre>
+    </div>
+
+    <div id="tab-builder" class="tab-panel">
+      <pre><code><span class="cm">// Builder: construir objetos complejos paso a paso</span>
+<span class="kw">class</span> <span class="cl">QueryBuilder</span> {
+  <span class="fn">constructor</span>(<span class="vn">tabla</span>) {
+    <span class="kw">this</span>.<span class="pr">_tabla</span>     = <span class="vn">tabla</span>;
+    <span class="kw">this</span>.<span class="pr">_campos</span>    = [<span class="st">"*"</span>];
+    <span class="kw">this</span>.<span class="pr">_condicion</span>  = <span class="nu">null</span>;
+    <span class="kw">this</span>.<span class="pr">_orden</span>     = <span class="nu">null</span>;
+    <span class="kw">this</span>.<span class="pr">_limite</span>    = <span class="nu">null</span>;
+  }
+
+  <span class="fn">select</span>(...<span class="vn">campos</span>) { <span class="kw">this</span>.<span class="pr">_campos</span>   = <span class="vn">campos</span>; <span class="kw">return</span> <span class="kw">this</span>; }
+  <span class="fn">where</span>(<span class="vn">cond</span>)       { <span class="kw">this</span>.<span class="pr">_condicion</span> = <span class="vn">cond</span>;   <span class="kw">return</span> <span class="kw">this</span>; }
+  <span class="fn">orderBy</span>(<span class="vn">campo</span>)    { <span class="kw">this</span>.<span class="pr">_orden</span>    = <span class="vn">campo</span>;  <span class="kw">return</span> <span class="kw">this</span>; }
+  <span class="fn">limit</span>(<span class="vn">n</span>)          { <span class="kw">this</span>.<span class="pr">_limite</span>   = <span class="vn">n</span>;      <span class="kw">return</span> <span class="kw">this</span>; }
+
+  <span class="fn">build</span>() {
+    <span class="kw">let</span> <span class="vn">q</span> = <span class="tp">`SELECT ${this._campos.join(", ")} FROM ${this._tabla}`</span>;
+    <span class="kw">if</span> (<span class="kw">this</span>.<span class="pr">_condicion</span>) <span class="vn">q</span> += <span class="tp">` WHERE ${this._condicion}`</span>;
+    <span class="kw">if</span> (<span class="kw">this</span>.<span class="pr">_orden</span>)     <span class="vn">q</span> += <span class="tp">` ORDER BY ${this._orden}`</span>;
+    <span class="kw">if</span> (<span class="kw">this</span>.<span class="pr">_limite</span>)    <span class="vn">q</span> += <span class="tp">` LIMIT ${this._limite}`</span>;
+    <span class="kw">return</span> <span class="vn">q</span>;
+  }
+}
+
+<span class="kw">const</span> <span class="vn">query</span> = <span class="kw">new</span> <span class="cl">QueryBuilder</span>(<span class="st">"usuarios"</span>)
+  .<span class="fn">select</span>(<span class="st">"id"</span>, <span class="st">"nombre"</span>, <span class="st">"email"</span>)
+  .<span class="fn">where</span>(<span class="st">"activo = true"</span>)
+  .<span class="fn">orderBy</span>(<span class="st">"nombre ASC"</span>)
+  .<span class="fn">limit</span>(<span class="nm">10</span>)
+  .<span class="fn">build</span>();
+<span class="cm">// "SELECT id, nombre, email FROM usuarios WHERE activo = true ORDER BY nombre ASC LIMIT 10"</span></code></pre>
+    </div>
+
+    <div id="tab-prototype" class="tab-panel">
+      <pre><code><span class="cm">// Prototype: clonar objetos como plantillas</span>
+<span class="kw">class</span> <span class="cl">Configuracion</span> {
+  <span class="fn">constructor</span>(<span class="vn">opciones</span>) {
+    <span class="bi">Object</span>.<span class="fn">assign</span>(<span class="kw">this</span>, <span class="vn">opciones</span>);
+  }
+
+  <span class="fn">clonar</span>() {
+    <span class="kw">return</span> <span class="bi">structuredClone</span>(<span class="kw">this</span>);  <span class="cm">// deep clone</span>
+  }
+
+  <span class="fn">con</span>(<span class="vn">cambios</span>) {
+    <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Configuracion</span>({ ...<span class="kw">this</span>, ...<span class="vn">cambios</span> });
+  }
+}
+
+<span class="kw">const</span> <span class="vn">base</span> = <span class="kw">new</span> <span class="cl">Configuracion</span>({
+  <span class="pr">tema</span>:      <span class="st">"oscuro"</span>,
+  <span class="pr">idioma</span>:    <span class="st">"es"</span>,
+  <span class="pr">debug</span>:     <span class="bo">false</span>
+});
+
+<span class="kw">const</span> <span class="vn">dev</span>  = <span class="vn">base</span>.<span class="fn">con</span>({ <span class="pr">debug</span>: <span class="bo">true</span> });
+<span class="kw">const</span> <span class="vn">prod</span> = <span class="vn">base</span>.<span class="fn">con</span>({ <span class="pr">tema</span>: <span class="st">"claro"</span>, <span class="pr">idioma</span>: <span class="st">"en"</span> });
+
+<span class="cm">// base permanece inalterado</span></code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S15 — PATRONES ESTRUCTURALES -->
+  <section class="section" id="s15">
+    <div class="section-header"><div class="section-num">15</div><h2>Patrones de diseño estructurales</h2></div>
+
+    <div class="tab-bar" id="structural-tabs">
+      <button class="tab-btn active" onclick="showTab('decorator','structural-tabs')">Decorator</button>
+      <button class="tab-btn" onclick="showTab('adapter','structural-tabs')">Adapter</button>
+      <button class="tab-btn" onclick="showTab('facade','structural-tabs')">Facade</button>
+      <button class="tab-btn" onclick="showTab('proxy-p','structural-tabs')">Proxy</button>
+    </div>
+
+    <div id="tab-decorator" class="tab-panel active">
+      <pre><code><span class="cm">// Decorator: añade comportamiento sin modificar la clase</span>
+<span class="cm">// Usando decorators de clase (Etapa 3)</span>
+<span class="dc">@log</span>
+<span class="dc">@cache</span>(60)
+<span class="kw">class</span> <span class="cl">UserService</span> {
+  <span class="kw">async</span> <span class="fn">getUser</span>(<span class="vn">id</span>) { <span class="kw">return</span> <span class="fn">fetch</span>(<span class="tp">`/api/users/${id}`</span>); }
+}
+
+<span class="cm">// Implementación del decorator @log</span>
+<span class="kw">function</span> <span class="fn">log</span>(<span class="cl">Clase</span>) {
+  <span class="kw">return</span> <span class="kw">class</span> <span class="kw">extends</span> <span class="cl">Clase</span> {
+    <span class="kw">constructor</span>(...<span class="vn">args</span>) {
+      <span class="kw">super</span>(...<span class="vn">args</span>);
+      <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Proxy</span>(<span class="kw">this</span>, {
+        <span class="fn">get</span>(<span class="vn">t</span>, <span class="vn">p</span>) {
+          <span class="kw">const</span> <span class="vn">val</span> = <span class="vn">t</span>[<span class="vn">p</span>];
+          <span class="kw">if</span> (<span class="kw">typeof</span> <span class="vn">val</span> !== <span class="st">"function"</span>) <span class="kw">return</span> <span class="vn">val</span>;
+          <span class="kw">return</span> <span class="kw">function</span>(...<span class="vn">args</span>) {
+            <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`[LOG] ${p}(${args})`</span>);
+            <span class="kw">const</span> <span class="vn">result</span> = <span class="vn">val</span>.<span class="fn">apply</span>(<span class="vn">t</span>, <span class="vn">args</span>);
+            <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`[LOG] ${p} →`, result);
+            <span class="kw">return</span> <span class="vn">result</span>;
+          };
+        }
+      });
+    }
+  };
+}</code></pre>
+    </div>
+
+    <div id="tab-adapter" class="tab-panel">
+      <pre><code><span class="cm">// Adapter: hace compatibles interfaces incompatibles</span>
+
+<span class="cm">// API antigua que debemos mantener</span>
+<span class="kw">class</span> <span class="cl">GreetingLegacy</span> {
+  <span class="fn">greet</span>(<span class="vn">firstName</span>, <span class="vn">lastName</span>) {
+    <span class="kw">return</span> <span class="tp">`Hello, ${firstName} ${lastName}!`</span>;
+  }
+}
+
+<span class="cm">// Nueva API que queremos usar</span>
+<span class="kw">class</span> <span class="cl">GreetingAdapter</span> {
+  <span class="fn">constructor</span>(<span class="vn">legacy</span>) { <span class="kw">this</span>.<span class="pr">_legacy</span> = <span class="vn">legacy</span>; }
+
+  <span class="cm">// Nueva interfaz: acepta objeto</span>
+  <span class="fn">greet</span>({ <span class="vn">nombre</span>, <span class="vn">apellido</span> }) {
+    <span class="kw">return</span> <span class="kw">this</span>.<span class="pr">_legacy</span>.<span class="fn">greet</span>(<span class="vn">nombre</span>, <span class="vn">apellido</span>);
+  }
+}
+
+<span class="kw">const</span> <span class="vn">adaptado</span> = <span class="kw">new</span> <span class="cl">GreetingAdapter</span>(<span class="kw">new</span> <span class="cl">GreetingLegacy</span>());
+<span class="vn">adaptado</span>.<span class="fn">greet</span>({ <span class="pr">nombre</span>: <span class="st">"Ana"</span>, <span class="pr">apellido</span>: <span class="st">"García"</span> });
+
+<span class="cm">// Caso real: adaptar fetch a axios-like interface</span>
+<span class="kw">function</span> <span class="fn">fetchAdapter</span>(<span class="vn">baseURL</span>) {
+  <span class="kw">return</span> {
+    <span class="kw">async</span> <span class="fn">get</span>(<span class="vn">url</span>, { <span class="vn">params</span> } = {}) {
+      <span class="kw">const</span> <span class="vn">qs</span>   = <span class="kw">new</span> <span class="cl">URLSearchParams</span>(<span class="vn">params</span>).<span class="fn">toString</span>();
+      <span class="kw">const</span> <span class="vn">resp</span> = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="tp">`${baseURL}${url}?${qs}`</span>);
+      <span class="kw">return</span> { <span class="pr">data</span>: <span class="kw">await</span> <span class="vn">resp</span>.<span class="fn">json</span>(), <span class="pr">status</span>: <span class="vn">resp</span>.<span class="pr">status</span> };
+    }
+  };
+}</code></pre>
+    </div>
+
+    <div id="tab-facade" class="tab-panel">
+      <pre><code><span class="cm">// Facade: interfaz simple sobre sistema complejo</span>
+<span class="kw">class</span> <span class="cl">VideoConversor</span> {
+  <span class="cm">// Subsistemas complejos</span>
+  <span class="fn">decodificar</span>(<span class="vn">archivo</span>) { <span class="kw">return</span> <span class="tp">`decodificado: ${archivo}`</span>; }
+  <span class="fn">ajustarResolucion</span>(<span class="vn">d</span>) { <span class="kw">return</span> <span class="tp">`resolución ajustada`</span>; }
+  <span class="fn">comprimir</span>(<span class="vn">d</span>)          { <span class="kw">return</span> <span class="tp">`comprimido`</span>; }
+  <span class="fn">codificar</span>(<span class="vn">d</span>)           { <span class="kw">return</span> <span class="tp">`codificado a mp4`</span>; }
+  <span class="fn">guardar</span>(<span class="vn">d</span>, <span class="vn">destino</span>)    { <span class="kw">return</span> <span class="tp">`guardado en ${destino}`</span>; }
+}
+
+<span class="cm">// Facade: oculta la complejidad</span>
+<span class="kw">class</span> <span class="cl">ConversionFacade</span> {
+  <span class="fn">constructor</span>() { <span class="kw">this</span>.<span class="pr">conversor</span> = <span class="kw">new</span> <span class="cl">VideoConversor</span>(); }
+
+  <span class="kw">async</span> <span class="fn">convertirAmp4</span>(<span class="vn">origen</span>, <span class="vn">destino</span>) {
+    <span class="kw">const</span> <span class="vn">c</span>  = <span class="kw">this</span>.<span class="pr">conversor</span>;
+    <span class="kw">const</span> <span class="vn">d1</span> = <span class="vn">c</span>.<span class="fn">decodificar</span>(<span class="vn">origen</span>);
+    <span class="kw">const</span> <span class="vn">d2</span> = <span class="vn">c</span>.<span class="fn">ajustarResolucion</span>(<span class="vn">d1</span>);
+    <span class="kw">const</span> <span class="vn">d3</span> = <span class="vn">c</span>.<span class="fn">comprimir</span>(<span class="vn">d2</span>);
+    <span class="kw">const</span> <span class="vn">d4</span> = <span class="vn">c</span>.<span class="fn">codificar</span>(<span class="vn">d3</span>);
+    <span class="kw">return</span>       <span class="vn">c</span>.<span class="fn">guardar</span>(<span class="vn">d4</span>, <span class="vn">destino</span>);
+  }
+}
+
+<span class="cm">// Un método simple en lugar de 5 pasos</span>
+<span class="kw">const</span> <span class="vn">f</span> = <span class="kw">new</span> <span class="cl">ConversionFacade</span>();
+<span class="kw">await</span> <span class="vn">f</span>.<span class="fn">convertirAmp4</span>(<span class="st">"video.avi"</span>, <span class="st">"output/"</span>);</code></pre>
+    </div>
+
+    <div id="tab-proxy-p" class="tab-panel">
+      <pre><code><span class="cm">// Proxy estructural: controla acceso a un objeto</span>
+<span class="kw">class</span> <span class="cl">ImagenReal</span> {
+  <span class="fn">constructor</span>(<span class="vn">src</span>) {
+    <span class="kw">this</span>.<span class="pr">src</span> = <span class="vn">src</span>;
+    <span class="kw">this</span>.<span class="pr">datos</span> = <span class="kw">null</span>;
+    <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`Cargando ${src}... (costoso)`</span>);
+    <span class="kw">this</span>.<span class="pr">datos</span> = <span class="st">"[datos de la imagen]"</span>;
+  }
+  <span class="fn">render</span>() { <span class="kw">return</span> <span class="tp">`<img src="${this.src}">`</span>; }
+}
+
+<span class="cm">// Proxy lazy: retrasa la carga hasta que sea necesaria</span>
+<span class="kw">class</span> <span class="cl">ImagenLazy</span> {
+  <span class="fn">constructor</span>(<span class="vn">src</span>) { <span class="kw">this</span>.<span class="pr">src</span> = <span class="vn">src</span>; <span class="kw">this</span>.<span class="pr">_real</span> = <span class="nu">null</span>; }
+
+  <span class="fn">render</span>() {
+    <span class="kw">if</span> (!<span class="kw">this</span>.<span class="pr">_real</span>) {
+      <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"Carga diferida activada"</span>);
+      <span class="kw">this</span>.<span class="pr">_real</span> = <span class="kw">new</span> <span class="cl">ImagenReal</span>(<span class="kw">this</span>.<span class="pr">src</span>);
+    }
+    <span class="kw">return</span> <span class="kw">this</span>.<span class="pr">_real</span>.<span class="fn">render</span>();
+  }
+}
+
+<span class="cm">// La imagen NO se carga hasta llamar a .render()</span>
+<span class="kw">const</span> <span class="vn">img</span> = <span class="kw">new</span> <span class="cl">ImagenLazy</span>(<span class="st">"foto.jpg"</span>); <span class="cm">// sin carga</span>
+<span class="vn">img</span>.<span class="fn">render</span>();                             <span class="cm">// carga aquí</span></code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S16 — PATRONES DE COMPORTAMIENTO -->
+  <section class="section" id="s16">
+    <div class="section-header"><div class="section-num">16</div><h2>Patrones de diseño de comportamiento</h2></div>
+
+    <div class="tab-bar" id="behavioral-tabs">
+      <button class="tab-btn active" onclick="showTab('observer','behavioral-tabs')">Observer</button>
+      <button class="tab-btn" onclick="showTab('strategy','behavioral-tabs')">Strategy</button>
+      <button class="tab-btn" onclick="showTab('command','behavioral-tabs')">Command</button>
+      <button class="tab-btn" onclick="showTab('middleware','behavioral-tabs')">Middleware</button>
+    </div>
+
+    <div id="tab-observer" class="tab-panel active">
+      <pre><code><span class="cm">// Observer / Event Emitter</span>
+<span class="kw">class</span> <span class="cl">EventEmitter</span> {
+  <span class="fn">constructor</span>() { <span class="kw">this</span>.<span class="pr">_events</span> = <span class="kw">new</span> <span class="cl">Map</span>(); }
+
+  <span class="fn">on</span>(<span class="vn">event</span>, <span class="vn">listener</span>) {
+    <span class="kw">if</span> (!<span class="kw">this</span>.<span class="pr">_events</span>.<span class="fn">has</span>(<span class="vn">event</span>)) <span class="kw">this</span>.<span class="pr">_events</span>.<span class="fn">set</span>(<span class="vn">event</span>, <span class="kw">new</span> <span class="cl">Set</span>());
+    <span class="kw">this</span>.<span class="pr">_events</span>.<span class="fn">get</span>(<span class="vn">event</span>).<span class="fn">add</span>(<span class="vn">listener</span>);
+    <span class="kw">return</span> () <span class="ar">=></span> <span class="kw">this</span>.<span class="fn">off</span>(<span class="vn">event</span>, <span class="vn">listener</span>); <span class="cm">// unsubscribe</span>
+  }
+
+  <span class="fn">once</span>(<span class="vn">event</span>, <span class="vn">listener</span>) {
+    <span class="kw">const</span> <span class="vn">wrapper</span> = (...<span class="vn">args</span>) <span class="ar">=></span> {
+      <span class="vn">listener</span>(...<span class="vn">args</span>);
+      <span class="kw">this</span>.<span class="fn">off</span>(<span class="vn">event</span>, <span class="vn">wrapper</span>);
+    };
+    <span class="kw">return</span> <span class="kw">this</span>.<span class="fn">on</span>(<span class="vn">event</span>, <span class="vn">wrapper</span>);
+  }
+
+  <span class="fn">off</span>(<span class="vn">event</span>, <span class="vn">listener</span>) {
+    <span class="kw">this</span>.<span class="pr">_events</span>.<span class="fn">get</span>(<span class="vn">event</span>)?.<span class="fn">delete</span>(<span class="vn">listener</span>);
+  }
+
+  <span class="fn">emit</span>(<span class="vn">event</span>, ...<span class="vn">args</span>) {
+    <span class="kw">this</span>.<span class="pr">_events</span>.<span class="fn">get</span>(<span class="vn">event</span>)?.<span class="fn">forEach</span>(<span class="vn">fn</span> <span class="ar">=></span> <span class="fn">fn</span>(...<span class="vn">args</span>));
+  }
+}
+
+<span class="kw">const</span> <span class="vn">tienda</span> = <span class="kw">new</span> <span class="cl">EventEmitter</span>();
+<span class="kw">const</span> <span class="vn">unsubscribe</span> = <span class="vn">tienda</span>.<span class="fn">on</span>(<span class="st">"venta"</span>, (<span class="vn">item</span>) <span class="ar">=></span> <span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`Vendido: ${item}`</span>));
+
+<span class="vn">tienda</span>.<span class="fn">emit</span>(<span class="st">"venta"</span>, <span class="st">"producto A"</span>);
+<span class="fn">unsubscribe</span>(); <span class="cm">// limpieza</span></code></pre>
+    </div>
+
+    <div id="tab-strategy" class="tab-panel">
+      <pre><code><span class="cm">// Strategy: intercambiar algoritmos en runtime</span>
+<span class="kw">const</span> <span class="vn">estrategias</span> = {
+  <span class="fn">burbuja</span>(<span class="vn">arr</span>) { <span class="cm">/* O(n²) */</span>
+    <span class="kw">const</span> <span class="vn">a</span> = [...<span class="vn">arr</span>];
+    <span class="kw">for</span> (<span class="kw">let</span> <span class="vn">i</span> = <span class="nm">0</span>; <span class="vn">i</span> < <span class="vn">a</span>.<span class="pr">length</span>; <span class="vn">i</span>++)
+      <span class="kw">for</span> (<span class="kw">let</span> <span class="vn">j</span> = <span class="nm">0</span>; <span class="vn">j</span> < <span class="vn">a</span>.<span class="pr">length</span> - <span class="nm">1</span>; <span class="vn">j</span>++)
+        <span class="kw">if</span> (<span class="vn">a</span>[<span class="vn">j</span>] > <span class="vn">a</span>[<span class="vn">j</span> + <span class="nm">1</span>]) [<span class="vn">a</span>[<span class="vn">j</span>], <span class="vn">a</span>[<span class="vn">j</span>+<span class="nm">1</span>]] = [<span class="vn">a</span>[<span class="vn">j</span>+<span class="nm">1</span>], <span class="vn">a</span>[<span class="vn">j</span>]];
+    <span class="kw">return</span> <span class="vn">a</span>;
+  },
+  <span class="fn">rapido</span>([<span class="vn">pivot</span>, ...<span class="vn">rest</span>]) { <span class="cm">/* O(n log n) */</span>
+    <span class="kw">if</span> (!<span class="vn">pivot</span>) <span class="kw">return</span> [];
+    <span class="kw">const</span> <span class="vn">menores</span> = <span class="vn">rest</span>.<span class="fn">filter</span>(<span class="vn">x</span> <span class="ar">=></span> <span class="vn">x</span> <= <span class="vn">pivot</span>);
+    <span class="kw">const</span> <span class="vn">mayores</span> = <span class="vn">rest</span>.<span class="fn">filter</span>(<span class="vn">x</span> <span class="ar">=></span> <span class="vn">x</span> > <span class="vn">pivot</span>);
+    <span class="kw">return</span> [...<span class="kw">this</span>.<span class="fn">rapido</span>(<span class="vn">menores</span>), <span class="vn">pivot</span>, ...<span class="kw">this</span>.<span class="fn">rapido</span>(<span class="vn">mayores</span>)];
+  },
+  <span class="fn">nativo</span>(<span class="vn">arr</span>)    { <span class="kw">return</span> [...<span class="vn">arr</span>].<span class="fn">sort</span>((<span class="vn">a</span>, <span class="vn">b</span>) <span class="ar">=></span> <span class="vn">a</span> - <span class="vn">b</span>); }
+};
+
+<span class="kw">class</span> <span class="cl">Ordenador</span> {
+  <span class="fn">constructor</span>(<span class="vn">estrategia</span> = <span class="st">"nativo"</span>) { <span class="kw">this</span>.<span class="pr">estrategia</span> = <span class="vn">estrategia</span>; }
+  <span class="fn">setEstrategia</span>(<span class="vn">nombre</span>) { <span class="kw">this</span>.<span class="pr">estrategia</span> = <span class="vn">nombre</span>; <span class="kw">return</span> <span class="kw">this</span>; }
+  <span class="fn">ordenar</span>(<span class="vn">arr</span>) { <span class="kw">return</span> <span class="vn">estrategias</span>[<span class="kw">this</span>.<span class="pr">estrategia</span>](<span class="vn">arr</span>); }
+}
+
+<span class="kw">const</span> <span class="vn">ord</span> = <span class="kw">new</span> <span class="cl">Ordenador</span>();
+<span class="vn">ord</span>.<span class="fn">ordenar</span>([<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">4</span>, <span class="nm">1</span>, <span class="nm">5</span>]);
+<span class="vn">ord</span>.<span class="fn">setEstrategia</span>(<span class="st">"burbuja"</span>).<span class="fn">ordenar</span>([<span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">4</span>]);</code></pre>
+    </div>
+
+    <div id="tab-command" class="tab-panel">
+      <pre><code><span class="cm">// Command: encapsular acciones como objetos (undo/redo)</span>
+<span class="kw">class</span> <span class="cl">HistorialComandos</span> {
+  <span class="fn">constructor</span>() { <span class="kw">this</span>.<span class="pr">hechos</span> = []; <span class="kw">this</span>.<span class="pr">deshechos</span> = []; }
+
+  <span class="fn">ejecutar</span>(<span class="vn">comando</span>) {
+    <span class="vn">comando</span>.<span class="fn">ejecutar</span>();
+    <span class="kw">this</span>.<span class="pr">hechos</span>.<span class="fn">push</span>(<span class="vn">comando</span>);
+    <span class="kw">this</span>.<span class="pr">deshechos</span> = [];    <span class="cm">// limpiar redo al ejecutar</span>
+  }
+
+  <span class="fn">deshacer</span>() {
+    <span class="kw">const</span> <span class="vn">cmd</span> = <span class="kw">this</span>.<span class="pr">hechos</span>.<span class="fn">pop</span>();
+    <span class="kw">if</span> (!<span class="vn">cmd</span>) <span class="kw">return</span>;
+    <span class="vn">cmd</span>.<span class="fn">deshacer</span>();
+    <span class="kw">this</span>.<span class="pr">deshechos</span>.<span class="fn">push</span>(<span class="vn">cmd</span>);
+  }
+
+  <span class="fn">rehacer</span>() {
+    <span class="kw">const</span> <span class="vn">cmd</span> = <span class="kw">this</span>.<span class="pr">deshechos</span>.<span class="fn">pop</span>();
+    <span class="kw">if</span> (!<span class="vn">cmd</span>) <span class="kw">return</span>;
+    <span class="vn">cmd</span>.<span class="fn">ejecutar</span>();
+    <span class="kw">this</span>.<span class="pr">hechos</span>.<span class="fn">push</span>(<span class="vn">cmd</span>);
+  }
+}
+
+<span class="cm">// Comando concreto</span>
+<span class="kw">class</span> <span class="cl">CambiarTexto</span> {
+  <span class="fn">constructor</span>(<span class="vn">editor</span>, <span class="vn">nuevoTexto</span>) {
+    <span class="kw">this</span>.<span class="pr">editor</span>    = <span class="vn">editor</span>;
+    <span class="kw">this</span>.<span class="pr">nuevo</span>     = <span class="vn">nuevoTexto</span>;
+    <span class="kw">this</span>.<span class="pr">anterior</span>  = <span class="vn">editor</span>.<span class="pr">texto</span>;
+  }
+  <span class="fn">ejecutar</span>()  { <span class="kw">this</span>.<span class="pr">editor</span>.<span class="pr">texto</span> = <span class="kw">this</span>.<span class="pr">nuevo</span>; }
+  <span class="fn">deshacer</span>()  { <span class="kw">this</span>.<span class="pr">editor</span>.<span class="pr">texto</span> = <span class="kw">this</span>.<span class="pr">anterior</span>; }
+}
+
+<span class="kw">const</span> <span class="vn">editor</span>    = { <span class="pr">texto</span>: <span class="st">"Hola"</span> };
+<span class="kw">const</span> <span class="vn">historial</span> = <span class="kw">new</span> <span class="cl">HistorialComandos</span>();
+<span class="vn">historial</span>.<span class="fn">ejecutar</span>(<span class="kw">new</span> <span class="cl">CambiarTexto</span>(<span class="vn">editor</span>, <span class="st">"Mundo"</span>));
+<span class="vn">historial</span>.<span class="fn">deshacer</span>(); <span class="cm">// editor.texto = "Hola"</span></code></pre>
+    </div>
+
+    <div id="tab-middleware" class="tab-panel">
+      <pre><code><span class="cm">// Middleware / Chain of Responsibility (estilo Koa/Express)</span>
+<span class="kw">class</span> <span class="cl">App</span> {
+  <span class="fn">constructor</span>() { <span class="kw">this</span>.<span class="pr">middlewares</span> = []; }
+
+  <span class="fn">use</span>(<span class="vn">fn</span>) { <span class="kw">this</span>.<span class="pr">middlewares</span>.<span class="fn">push</span>(<span class="vn">fn</span>); <span class="kw">return</span> <span class="kw">this</span>; }
+
+  <span class="kw">async</span> <span class="fn">handle</span>(<span class="vn">ctx</span>) {
+    <span class="kw">let</span> <span class="vn">index</span> = <span class="nm">-1</span>;
+    <span class="kw">const</span> <span class="fn">dispatch</span> = <span class="kw">async</span> (<span class="vn">i</span>) <span class="ar">=></span> {
+      <span class="kw">if</span> (<span class="vn">i</span> <= <span class="vn">index</span>) <span class="kw">throw</span> <span class="kw">new</span> <span class="cl">Error</span>(<span class="st">"next() llamado múltiples veces"</span>);
+      <span class="vn">index</span> = <span class="vn">i</span>;
+      <span class="kw">const</span> <span class="vn">fn</span> = <span class="kw">this</span>.<span class="pr">middlewares</span>[<span class="vn">i</span>];
+      <span class="kw">if</span> (!<span class="vn">fn</span>) <span class="kw">return</span>;
+      <span class="kw">await</span> <span class="fn">fn</span>(<span class="vn">ctx</span>, () <span class="ar">=></span> <span class="fn">dispatch</span>(<span class="vn">i</span> + <span class="nm">1</span>));
+    };
+    <span class="kw">await</span> <span class="fn">dispatch</span>(<span class="nm">0</span>);
+  }
+}
+
+<span class="kw">const</span> <span class="vn">app</span> = <span class="kw">new</span> <span class="cl">App</span>();
+
+<span class="vn">app</span>.<span class="fn">use</span>(<span class="kw">async</span> (<span class="vn">ctx</span>, <span class="vn">next</span>) <span class="ar">=></span> {
+  <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"→ Logger: inicio"</span>);
+  <span class="kw">await</span> <span class="fn">next</span>();
+  <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"← Logger: fin"</span>);
+});
+
+<span class="vn">app</span>.<span class="fn">use</span>(<span class="kw">async</span> (<span class="vn">ctx</span>, <span class="vn">next</span>) <span class="ar">=></span> {
+  <span class="vn">ctx</span>.<span class="pr">user</span> = <span class="st">"Ana"</span>;             <span class="cm">// añadir datos</span>
+  <span class="kw">await</span> <span class="fn">next</span>();
+});
+
+<span class="vn">app</span>.<span class="fn">use</span>(<span class="kw">async</span> (<span class="vn">ctx</span>) <span class="ar">=></span> {
+  <span class="vn">ctx</span>.<span class="pr">body</span> = <span class="tp">`Hola, ${ctx.user}`</span>;  <span class="cm">// respuesta final</span>
+});
+
+<span class="vn">app</span>.<span class="fn">handle</span>({});
+<span class="cm">// "→ Logger: inicio" → "← Logger: fin"</span></code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S17 — PERFORMANCE -->
+  <section class="section" id="s17">
+    <div class="section-header"><div class="section-num">17</div><h2>Performance y optimización JS</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Medición de rendimiento ———</span>
+<span class="bi">console</span>.<span class="fn">time</span>(<span class="st">"operación"</span>);
+<span class="cm">/* ... código ... */</span>
+<span class="bi">console</span>.<span class="fn">timeEnd</span>(<span class="st">"operación"</span>);
+
+<span class="cm">// Performance API (más preciso)</span>
+<span class="kw">const</span> <span class="vn">t0</span> = <span class="bi">performance</span>.<span class="fn">now</span>();
+<span class="cm">/* ... código ... */</span>
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="tp">`${performance.now() - t0}ms`</span>);
+
+<span class="cm">// ——— Técnicas clave ———</span>
+
+<span class="cm">// 1. Debounce: retrasa ejecución hasta que pare el evento</span>
+<span class="kw">function</span> <span class="fn">debounce</span>(<span class="vn">fn</span>, <span class="vn">delay</span>) {
+  <span class="kw">let</span> <span class="vn">timer</span>;
+  <span class="kw">return</span> <span class="kw">function</span>(...<span class="vn">args</span>) {
+    <span class="bi">clearTimeout</span>(<span class="vn">timer</span>);
+    <span class="vn">timer</span> = <span class="bi">setTimeout</span>(() <span class="ar">=></span> <span class="vn">fn</span>.<span class="fn">apply</span>(<span class="kw">this</span>, <span class="vn">args</span>), <span class="vn">delay</span>);
+  };
+}
+<span class="cm">// Uso: input.oninput = debounce(buscar, 300);</span>
+
+<span class="cm">// 2. Throttle: limita la frecuencia de ejecución</span>
+<span class="kw">function</span> <span class="fn">throttle</span>(<span class="vn">fn</span>, <span class="vn">limit</span>) {
+  <span class="kw">let</span> <span class="vn">ultima</span> = <span class="nm">0</span>;
+  <span class="kw">return</span> <span class="kw">function</span>(...<span class="vn">args</span>) {
+    <span class="kw">const</span> <span class="vn">ahora</span> = <span class="bi">Date</span>.<span class="fn">now</span>();
+    <span class="kw">if</span> (<span class="vn">ahora</span> - <span class="vn">ultima</span> >= <span class="vn">limit</span>) {
+      <span class="vn">ultima</span> = <span class="vn">ahora</span>;
+      <span class="kw">return</span> <span class="vn">fn</span>.<span class="fn">apply</span>(<span class="kw">this</span>, <span class="vn">args</span>);
+    }
+  };
+}
+<span class="cm">// Uso: window.onscroll = throttle(actualizarNav, 100);</span>
+
+<span class="cm">// 3. requestAnimationFrame para animaciones</span>
+<span class="kw">function</span> <span class="fn">animar</span>() {
+  <span class="cm">/* actualizar estado */</span>
+  <span class="bi">requestAnimationFrame</span>(<span class="vn">animar</span>); <span class="cm">// sincroniza con 60fps</span>
+}
+<span class="bi">requestAnimationFrame</span>(<span class="vn">animar</span>);
+
+<span class="cm">// 4. Virtualización: solo renderizar elementos visibles</span>
+<span class="kw">class</span> <span class="cl">ListaVirtual</span> {
+  <span class="fn">constructor</span>(<span class="vn">contenedor</span>, <span class="vn">datos</span>, <span class="vn">alturaItem</span> = <span class="nm">40</span>) {
+    <span class="kw">this</span>.<span class="pr">contenedor</span>  = <span class="vn">contenedor</span>;
+    <span class="kw">this</span>.<span class="pr">datos</span>       = <span class="vn">datos</span>;
+    <span class="kw">this</span>.<span class="pr">alturaItem</span>  = <span class="vn">alturaItem</span>;
+    <span class="vn">contenedor</span>.<span class="fn">addEventListener</span>(<span class="st">"scroll"</span>, () <span class="ar">=></span> <span class="kw">this</span>.<span class="fn">render</span>());
+  }
+
+  <span class="fn">render</span>() {
+    <span class="kw">const</span> { <span class="vn">scrollTop</span>, <span class="vn">clientHeight</span> } = <span class="kw">this</span>.<span class="pr">contenedor</span>;
+    <span class="kw">const</span> <span class="vn">inicio</span> = <span class="bi">Math</span>.<span class="fn">floor</span>(<span class="vn">scrollTop</span> / <span class="kw">this</span>.<span class="pr">alturaItem</span>);
+    <span class="kw">const</span> <span class="vn">visible</span> = <span class="bi">Math</span>.<span class="fn">ceil</span>(<span class="vn">clientHeight</span> / <span class="kw">this</span>.<span class="pr">alturaItem</span>);
+    <span class="kw">const</span> <span class="vn">items</span>   = <span class="kw">this</span>.<span class="pr">datos</span>.<span class="fn">slice</span>(<span class="vn">inicio</span>, <span class="vn">inicio</span> + <span class="vn">visible</span> + <span class="nm">2</span>);
+    <span class="cm">/* renderizar solo los items visibles */</span>
+  }
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S18 — WORKERS -->
+  <section class="section" id="s18">
+    <div class="section-header"><div class="section-num">18</div><h2>Web Workers y concurrencia</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Web Worker: hilo separado ———</span>
+
+<span class="cm">// main.js — hilo principal</span>
+<span class="kw">const</span> <span class="vn">worker</span> = <span class="kw">new</span> <span class="cl">Worker</span>(<span class="st">"worker.js"</span>);
+
+<span class="vn">worker</span>.<span class="fn">postMessage</span>({ <span class="pr">tipo</span>: <span class="st">"calcular"</span>, <span class="pr">datos</span>: <span class="vn">datosGrandes</span> });
+
+<span class="vn">worker</span>.<span class="fn">onmessage</span> = (<span class="vn">e</span>) <span class="ar">=></span> {
+  <span class="bi">console</span>.<span class="fn">log</span>(<span class="st">"Resultado del worker:"</span>, <span class="vn">e</span>.<span class="pr">data</span>);
+};
+
+<span class="vn">worker</span>.<span class="fn">onerror</span> = (<span class="vn">e</span>) <span class="ar">=></span> <span class="bi">console</span>.<span class="fn">error</span>(<span class="vn">e</span>);
+
+<span class="cm">// worker.js — hilo worker (sin acceso al DOM)</span>
+<span class="fn">self</span>.<span class="fn">onmessage</span> = (<span class="vn">e</span>) <span class="ar">=></span> {
+  <span class="kw">if</span> (<span class="vn">e</span>.<span class="pr">data</span>.<span class="pr">tipo</span> === <span class="st">"calcular"</span>) {
+    <span class="kw">const</span> <span class="vn">resultado</span> = <span class="vn">calcularPesado</span>(<span class="vn">e</span>.<span class="pr">data</span>.<span class="pr">datos</span>);
+    <span class="fn">self</span>.<span class="fn">postMessage</span>(<span class="vn">resultado</span>);
+  }
+};
+
+<span class="cm">// ——— SharedArrayBuffer + Atomics (memoria compartida) ———</span>
+<span class="kw">const</span> <span class="vn">buffer</span>  = <span class="kw">new</span> <span class="cl">SharedArrayBuffer</span>(<span class="nm">4</span>);
+<span class="kw">const</span> <span class="vn">counter</span> = <span class="kw">new</span> <span class="cl">Int32Array</span>(<span class="vn">buffer</span>);
+
+<span class="cm">// Operaciones atómicas — thread-safe</span>
+<span class="cl">Atomics</span>.<span class="fn">add</span>(<span class="vn">counter</span>, <span class="nm">0</span>, <span class="nm">1</span>);           <span class="cm">// incremento atómico</span>
+<span class="cl">Atomics</span>.<span class="fn">load</span>(<span class="vn">counter</span>, <span class="nm">0</span>);              <span class="cm">// leer</span>
+<span class="cl">Atomics</span>.<span class="fn">compareExchange</span>(<span class="vn">counter</span>, <span class="nm">0</span>, <span class="nm">0</span>, <span class="nm">1</span>); <span class="cm">// CAS</span>
+<span class="kw">await</span> <span class="cl">Atomics</span>.<span class="fn">waitAsync</span>(<span class="vn">counter</span>, <span class="nm">0</span>, <span class="nm">0</span>); <span class="cm">// esperar cambio</span>
+
+<span class="cm">// ——— Patrón: Worker Pool ———</span>
+<span class="kw">class</span> <span class="cl">WorkerPool</span> {
+  <span class="fn">constructor</span>(<span class="vn">script</span>, <span class="vn">size</span> = <span class="bi">navigator</span>.<span class="pr">hardwareConcurrency</span>) {
+    <span class="kw">this</span>.<span class="pr">workers</span> = <span class="bi">Array</span>.<span class="fn">from</span>({ <span class="pr">length</span>: <span class="vn">size</span> },
+      () <span class="ar">=></span> ({ <span class="pr">worker</span>: <span class="kw">new</span> <span class="cl">Worker</span>(<span class="vn">script</span>), <span class="pr">libre</span>: <span class="bo">true</span> })
+    );
+  }
+
+  <span class="fn">ejecutar</span>(<span class="vn">datos</span>) {
+    <span class="kw">const</span> <span class="vn">w</span> = <span class="kw">this</span>.<span class="pr">workers</span>.<span class="fn">find</span>(<span class="vn">w</span> <span class="ar">=></span> <span class="vn">w</span>.<span class="pr">libre</span>);
+    <span class="kw">if</span> (!<span class="vn">w</span>) <span class="kw">return</span> <span class="bi">Promise</span>.<span class="fn">reject</span>(<span class="kw">new</span> <span class="cl">Error</span>(<span class="st">"Pool ocupado"</span>));
+
+    <span class="vn">w</span>.<span class="pr">libre</span> = <span class="bo">false</span>;
+    <span class="kw">return</span> <span class="kw">new</span> <span class="cl">Promise</span>((<span class="vn">resolve</span>, <span class="vn">reject</span>) <span class="ar">=></span> {
+      <span class="vn">w</span>.<span class="pr">worker</span>.<span class="fn">onmessage</span> = (<span class="vn">e</span>) <span class="ar">=></span> { <span class="vn">w</span>.<span class="pr">libre</span> = <span class="bo">true</span>; <span class="fn">resolve</span>(<span class="vn">e</span>.<span class="pr">data</span>); };
+      <span class="vn">w</span>.<span class="pr">worker</span>.<span class="fn">onerror</span>   = (<span class="vn">e</span>) <span class="ar">=></span> { <span class="vn">w</span>.<span class="pr">libre</span> = <span class="bo">true</span>; <span class="fn">reject</span>(<span class="vn">e</span>); };
+      <span class="vn">w</span>.<span class="pr">worker</span>.<span class="fn">postMessage</span>(<span class="vn">datos</span>);
+    });
+  }
+}</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S19 — MÓDULOS AVANZADOS -->
+  <section class="section" id="s19">
+    <div class="section-header"><div class="section-num">19</div><h2>Módulos avanzados</h2></div>
+
+    <div class="code-wrap">
+      <div class="code-header"><div class="code-dots"><span></span><span></span><span></span></div><span class="code-lang">JavaScript</span></div>
+      <pre><code><span class="cm">// ——— Import dinámico (code splitting) ———</span>
+<span class="kw">async</span> <span class="kw">function</span> <span class="fn">cargarComponente</span>(<span class="vn">nombre</span>) {
+  <span class="kw">const</span> <span class="vn">modulo</span> = <span class="kw">await</span> <span class="kw">import</span>(<span class="tp">`./componentes/${nombre}.js`</span>);
+  <span class="kw">return</span> <span class="vn">modulo</span>.<span class="kw">default</span>;
+}
+
+<span class="cm">// Lazy loading condicional</span>
+<span class="kw">if</span> (<span class="vn">usuario</span>.<span class="pr">esAdmin</span>) {
+  <span class="kw">const</span> { <span class="vn">PanelAdmin</span> } = <span class="kw">await</span> <span class="kw">import</span>(<span class="st">"./admin.js"</span>);
+  <span class="kw">new</span> <span class="vn">PanelAdmin</span>().<span class="fn">montar</span>();
+}
+
+<span class="cm">// ——— Import assertions (JSON modules) ———</span>
+<span class="kw">import</span> <span class="vn">config</span> <span class="kw">from</span> <span class="st">"./config.json"</span> <span class="kw">with</span> { <span class="pr">type</span>: <span class="st">"json"</span> };
+
+<span class="cm">// ——— Import maps (navegador nativo) ———</span>
+<span class="cm">// En HTML:
+// &lt;script type="importmap"&gt;
+// { "imports": {
+//     "lodash": "/node_modules/lodash/lodash.js",
+//     "react":  "https://esm.sh/react"
+// }}
+// &lt;/script&gt;</span>
+
+<span class="kw">import</span> _ <span class="kw">from</span> <span class="st">"lodash"</span>;   <span class="cm">// usa el importmap</span>
+
+<span class="cm">// ——— Module workers ———</span>
+<span class="kw">const</span> <span class="vn">worker</span> = <span class="kw">new</span> <span class="cl">Worker</span>(<span class="st">"worker.js"</span>, { <span class="pr">type</span>: <span class="st">"module"</span> });
+<span class="cm">// Ahora el worker puede usar import/export</span>
+
+<span class="cm">// ——— Barrel exports — índice de módulos ———</span>
+<span class="cm">// index.js</span>
+<span class="kw">export</span> { <span class="kw">default</span> <span class="kw">as</span> <span class="vn">Button</span> }    <span class="kw">from</span> <span class="st">"./Button.js"</span>;
+<span class="kw">export</span> { <span class="kw">default</span> <span class="kw">as</span> <span class="vn">Input</span> }     <span class="kw">from</span> <span class="st">"./Input.js"</span>;
+<span class="kw">export</span> { <span class="kw">default</span> <span class="kw">as</span> <span class="vn">Modal</span> }     <span class="kw">from</span> <span class="st">"./Modal.js"</span>;
+<span class="kw">export</span> * <span class="kw">from</span> <span class="st">"./utils.js"</span>;
+
+<span class="cm">// Consumidor: import limpio</span>
+<span class="kw">import</span> { <span class="vn">Button</span>, <span class="vn">Input</span>, <span class="vn">Modal</span> } <span class="kw">from</span> <span class="st">"./ui/index.js"</span>;
+
+<span class="cm">// ——— import.meta ———</span>
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="kw">import</span>.<span class="pr">meta</span>.<span class="pr">url</span>);       <span class="cm">// URL del módulo actual</span>
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="kw">import</span>.<span class="pr">meta</span>.<span class="pr">env</span>);       <span class="cm">// variables de entorno (Vite)</span>
+<span class="bi">console</span>.<span class="fn">log</span>(<span class="kw">import</span>.<span class="pr">meta</span>.<span class="pr">dirname</span>);  <span class="cm">// __dirname en ESM (Node 22+)</span>
+
+<span class="kw">const</span> <span class="vn">archivo</span> = <span class="kw">new</span> <span class="cl">URL</span>(<span class="st">"data.json"</span>, <span class="kw">import</span>.<span class="pr">meta</span>.<span class="pr">url</span>);</code></pre>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- S20 — BUENAS PRÁCTICAS -->
+  <section class="section" id="s20">
+    <div class="section-header"><div class="section-num">20</div><h2>Buenas prácticas de JS Avanzado</h2></div>
+
+    <ul class="checklist">
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><strong>Entiende el Event Loop</strong> antes de escribir código asíncrono complejo. Saber la diferencia entre microtasks y macrotasks evita bugs de timing.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><strong>Prefiere funciones puras</strong> siempre que sea posible: misma entrada = misma salida, sin efectos secundarios. Son triviales de testear y predecir.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Usa <strong>WeakMap para metadatos privados</strong> de objetos y <strong>WeakRef</strong> para caches que no deben bloquear el GC.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Aplica <strong>debounce</strong> en inputs y búsquedas, <strong>throttle</strong> en scroll y resize, <strong>requestAnimationFrame</strong> en animaciones.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>En código asíncrono complejo, usa <strong>AbortController</strong> para poder cancelar fetch y operaciones. Evita memory leaks en React, SPAs y event listeners.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Conoce los patrones de diseño pero <strong>no los uses por defecto</strong>. Úsalos cuando el problema que resuelven es explícito — no por sofisticación.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Para cálculos pesados que bloquean el hilo principal, usa <strong>Web Workers</strong>. Para muchos cálculos en paralelo, usa un <strong>Worker Pool</strong>.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><strong>Mide antes de optimizar</strong>. Usa <code class="inline">performance.now()</code>, <code class="inline">console.time</code> y Chrome DevTools Performance tab. No optimices lo que no es cuello de botella.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Usa <strong>Proxy</strong> para validación, reactividad y logging, pero con moderación — añade overhead y dificulta el debugging.</li>
+      <li><div class="ck-icon"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>Prefiere <strong>import dinámico</strong> para code splitting: carga solo lo que el usuario necesita cuando lo necesita. Mejora drásticamente el TTI.</li>
+    </ul>
+
+    <div class="table-wrap" style="margin-top:20px;">
+      <table>
+        <tr><th>Característica</th><th>Soporte 2024</th><th>Para qué</th></tr>
+        <tr><td><code>structuredClone()</code></td><td>97%+</td><td>Deep clone sin JSON.parse hack</td></tr>
+        <tr><td><code>Object.hasOwn()</code></td><td>95%+</td><td>Reemplaza .hasOwnProperty()</td></tr>
+        <tr><td><code>Array.at()</code></td><td>96%+</td><td>Índice negativo: arr.at(-1)</td></tr>
+        <tr><td><code>Array.fromAsync()</code></td><td>88%+</td><td>Array desde async iterable</td></tr>
+        <tr><td><code>Promise.withResolvers()</code></td><td>88%+</td><td>Crea promise + resolve/reject expuesto</td></tr>
+        <tr><td><code>Iterator.prototype.map/filter</code></td><td>80%+</td><td>Iteradores lazy sin arrays intermedios</td></tr>
+        <tr><td><code>using / await using</code></td><td>70%+</td><td>Disposable resources (cleanup automático)</td></tr>
+        <tr><td>Decorators (TC39 Stage 3)</td><td>Transpilado</td><td>Metaprogramación declarativa en clases</td></tr>
+        <tr><td><code>Temporal API</code></td><td>Polyfill</td><td>Reemplazará Date con API moderna</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- SERIES FOOTER -->
+  <div class="series-footer">
+    <div class="series-footer-label">// Serie: Manuales de Programación &amp; Diseño Web</div>
+    <div class="series-vols">
+
+      <a href="manual-html.html"> 
+        <span class="vol-chip done">Vol. 1 — HTML</span>
+      </a>
+      
+      <a href="manual-css.html"> 
+        <span class="vol-chip done">Vol. 2 — CSS</span>
+      </a>
+      
+      <a href="manual-javascript.html"> 
+        <span class="vol-chip done">Vol. 3 — JavaScript básico</span>
+      </a>
+      
+      <a href="manual-responsive.html"> 
+         <span class="vol-chip done">Vol. 4 — Responsive</span>
+      </a>
+     
+      <a href="manual-css-avanzado.html"> 
+        <span class="vol-chip done">Vol. 5 — CSS Avanzado</span>
+      </a>
+      
+      
+      <a href="manual-js-avanzado.html"> 
+        <span class="vol-chip current">Vol. 6 — JavaScript Avanzado ◀</span>
+      </a>
+      
+    </div>
+  </div>
+
+</main>
+
+<button class="sidebar-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+<a href="#" class="back-top" id="backTop" title="Volver arriba">↑</a>
+
+<script>
+// =============================================
+// SIDEBAR & PROGRESS
+// =============================================
+const sidebar     = document.getElementById('sidebar');
+const toggle      = document.getElementById('menuToggle');
+const progressBar = document.getElementById('progressBar');
+const backTop     = document.getElementById('backTop');
+const sections    = document.querySelectorAll('.section');
+const navLinks    = document.querySelectorAll('.nav-link');
+
+toggle.addEventListener('click', () => {
+  sidebar.classList.toggle('open');
+  toggle.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
+});
+sidebar.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', () => { sidebar.classList.remove('open'); toggle.textContent = '☰'; });
+});
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = (docH > 0 ? (scrollTop / docH * 100) : 0) + '%';
+  backTop.classList.toggle('visible', scrollTop > 400);
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 90) current = s.id; });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+
+// =============================================
+// TABS
+// =============================================
+function showTab(name, groupId) {
+  const group = document.getElementById(groupId);
+  group.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('tab-' + name);
+  if (target) target.classList.add('active');
+  group.querySelectorAll('.tab-btn').forEach(btn => {
+    const fn = btn.getAttribute('onclick') || '';
+    if (fn.includes("'" + name + "'")) btn.classList.add('active');
+  });
+}
+
+// =============================================
+// DEMO — EVENT LOOP
+// =============================================
+function runEventLoop() {
+  const out = document.getElementById('out-eventloop');
+  out.textContent = '';
+  const log = (msg) => { out.textContent += msg + '\n'; };
+
+  log('> Inicio del script...\n');
+  log('1. [SYNC]      console.log("síncrono 1")');
+
+  const results = [];
+  results.push('1. [SYNC]      "síncrono 1"');
+
+  // Simulate order
+  setTimeout(() => {
+    results.push('5. [MACROTASK] setTimeout 0ms');
+    finalizarEventLoop(results, out);
+  }, 0);
+
+  Promise.resolve().then(() => {
+    results.push('3. [MICROTASK] Promise.resolve().then');
+  });
+
+  queueMicrotask(() => {
+    results.push('4. [MICROTASK] queueMicrotask');
+  });
+
+  results.push('2. [SYNC]      "síncrono 2"');
+
+  setTimeout(() => {
+    if (results.length < 5) results.push('5. [MACROTASK] setTimeout 0ms');
+    out.textContent = 'Event Loop — Orden de ejecución:\n\n';
+    results.forEach(r => { out.textContent += r + '\n'; });
+    out.textContent += '\n// Orden: Sync → Microtasks → Macrotasks';
+  }, 50);
+}
+
+function finalizarEventLoop(results, out) {}
+
+// =============================================
+// DEMO — FIBONACCI GENERATOR
+// =============================================
+function* fibGen() {
+  let [a, b] = [0, 1];
+  while (true) { yield a; [a, b] = [b, a + b]; }
+}
+
+function runFibGenerator() {
+  const n = Math.min(parseInt(document.getElementById('fib-n').value) || 10, 40);
+  const out = document.getElementById('out-fib');
+  const gen = fibGen();
+  const nums = [];
+  for (let i = 0; i < n; i++) nums.push(gen.next().value);
+  out.textContent = `function* fibonacci() { ... }\ntake(${n}, fibonacci())\n\n→ [${nums.join(', ')}]`;
+}
+
+// =============================================
+// DEMO — PROXY
+// =============================================
+function runProxyDemo() {
+  const out = document.getElementById('out-proxy');
+  const log = [];
+
+  function reactive(obj, onChange) {
+    return new Proxy(obj, {
+      set(t, p, v) {
+        const old = t[p];
+        Reflect.set(t, p, v);
+        if (v !== old) onChange(p, v, old);
+        return true;
+      },
+      get(t, p) { return Reflect.get(t, p); }
+    });
+  }
+
+  const estado = reactive({ count: 0, nombre: 'inicial' }, (prop, val, old) => {
+    log.push(`  ${prop}: ${JSON.stringify(old)} → ${JSON.stringify(val)}`);
+  });
+
+  log.push('const estado = reactive({ count: 0, nombre: "inicial" }, onChange);\n');
+
+  log.push('estado.count = 1;');
+  estado.count = 1;
+  log.push('estado.count++;');
+  estado.count++;
+  log.push('estado.nombre = "JavaScript Avanzado";');
+  estado.nombre = 'JavaScript Avanzado';
+  log.push('estado.count = estado.count * 5;');
+  estado.count = estado.count * 5;
+
+  log.push('\nCambios interceptados por Proxy:');
+
+  out.textContent = log.join('\n');
+}
+</script>
+</body>
+</html>
